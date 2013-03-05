@@ -1,0 +1,30 @@
+\name{is.windows}
+\alias{is.windows}
+\title{Checks if the running OS is windows}
+\usage{
+  is.windows(...)
+}
+\arguments{
+  \item{...}{none are available.}
+}
+\value{
+  Returns TRUE/FALSE if the R session is running on Windows
+  or not.
+}
+\description{
+  Returns TRUE/FALSE if the R session is running on Windows
+  or not.
+}
+\details{
+  This function is run when the 'installr' package is first
+  loaded in order to check if the current running OS is
+  Windows. If you are running a different OS, then the
+  installr package (at its current form) does not have much
+  to offer you.
+}
+\examples{
+\dontrun{
+is.windows() # returns TRUE on my machine.
+}
+}
+
