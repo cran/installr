@@ -1,0 +1,103 @@
+installR 0.8
+--------------
+
+FIXES FOR CRAN SUBMISSION:
+   * Fixed some spelling mistakes in DESCRIPTION,
+   * Made sure to run the checks in the latest R version (R 2.15.3, oh the irony)
+   * Changed update.R to be called updateR (in order to avoid confusing it as an S3 variation to 'update')
+
+
+My thanks goes to Prof Brian Ripley for his help.
+
+
+installR 0.7
+--------------
+
+NEW FUNCTIONS ADDED:
+   * ask.user.yn.question - Asks the user for one yes/no question.
+
+UPDATED FUNCTIONS:
+   * update.R  - fixed a bug in quit_R, and added an option to open the Rgui of the new R. Started using ask.user.yn.question in the function (to make it more readable).
+   * fixed some parameters not defined in the function.
+   * made install.MikTeX more friendly in case a wrong version number is specified.
+
+OTHER NOTES:
+   * More documentation.  Updated README.md (fixed \link vs \url)
+   * More documentation.  Updated README.md
+
+TODO for future releases:
+   * uninstall.R() for the old version of R (including the library folder)
+   * Better integration with the "global library" strategy
+
+
+
+installR 0.6
+------------
+
+NEW FUNCTIONS ADDED:
+   * get.installed.R.folders - Returns folder names with R installations
+   * copy.packages.between.libraries - Copies all packages from one library folder to another
+
+UPDATED FUNCTIONS:
+   * update.R  - major update.  Now the user can copy his packages from the old R version to the new version.
+   * ask.user.for.a.row - new "questions_text" parameter
+
+OTHER NOTES:
+   * Updated the NEWS
+   * More documentation
+   * Added "\dontrun{" so to make the package pass CRAN tests (http://stackoverflow.com/questions/12038160/how-to-not-run-an-example-using-roxygen2)
+
+TODO for future releases:
+   * uninstall.R() for the old version of R (including the library folder)
+   * Better integration with the "global library" strategy
+
+
+
+installR 0.3-0.5
+----------------
+
+NEW FUNCTIONS ADDED:
+   * source.https
+   * install.MikTeX
+   * install.git
+   * install.RStudio
+   * install.GitHub
+   * create.global.library - a merge of create.global.library.oldR and create.global.library.newR (from the post: http://www.r-statistics.com/2011/04/how-to-upgrade-r-on-windows-7/)
+   * is.windows() - so when the function is loaded it is checked if the current OS is windows or not.
+
+UPDATED FUNCTIONS:
+   * isntall.R - removed extra parameter.
+   * update.R - allow the user to review the NEWS of the newer version
+
+OTHER NOTES:
+
+   * Updated the NEWS format and text
+   * Updated the description file
+   * Changed the name of the package from installR to installr.
+   * Added a README.md	
+   * Added documentation to all the functions in install.r (via roxygen2)
+
+
+installR 0.2
+------------
+
+NEW FUNCTIONS ADDED:
+
+   * install.packages.zip - for installing package from a url of the ZIP file
+   * install.Rtools - for installing Rtools (allowing the user to choose which version to download)	
+   * update.R - for checking if we have the latest version of R - and if not - download and install it.
+   * install.R
+	
+
+
+installR 0.1
+------------
+
+NEW FUNCTIONS ADDED:
+
+   * install.pandoc() function is created.
+
+OTHER NOTES:
+
+	* Includes skeletons for some functions that will be added in the future.
+	
