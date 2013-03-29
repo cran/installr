@@ -1,9 +1,11 @@
 \name{install.MikTeX}
 \alias{install.MikTeX}
+\alias{install.miktex}
 \title{Downloads and installs MikTeX for windows}
 \usage{
   install.MikTeX(version,
-    page_with_download_url = "http://miktex.org/download")
+    page_with_download_url = "http://miktex.org/download",
+    ...)
 }
 \arguments{
   \item{version}{gets the values 32 and 64. Deciding if we
@@ -12,9 +14,12 @@
 
   \item{page_with_download_url}{the URL of the MikTeX
   download page.}
+
+  \item{...}{extra parameters to pass to
+  \link{install.URL}}
 }
 \value{
-  Nothing.
+  TRUE/FALSE - was the installation successful or not.
 }
 \description{
   Allows the user to downloads and install the latest

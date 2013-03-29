@@ -2,7 +2,8 @@
 \alias{install.URL}
 \title{Downloads and runs a .exe installer file for some software from a URL}
 \usage{
-  install.URL(exe_URL, keep_install_file = F)
+  install.URL(exe_URL, keep_install_file = FALSE,
+    wait = TRUE, ...)
 }
 \arguments{
   \item{exe_URL}{A character with a link to an installer
@@ -10,9 +11,18 @@
 
   \item{keep_install_file}{If TRUE - the installer file
   will not be erased after it is downloaded and run.}
+
+  \item{wait}{should the R interpreter wait for the command
+  to finish? The default is to NOT wait.}
+
+  \item{...}{parameters passed to 'shell'}
 }
 \value{
-  Nothing.
+  invisible(TRUE/FALSE) - was the installation successful
+  or not. (this is based on the output of shell of running
+  the command being either 0 or 1/2.  0 means the file was
+  succesfully installed, while 1 or 2 means there was a
+  failure in running the installer.)
 }
 \description{
   Gets a character with a link to an installer file,
@@ -29,5 +39,8 @@
 }
 \author{
   GERGELY DAROCZI, Tal Galili
+}
+\seealso{
+  \link{shell}
 }
 
