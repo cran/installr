@@ -1,15 +1,20 @@
 \name{install.RStudio}
 \alias{install.RStudio}
+\alias{install.rstudio}
 \title{Downloads and installs RStudio for windows}
 \usage{
-  install.RStudio(page_with_download_url = "http://www.rstudio.com/ide/download/desktop")
+  install.RStudio(page_with_download_url = "http://www.rstudio.com/ide/download/desktop",
+    ...)
 }
 \arguments{
   \item{page_with_download_url}{the URL of the RStudio
   download page.}
+
+  \item{...}{extra parameters to pass to
+  \link{install.URL}}
 }
 \value{
-  Nothing.
+  TRUE/FALSE - was the installation successful or not.
 }
 \description{
   Allows the user to downloads and install the latest
@@ -27,7 +32,7 @@ install.RStudio() # installs the latest version of git
 }
 \references{
   \itemize{ \item RStudio homepage:
-  \url{http://www.rstudio.com//} \item devtools::source_url
+  \url{http://www.rstudio.com/} \item devtools::source_url
   \url{http://rgm3.lab.nig.ac.jp/RGM/r_function?p=devtools&f=source_url}
   }
 }
