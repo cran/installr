@@ -1,3 +1,67 @@
+#' @title Check and Create MD5 Checksum Files
+#' @export
+#' @description checkMD5sums checks the files against a file 'MD5'.  This extends the default checkMD5sums from package tools by adding a new parameter "md5file"
+#' @param package the name of an installed package
+#' @param dir the path to the top-level directory of an installed package.
+#' @param md5file the exact path of the md5file to compare the dir with
+#' @return checkMD5sums returns a logical, NA if there is no 'MD5' file to be checked.
+#' @seealso \link[tools]{checkMD5sums}
+checkMD5sums2 <- function (package, dir, md5file) 
+{
+   library(tools) # making sure this is used.
+   
+   if (missing(dir)) 
+      dir <- find.package(package, quiet = TRUE)
+   if (!length(dir)) 
+      return(NA)
+   if(missing(md5file)) {
+      md5file <- file.path(dir, "MD5") # the "if-missing" is the only line added to the original function.
+      if (!file.exists(md5file)) # I've moved this section into the "if" since file.exists fails if md5file is on the internet
+         return(NA)
+   }
+   inlines <- readLines(md5file)
+   xx <- sub("^([0-9a-fA-F]*)(.*)", "\\1", inlines)
+   nmxx <- names(xx) <- sub("^[0-9a-fA-F]* [ |*](.*)", "\\1", 
+                            inlines)
+   dot <- getwd()
+   if (is.null(dot)) 
+      stop("current working directory cannot be ascertained")
+   setwd(dir)
+   x <- md5sum(dir(dir, recursive = TRUE))
+   setwd(dot)
+   x <- x[names(x) != "MD5"]
+   nmx <- names(x)
+   res <- TRUE
+   not.here <- !(nmxx %in% nmx)
+   if (any(not.here)) {
+      res <- FALSE
+      if (sum(not.here) > 1L) 
+         cat("files", paste(sQuote(nmxx[not.here]), collapse = ", "), 
+             "are missing\n", sep = " ")
+      else cat("file", sQuote(nmxx[not.here]), "is missing\n", 
+               sep = " ")
+   }
+   nmxx <- nmxx[!not.here]
+   diff <- xx[nmxx] != x[nmxx]
+   if (any(diff)) {
+      res <- FALSE
+      files <- nmxx[diff]
+      if (length(files) > 1L) 
+         cat("files", paste(sQuote(files), collapse = ", "), 
+             "have the wrong MD5 checksums\n", sep = " ")
+      else cat("file", sQuote(files), "has the wrong MD5 checksum\n")
+   }
+   res
+}
+
+
+
+
+
+
+
+
+
 #' @title Asks the user for one yes/no question.
 #' @export
 #' @description Asks the user for one yes/no question.  If the users replies with a "yes" (or Y, or y) the function returns TRUE.  Otherwise, FALSE. (also exists as the function devtools::yesno)
@@ -6,15 +70,22 @@
 #' @param add_lines_before if to add a line before asking the question.  Default is TRUE.
 #' @return TRUE/FALSE - if the user answeres yes or no.
 #' @seealso \link[utils]{menu}, (yesno in the package {devtools}) 
-#' @references \url{http://stackoverflow.com/questions/15250487/how-to-add-a-menu-item-to-rgui} (my thanks goes to Dason for his answer and help)
+#' @references \url{http://stackoverflow.com/questions/15250487/how-to-add-a-menu-item-to-rgui} 
+#' (my thanks goes to Dason for his answer and help)
 #' @examples
 #' \dontrun{
 #' ask.user.yn.question("Do you love R?")
 #' ask.user.yn.question(question = "Do you love R?", use_GUI = TRUE) # the same one as before
-#' ask.user.yn.question(question = "Do you love R?", use_GUI = FALSE) # reverts to command line questions
-#' ask.user.yn.question("Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+#' ask.user.yn.question(question = "Do you love R?", use_GUI = FALSE) 
+#' # reverts to command line questions
 #' 
-#'   ullamco laboris nisi ut aliquip ex ea commodo consequat. Do \n you \n love R?") # checking how it deals with multi lines, and a lot of text (very good actually)
+#' ask.user.yn.question("Lorem ipsum dolor sit amet, consectetur adipisicing elit, 
+#' sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+#' Ut enim ad minim veniam, quis nostrud exercitation
+#' 
+#'   ullamco laboris nisi ut aliquip 
+#'   ex ea commodo consequat. Do \n you \n love R?")
+#'    # checking how it deals with multi lines, and a lot of text (very good actually)
 #'   
 #' }
 ask.user.yn.question <- function(question, use_GUI = TRUE, add_lines_before = TRUE) {
@@ -90,6 +161,34 @@ check.for.updates.R <- function(notify_user = TRUE,
 
 
 
+
+
+#' @title See the NEWS file for the latest R release
+#' @export
+#' @description Sends the user the the NEWS html file on "http://cran.rstudio.com/bin/windows/base/NEWS.R-3.0.0.html" (URL changes with each version)
+#' @param URL the URL of the page from which R can be downloaded.
+#' @param ... for future use
+#' @return invisible(NULL)
+#' @examples
+#' \dontrun{
+#' browse.latest.R.NEWS() 
+#' }
+browse.latest.R.NEWS <- function(
+                                URL = "http://cran.rstudio.com/bin/windows/base/",...) {
+   page_with_download_url <- URL
+   page   <- readLines(page_with_download_url, warn = FALSE)
+   pat <- "NEWS.R-[0-9.]+.html"# this is the structure of the link...
+   target_line <- grep(pat, page, value = TRUE); 
+   m <- regexpr(pat, target_line); 
+   latest_R_version_NEWS_html  <- regmatches(target_line, m)[1]
+   
+   URL <- paste(page_with_download_url, latest_R_version_NEWS_html, sep = "")
+   browseURL(URL)   
+   
+   return(invisible(NULL))
+}
+
+
 #' @title Downloads and installs the latest R version
 #' @description Fetches the latest (not development!) R version
 #' @details
@@ -125,7 +224,7 @@ install.R <- function(page_with_download_url = "http://cran.rstudio.com/bin/wind
       require(tools)
       pass_checkMD5sums <- checkMD5sums(dir = new_R_path)
       if(!pass_checkMD5sums) {
-         warning("There was some problem with installing R.  Some files are not what they should be (e.g: check MD5 sums did not pass all the tests)")
+         warning("There was some problem with installing R.  Some files are not what they should be (e.g: check MD5 sums did not pass all the tests). \n  You can try installing R again (either manually or through install.R()), \n  and if the problem persists you can file a bug report by running:  bug.report(package = 'installr') ")
          return(FALSE)
       }
    }
@@ -226,8 +325,16 @@ turn.number.version <- function(number_to_dots) {
 #' @seealso \link{copy.packages.between.libraries}
 #' @examples
 #' \dontrun{
-#' get.installed.R.folders() # returns the sorted and named vector of folder names where R is installed (in different versions).  The first element is the folder of the newest version of R.
-#' get.installed.R.folders(F, F) # returns the folder names where R is installed (in different versions) - no sorting of the folder names was performed
+#' get.installed.R.folders() 
+#' # returns the sorted and named vector of
+#' # folder names where R is installed (in different versions).
+#' #  The first element is 
+#' # the folder of the newest version of R.
+#' 
+#' get.installed.R.folders(F, F) 
+#' # returns the folder names where R is 
+#' # installed (in different versions) - no sorting of 
+#' # the folder names was performed
 #' }
 get.installed.R.folders <- function(sort_by_version = T, add_version_to_name = T) {
    # get the parent folder of the current R installation
@@ -274,8 +381,15 @@ get.installed.R.folders <- function(sort_by_version = T, add_version_to_name = T
 #' @seealso \link{get.installed.R.folders}
 #' @examples
 #' \dontrun{
-#' copy.packages.between.libraries(ask = T) # it will ask you from what R version to copy the packages into which R version.  Since (do_NOT_override_packages_in_new_R = T) the function will make sure to NOT override your newer packages.
-#' # copy.packages.between.libraries(ask = T, keep_old = F) # As before, but this time it will MOVE (instead of COPY) the packages.  e.g: erase them from their old location.
+#' copy.packages.between.libraries(ask = T) 
+#' # it will ask you from what R version 
+#' # to copy the packages into which R version.  
+#' # Since (do_NOT_override_packages_in_new_R = T) the function will 
+#' # make sure to NOT override your newer packages.
+#' 
+#' # copy.packages.between.libraries(ask = T, keep_old = F) 
+#' # As before, but this time it will MOVE (instead of COPY) the packages.
+#' #  e.g: erase them from their old location.
 #' }
 copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE, do_NOT_override_packages_in_new_R = TRUE) {
    
@@ -377,15 +491,22 @@ copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE
 #' @param quit_R TRUE/FALSE - if to quite R after the installation and package copying or not. If missing (this is the default) - the user is asked what to do.
 #' @param print_R_versions if to tell the user what version he has and what is the latest version (default is TRUE)
 #' @param use_GUI a logical indicating whether a graphics menu should be used if available.  If TRUE, and on Windows, it will use \link{winDialog}, otherwise it will use \link[utils]{menu}.
+#' @param to_checkMD5sums Should we check that the new R installation has the files we expect it to (by checking the MD5 sums)? default is TRUE.  It assumes that the R which was isntalled is the latest R version. parameter is passed to install.R()
 #' @param ... Other arguments (this is currently not used in any way)
 #' @return a TRUE/FALSE value on whether or not R was updated.
 #' @seealso \link{check.for.updates.R}, \link{install.R}, \link{copy.packages.between.libraries}, 
 #' @examples
 #' \dontrun{
-#' updateR(T, T, T, T, T, T, T) # the safest upgrade option: See the NEWS, install R, copy packages, keep old packages, update packages in the new installation, start the Rgui of the new R, and quite current session of R
+#' updateR(T, T, T, T, T, T, T) 
+#' # # the safest upgrade option: See the NEWS, 
+#' # install R, copy packages, keep old packages, 
+#' # update packages in the new installation, 
+#' # start the Rgui of the new R, and quite current session 
+#' # of R
+#' 
 #' updateR() # will ask you what you want at every decision.
 #' }
-updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  update_packages, start_new_R, quit_R,  print_R_versions=TRUE, use_GUI = TRUE, ...) {
+updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  update_packages, start_new_R, quit_R,  print_R_versions=TRUE, use_GUI = TRUE, to_checkMD5sums = TRUE, ...) {
    # this function checks if we have the latest version of R
    # IF not - it notifies the user - and leaves.
    # If there is a new version - it offers the user to download and install it.   
@@ -398,7 +519,7 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
 
    # should we open the NEWS?
    if(missing(browse_news)) browse_news <- ask.user.yn.question("Do you wish to see the NEWS regarding this new version of R?", use_GUI = use_GUI)
-   if(browse_news) browseURL("http://stat.ethz.ch/R-manual/R-patched/NEWS")
+   if(browse_news) browse.latest.R.NEWS()      
    
    
    # should we install R?
@@ -406,8 +527,8 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
    if(!install_R) return(F) # if not - return F
    
    # if we got this far, the user wants to install the latest version of R (and his current version is old)
-   cat("Installing the newest version of R, pleaes wait for the installer file to download and run, and be sure to click 'next' as needed...\n")
-   did_R_install <- install.R() 
+   cat("Installing the newest version of R, please wait for the installer file to download and run, and be sure to click 'next' as needed...\n")
+   did_R_install <- install.R(to_checkMD5sums = to_checkMD5sums) 
    if(!did_R_install) return(FALSE) 
    new_R_path <- get.installed.R.folders()[1]
    

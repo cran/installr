@@ -23,7 +23,7 @@ install.packages('installr')
 To install the GitHub version:
 
 ```r
-if (!require('devtools')) install.packages('devtools')
+if (!require('devtools')) install.packages('devtools'); require('devtools')
 install_github('installr', 'talgalili')
 ```
 
@@ -50,8 +50,8 @@ installr() #  user can easily select (via a GUI interface) a software to install
 
 You are welcome to:
 * submit suggestions and bug-reports at: <https://github.com/talgalili/installr/issues>
-* send pull requests are welcome on: <https://github.com/talgalili/installr/>
-* compose friendly e-mail to: <tal.galili@gmail.com>
+* send a pull request on: <https://github.com/talgalili/installr/>
+* compose a friendly e-mail to: <tal.galili@gmail.com>
 
 
 ## Available functions are:
@@ -76,3 +76,5 @@ You are welcome to:
 * install.npptor()
 * install.Cygwin()
 * manage.os() - for shutdown/sleep of a Windows computer (useful for running at the end of a simulation)
+* cranometer - Estimates the speed of each CRAN mirror by measuring the time it takes to download the NEWS file.
+* require2 - just like "require", only makes sure to download and install the package in case it is not present on the system (useful for examples...)

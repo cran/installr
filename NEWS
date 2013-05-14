@@ -1,4 +1,40 @@
-installR 0.9 (2013-03-29)
+installr 0.9.2 (2013-05-14)
+---------------------------
+
+NEW FUNCTIONS ADDED:
+   * cranometer - Estimates the speed of each CRAN mirror by measuring the time it takes to download the NEWS file. (including an example of creating a world-map based on this data)
+   * require2 - just like "require", only makes sure to download and install the package in case it is not present on the system (useful for examples...)
+
+OTHER NOTES:
+   * More documentation.  Updated README.md
+   * Fixed width of various elements in the documentation
+   * installr 0.9.2 is to be shipped to CRAN.
+
+
+installr 0.9.1 (2013-04-04)
+---------------------------
+
+NEW FUNCTIONS ADDED:
+   * checkMD5sums2 - Just like checkMD5sums from the tools package, but with the added md5file parameter. (useful for manually checking if the downloaded R EXE installer is fine, combined with this MD5 file: http://cran.rstudio.com/bin/windows/base/md5sum.txt)
+   * browse.latest.R.NEWS() - sends the user to the latest R NEWS file.
+
+UPDATED FUNCTIONS:
+   * install.URL - updated the error massage to explain better what (probably) went wrong.  And encourage the users to e-mail me with bug reports.
+   * add.installr.GUI - made sure the function wouldn't add items if "Update" is already present. e.g: made a fail-safe mechanism in case the function installr:::add.installr.GUI() is run more than once (my thanks goes to Dieter Menne for the suggestion)
+   * install.R - Updated the warning massage on install.R in case checkMD5sum fails.
+   * updateR -
+      ** added the to_checkMD5sums parameter to updateR (to be passed on to install.R() )
+      ** it now uses the browse.latest.R.NEWS() function.
+
+BUG FIXES:
+   * install.pandoc - fixed it to work with the new URL scheme they've chosen for their site (they moved to MSI instead of .EXE about two weeks ago...)
+   * updateR - fixed a typo in the installation massage (thanks to Henrik Pärn)
+
+OTHER NOTES:
+   * Fixed wrongly used capital letters (for example, in the NEWS file)
+
+
+installr 0.9 (2013-03-29)
 ---------------------------
 
 UPDATED FUNCTIONS:
@@ -6,11 +42,11 @@ UPDATED FUNCTIONS:
 
 OTHER NOTES:
    * More documentation.  Updated README.md
-   * installR 0.9 is to be shiped to CRAN.
+   * installr 0.9 is to be shipped to CRAN.
 
 
 
-installR 0.8.8 (2013-03-26)
+installr 0.8.8 (2013-03-26)
 ---------------------------
 NEW FUNCTIONS ADDED:
    * install.notepadpp
@@ -20,7 +56,7 @@ NEW FUNCTIONS ADDED:
 
 
 
-installR 0.8.7 (2013-03-16)
+installr 0.8.7 (2013-03-16)
 ---------------------------
 NEW FUNCTIONS ADDED:
    * install.SWFTools
@@ -34,7 +70,7 @@ UPDATED FUNCTIONS:
 BUG FIXES:
    * Fixed a bug in install.LyX.rd that caused it to not load properly when using install_github (props goes to Richard Cotton for catching the bug.)
 
-installR 0.8.6
+installr 0.8.6
 --------------
 
 NEW FUNCTIONS ADDED:
@@ -48,13 +84,13 @@ UPDATED FUNCTIONS:
    * Removed shutdown (turned into os.shutdown), and made sure it uses "force" shutdown.
 
 
-installR 0.8.5
+installr 0.8.5
 --------------
 
 NEW FUNCTIONS ADDED:
    * installr - allows the user to choose which software to install (from a GUI or console based menu system)
    * A new GUI for Rgui - added the "Update" to the menu, with three submenu items: Update R, Update R Packages, and Installing software. (thanks to Dason and Yihui Xie for their ideas and help)
-   * shutdown - Shut down the operating system with the command `shutdown'.  A modified version of Yihui's shitdown function from the {fun} package (see: https://github.com/yihui/fun/blob/master/R/shutdown.R)
+   * shutdown - Shut down the operating system with the command `shutdown'.  A modified version of Yihui's shutdown function from the {fun} package (see: https://github.com/yihui/fun/blob/master/R/shutdown.R)
    * is.RStudio - checks if the current R session is running within RStudio or not.
    * is.Rgui - checks if the current R session is running within Rgui or not.
    * add.installr.GUI and remove.installr.GUI - for adding a menu system to Rgui
@@ -78,20 +114,20 @@ BUG FIXES:
    * Fixed a bug in updateR, "Error in !install_R : 'install_R' is missing" (install_R was called in too early) (thanks to AC for the bug report!)
 
 
-installR 0.8 (2013-03-05)
+installr 0.8 (2013-03-05)
 -------------------------
 
 FIXES FOR CRAN SUBMISSION:
    * Fixed some spelling mistakes in DESCRIPTION,
    * Made sure to run the checks in the latest R version (R 2.15.3, oh the irony)
    * Changed update.R to be called updateR (in order to avoid confusing it as an S3 variation to 'update')
-   * installR 0.8 is to be shiped to CRAN.
+   * installr 0.8 is to be shipped to CRAN.
 
 
 My thanks goes to Prof Brian Ripley for his help.
 
 
-installR 0.7
+installr 0.7
 --------------
 
 NEW FUNCTIONS ADDED:
@@ -105,7 +141,7 @@ UPDATED FUNCTIONS:
 OTHER NOTES:
    * More documentation.  Updated README.md (fixed \link vs \url)
 
-installR 0.6
+installr 0.6
 ------------
 
 NEW FUNCTIONS ADDED:
@@ -122,7 +158,7 @@ OTHER NOTES:
    * Added "\dontrun{" so to make the package pass CRAN tests (http://stackoverflow.com/questions/12038160/how-to-not-run-an-example-using-roxygen2)
 
 
-installR 0.3-0.5
+installr 0.3-0.5
 ----------------
 
 NEW FUNCTIONS ADDED:
@@ -177,9 +213,12 @@ TODO for future releases:
 -------------------------
 	* uninstall.R() for the old version of R (including the library folder)
 	* Better integration with the "global library" strategy
-	* Add install.notepad and install.notepadpp
-   * Maybe add some timer to the os.manage functions.  And also allow input for how long from x time to perform the action.
    * make the os.manage work by running an Rscript, in order to allow for their use in long running of knitr/Sweave projects.
    * Add a rate function for the package
    * Add automatic check for a new R version every X time.
    * a way to copy/move Rprofile.site from one installation to the next such as "C:\Program Files\R\R-2.15.2\etc\Rprofile.site" to "C:\Program Files\R\R-2.15.3\etc\Rprofile.site"? (requested by: Farrel Buchinsky)
+   * Add more checks for when copying library folders. If it is found the user has more than one library - show him the options of what he is copying from where to where - and ask the user to approve.  If he denies, to ask him which folder to choose "from", and which "to" copy the libraries into.
+   *add a general package help file.
+   * Fix install.RStudio to act differently in case it is being run from within RStudio (keeping the installation file for the user to run it)
+   *  Add control on which mirror to use when running install.R()
+   * add a welcome massage like: require(googleVis)
