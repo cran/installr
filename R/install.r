@@ -11,7 +11,8 @@
 #' @seealso \code{\link{install.URL}}, \code{\link{install.packages.zip}}
 #' @examples
 #' \dontrun{
-#' file.name.from.url("http://cran.r-project.org/bin/windows/base/R-2.15.3-win.exe") # returns: "R-2.15.3-win.exe"
+#' url <- "http://cran.r-project.org/bin/windows/base/R-2.15.3-win.exe"
+#' file.name.from.url(url) # returns: "R-2.15.3-win.exe"
 #' }
 file.name.from.url <- function(URL) tail(strsplit(URL,   "/")[[1]],1)
 
@@ -61,13 +62,16 @@ install.packages.zip <- function(zip_URL) {
 #' @export
 #' @author GERGELY DAROCZI, Tal Galili
 #' @examples
-#' # install.URL() 
+#' \dontrun{
+#' install.URL("adfadf") # shows the error produced when the URL is not valid.
+#' }
 install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, ...) {
    # source: http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
    # input: a url of an .exe file to install
    # output: it runs the .exe file (for installing something)   
-   exe_filename <- file.path(tempdir(), file.name.from.url(exe_URL))   # the name of the zip file MUST be as it was downloaded...
-   download.file(exe_URL, destfile=exe_filename, mode = 'wb')
+   exe_filename <- file.path(tempdir(), file.name.from.url(exe_URL))   # the name of the zip file MUST be as it was downloaded...   
+   tryCatch(download.file(exe_URL, destfile=exe_filename, mode = 'wb'), 
+            error = function(e) cat("\nExplenation of the error: You didn't enter a valid .EXE URL. \nThis is likely to have happened because there was a change in the software download page, \nand the function you just ran no longer works. \n\n This is often caused by a change in the URL of the installer file in the download page of the software \n(making our function unable to know what to download). \n\n Please e-mail: tal.galili@gmail.com and let me know this function needs updating/fixing - thanks!\n"))  
    if(!keep_install_file & !wait) {
       wait <- TRUE
       warning("wait was set to TRUE since you wanted to installation file removed. In order to be able to run the installer AND remove the file - we must first wait for the isntaller to finish running before removing the file.")
@@ -98,7 +102,7 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, ...) {
 #' @return TRUE/FALSE - was the installation successful or not.
 #' @export
 #' @author GERGELY DAROCZI, G. Grothendieck, Tal Galili
-#' @param page_with_download_url a link to the list of download links of pandoc
+#' @param URL a link to the list of download links of pandoc
 #' @param use_regex (default TRUE) should the regex method be used to extract exe links, or should the XML package be used.
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @source \url{http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command}
@@ -107,16 +111,18 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, ...) {
 #' install.pandoc() 
 #' }
 install.pandoc <- function(
-   page_with_download_url = 'http://code.google.com/p/pandoc/downloads/list',
-   use_regex = T,...
+   URL = 'http://code.google.com/p/pandoc/downloads/list',
+   use_regex = TRUE,...
 ) {
+   page_with_download_url <- URL
    # source: http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
    # published on: http://www.r-statistics.com/2013/02/installing-pandoc-from-r-on-windows/
    
    
    if(use_regex) {
       page     <- readLines(page_with_download_url, warn = FALSE)
-      pat <- "//pandoc.googlecode.com/files/pandoc-[0-9.]+-setup.exe"; 
+      #"//pandoc.googlecode.com/files/pandoc-1.11.1.msi"
+      pat <- "//pandoc.googlecode.com/files/pandoc-[0-9.]+.msi"
       target_line <- grep(pat, page, value = TRUE); 
       m <- regexpr(pat, target_line); 
       URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
@@ -171,9 +177,14 @@ check.integer <- function(N){
 #' If the user doesn't give a valid row number, the function repeats its questions until a valid row number is chosen (or the user escapes)
 #' @param TABLE a data.frame table with rows from which we wish the user to choose a row.  If TABLE is not a data.frame, it will be coerced into one.
 #' @param header_text the text the users sees (often a question) as a title for the printed table - explaining which row he should choose from
-#' @param questions_text the question the users see after the printing of the table - explaining which row he should choose from
+#' @param questions_text the question the users see after the printing of the table - explaining which row he should choose from.
+#' (the default is: "Please review the table of versions 
+#' from above, and enter the row number of the file-version 
+#' you'd like to install: ")
 #' @return The row number the user has choosen from the data.frame table.
-#' @source On how to ask the user for input: \url{http://stackoverflow.com/questions/5974967/what-is-the-correct-way-to-ask-for-user-input-in-an-r-program}
+#' @source On how to ask the user for input:
+#' 
+#' \url{http://stackoverflow.com/questions/5974967/what-is-the-correct-way-to-ask-for-user-input-in-an-r-program}
 #' @examples
 #' \dontrun{
 #' version_table <- data.frame(versions = c("devel", "V 1.0.0", "V 2.0.0"))
@@ -181,9 +192,13 @@ check.integer <- function(N){
 #' }
 ask.user.for.a.row <- function(TABLE, 
                                header_text = "Possible versions to download (choose one)",
-                               questions_text = "Please review the table of versions from above, \n  and enter the row number of the file-version you'd like to install: ") {
+                               questions_text) {
    # http://stackoverflow.com/questions/5974967/what-is-the-correct-way-to-ask-for-user-input-in-an-r-program
    # based on code by Joris Meys
+
+   if(missing(questions_text)) questions_text <- "Please review the table of versions from above,
+and enter the row number of the file-version you'd like to install: "
+   
    if(class(TABLE) != "data.frame") {
       TABLE <- as.data.frame(TABLE)
       colnames(TABLE)[1] <- "Choose:"
@@ -210,8 +225,8 @@ ask.user.for.a.row <- function(TABLE,
    
    ROW_id
 }
-
-# ask.user.for.a.row(TABLE)
+# version_table <- data.frame(versions = c("devel", "V 1.0.0", "V 2.0.0"))
+# ask.user.for.a.row(version_table)
 
 
 
@@ -294,8 +309,12 @@ ask.user.for.a.row <- function(TABLE,
 #' @examples
 #' \dontrun{
 #' install.Rtools() # installs the latest version of RTools (if one is needed)
-#' install.Rtools(TRUE) # if one is needed - asks the user to choose the latest version of RTools to install
-#' install.Rtools(TRUE, FALSE) # asks the user to choose the latest version of RTools to install (regardless if one is needed)
+#' install.Rtools(TRUE) # if one is needed - asks the user to choose the latest 
+#' # version of RTools to install
+#' 
+#' install.Rtools(TRUE, FALSE) # asks the user to choose 
+#' # the latest version of RTools to install 
+#' # (regardless if one is needed)
 #' }
 install.Rtools <- function(choose_version = FALSE,                           
                            check=TRUE,
@@ -441,7 +460,7 @@ install.notepadpp <- function(page_with_download_url="http://notepad-plus-plus.o
 #' Similar to the windows R gui built in editor, NppToR aims to extend the functionality of code passing to the Notepad++ code editor. In addition to passing to the R gui, NppToR provides optional passing to a PuTTY window for passing to an R instance a remote machine.
 #' 
 #' NppToR is a companion utility that facilitates communication between R and Notepad++. It provides code passing from Notepad++ into the windows R Gui. NppToR also provides an autocompletion database which is dynamically generated from the users' R library of packages, thanks to an addition by Yihui Xie. Notepad++ provides built it R code highlighting and folding.
-#' @param page_with_download_url the URL of the Notepad++ download page.
+#' @param URL the URL of the Notepad++ download page.
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @return invisible TRUE/FALSE - was the installation successful or not.
 #' @export
@@ -450,9 +469,10 @@ install.notepadpp <- function(page_with_download_url="http://notepad-plus-plus.o
 #' download page: \url{http://sourceforge.net/projects/npptor/}
 #' @examples
 #' \dontrun{
-#' install.npptor() # installs the latest version of git
+#' install.npptor() # installs the latest version of npptor
 #' }
-install.npptor <- function(page_with_download_url="http://sourceforge.net/projects/npptor/files/npptor%20installer/",...) {
+install.npptor <- function(URL="http://sourceforge.net/projects/npptor/files/npptor%20installer/",...) {
+   page_with_download_url <- URL
    # "http://git-scm.com/download/win"
    # get download URL:
    page     <- readLines(page_with_download_url, warn = FALSE)
@@ -632,7 +652,7 @@ install.rstudio <- function(...) install.RStudio(...)
 #' @details
 #' ImageMagick is a software suite to create, edit, compose, or convert bitmap images. It can read and write images in a variety of formats (over 100) including DPX, EXR, GIF, JPEG, JPEG-2000, PDF, PhotoCD, PNG, Postscript, SVG, and TIFF. Use ImageMagick to resize, flip, mirror, rotate, distort, shear and transform images, adjust image colors, apply various special effects, or draw text, lines, polygons, ellipses and Bezier curves.
 #' This function downloads Win32 dynamic at 16 bits-per-pixel.
-#' @param page_with_download_url the URL of the ImageMagick download page.
+#' @param URL the URL of the ImageMagick download page.
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @return TRUE/FALSE - was the installation successful or not.
 #' @export
@@ -644,7 +664,8 @@ install.rstudio <- function(...) install.RStudio(...)
 #' \dontrun{
 #' install.ImageMagick() # installs the latest version of git
 #' }
-install.ImageMagick  <- function(page_with_download_url="http://www.imagemagick.org/script/binary-releases.php",...) {    
+install.ImageMagick  <- function(URL="http://www.imagemagick.org/script/binary-releases.php",...) {    
+   page_with_download_url <- URL
    # get download URL:
    page     <- readLines(page_with_download_url, warn = FALSE)
    # http://www.imagemagick.org/download/binaries/ImageMagick-6.8.3-8-Q16-x86-dll.exe
@@ -670,7 +691,7 @@ install.imagemagick <- function(...) install.ImageMagick(...)
 #' @details
 #' GraphicsMagick is the swiss army knife of image processing. Comprised of 282K physical lines (according to David A. Wheeler's SLOCCount) of source code in the base package (or 964K including 3rd party libraries) it provides a robust and efficient collection of tools and libraries which support reading, writing, and manipulating an image in over 88 major formats including important formats like DPX, GIF, JPEG, JPEG-2000, PNG, PDF, PNM, and TIFF.
 #' This function downloads Win32 dynamic at 16 bits-per-pixel.
-#' @param page_with_download_url the URL of the ImageMagick download page.
+#' @param URL the URL of the ImageMagick download page.
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @return TRUE/FALSE - was the installation successful or not.
 #' @export
@@ -680,9 +701,10 @@ install.imagemagick <- function(...) install.ImageMagick(...)
 #' } 
 #' @examples
 #' \dontrun{
-#' install.GraphicsMagick() # installs the latest version of git
+#' install.GraphicsMagick() # installs the latest version of GraphicsMagick
 #' }
-install.GraphicsMagick  <- function(page_with_download_url="http://sourceforge.net/projects/graphicsmagick/",...) {    
+install.GraphicsMagick  <- function(URL="http://sourceforge.net/projects/graphicsmagick/",...) {    
+   page_with_download_url <- URL
    # get download URL:
    page     <- readLines(page_with_download_url, warn = FALSE)
    # http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick-binaries/1.3.17/GraphicsMagick-1.3.17-Q16-windows-dll.exe?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fgraphicsmagick%2Ffiles%2F&ts=1362862824&use_mirror=garr
@@ -1035,6 +1057,158 @@ source.https <- function(URL,..., remove_r_file = T) {
 # # actually use functions...
 # 
 # 
+
+
+
+
+
+
+#' @title Loading Packages (and Installing them if they are missing)
+#' @export
+#' @description  require2 load add-on packages by passing it to \link{require}.  However, if the package is not available on the system, it will first install it (through \link{install.packages}), and only then try to load it again.
+#' 
+#' @param package A character of the name of a package.
+#' @param ... not used
+#' 
+#' @return  returns (invisibly) a logical indicating whether the required package is available.
+#' @examples
+#' \dontrun{
+#' a= require2("devtools")
+#' a
+#' a= require2("geonames")
+#' a
+#' }
+require2 <- function(package, ...) {
+   if(!suppressWarnings(require(package=package, character.only = TRUE))) install.packages(pkgs=package)
+   require(package=package, character.only = TRUE)
+}
+
+
+# Escaping “@” in Roxygen2 Style Documentation
+# http://stackoverflow.com/questions/8809004/escaping-in-roxygen2-style-documentation
+
+
+#' @title Measures the speed of downloading from different CRAN mirrors
+#' @export
+#' @description Estimates the speed of each CRAN mirror by measuring the time it takes to download the NEWS file.
+#' 
+#' @author Barry Rowlingson <b.rowlingson@@lancaster.ac.uk>
+#' 
+#' @param ms - the output of getCRANmirrors.  Defaults to using all of the mirrors.
+#' @param ... not in use
+#' 
+#' 
+#' @details
+#' It works by downloading the latest NEWS file (288 Kbytes at the moment, so not huge) 
+#' from each of the mirror sites in the CRAN mirrors list. 
+#' If you want to test it on a subset then call getCRANmirrors yourself and subset it somehow.
+#' 
+#' It runs on the full CRAN list and while desiginig this package I've yet to find a 
+#' timeout or error so I'm not sure what will happen if download.file
+#' fails. It retuns a data frame like you get from getCRANmirrors but
+#' with an extra 't' column giving the elapsed time to get the NEWS file.
+#' 
+#' CAVEATS: if your network has any local caching then these results
+#' will be wrong, since your computer will probably be getting the
+#' locally cached NEWS file and not the one on the server. Especially if
+#' you run it twice. Oh, I should have put cacheOK=FALSE in the
+#' download.file - but even that might get overruled somewhere. Also,
+#' sites may have good days and bad days, good minutes and bad minutes,
+#' your network may be congested on a short-term basis, etc etc.
+#' 
+#' There may also be a difference in reliability, which would not so easily be measured by an individual user.
+#' 
+#' Later that year, Barry also wrote Cranography. See: \url{https://stat.ethz.ch/pipermail/r-help/2009-July/206489.html}, \url{http://www.maths.lancs.ac.uk/~rowlings/R/Cranography/}.
+#' 
+#' @return a data.frame with details on mirror sites and the time it took to download their NEWS file.
+#' 
+#' @source \url{https://stat.ethz.ch/pipermail/r-help/2009-July/206430.html}
+#' 
+#' @examples
+#' \dontrun{
+#' # this can take some time
+#' x <- cranometer() 
+#' 
+#' time_order <- order(x$t)
+#' 
+#' # a quick overview of the fastest mirrors
+#' head(x[time_order,c(1:4, 9)], 20)
+#' 
+#' # a dotchart of the fastest mirrors
+#' with(x[rev(time_order),],
+#'  dotchart(t, labels =Name,
+#'  cex = .5, xlab = "Timing of CRAN mirror")
+#'  )
+#'
+#'# tail(geonames_df)
+#'# tail(x)
+#'require(plyr)
+#'ss <- !(x$Name == "0-Cloud")
+#'gvis_df <- ddply(x[ss,], .(CountryCode), function(xx) {
+#'   ss <- which.min(xx$t) 
+#'   if(length(ss) == 0) ss <- 1
+#'   data.frame(time = xx$t[ss], name = xx$Name[ss] )
+#'})
+#'gvis_df <- gvis_df[!is.na(gvis_df$time), ]
+#'
+#'require2("googleVis")
+#'Geo<-gvisGeoMap(gvis_df,
+#'               locationvar = "CountryCode",
+#'                numvar="time",
+#'                hovervar = "name",
+#'                options=list(
+#'                             colors='[0xA5EF63, 
+#'                              0xFFB581, 0xFF8747]')
+#'               )
+#'# Display chart
+#'plot(Geo) 
+#' }
+cranometer <- function(ms = getCRANmirrors(all = FALSE, local.only = FALSE),...){   
+   dest = tempfile()
+   
+   nms = dim(ms)[1]
+   ms$t = rep(NA,nms)
+   for(i in 1:nms){
+      m = ms[i,]
+      url = paste(m$URL,"/src/base/NEWS",sep="")
+      t = try(system.time(download.file(url,dest),gcFirst=TRUE))
+      if(file.exists(dest)){
+         file.remove(dest)
+         ms$t[i]=t['elapsed']
+      }else{
+         ms$t[i]=NA
+      }
+   }
+   
+   ms$t <- as.numeric(ms$t)
+   
+   return(ms)
+}
+
+## ----
+# # a geomap of mirrors around the world, and how fast each one is
+# require2("geonames")
+# this can take some time
+# find the geo-locations for all of the CRAN mirrors based on http://www.geonames.org/export/geonames-search.html
+# geonames_df <- NULL
+# for(i in 1:nrow(x)) {
+#    tmp_geo <- with(x[i,], GNsearch(name=City, country= CountryCode))[1,]
+#    # if we have no columns, it probably means that GNsearch couldn't find that city name, in which case, we shorten the name of the city and search again.
+#    if(ncol(tmp_geo) == 0) {
+#       tmp_city <- paste(tail(strsplit(x[i,"City"], " ")[[1]], -1), collapse = " ")
+#       tmp_geo <- with(x[i,], GNsearch(name=tmp_city, country= CountryCode))[1,]      
+#    }
+#    if(ncol(tmp_geo) == 0) tmp_geo <- NA # if we still can't find anything, we should turn this to NA so that we would still add a row (though an empy one) to the data.frame
+#       
+#    geonames_df <- rbind(geonames_df,tmp_geo)            
+# }
+# LatLong <- with(geonames_df, paste(lat, ":", lng, sep = ""))
+# gvis_df <- data.frame(LatLong, time = x$t, name = x$Name)
+
+
+
+
+
 
 
 
