@@ -2,10 +2,15 @@
 \alias{require2}
 \title{Loading Packages (and Installing them if they are missing)}
 \usage{
-  require2(package, ...)
+  require2(package, ask = TRUE, ...)
 }
 \arguments{
-  \item{package}{A character of the name of a package.}
+  \item{package}{A character of the name of a package (can
+  also be without quotes).}
+
+  \item{ask}{Should the user be asked to install the
+  require packaged, in case it is missing? (default is
+  TRUE)}
 
   \item{...}{not used}
 }
@@ -24,7 +29,7 @@
 \dontrun{
 a= require2("devtools")
 a
-a= require2("geonames")
+a= require2(geonames)
 a
 }
 }

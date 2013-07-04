@@ -1,53 +1,4 @@
 
-#' @title Checks if the running OS is windows
-#' @description Returns TRUE/FALSE if the R session is running on Windows or not.
-#' @details
-#' This function is run when the 'installr' package is first loaded in order to check if the current running OS is Windows.
-#' If you are running a different OS, then the installr package (at its current form) does not have much to offer you.
-#' @param ... none are available.
-#' @return Returns TRUE/FALSE if the R session is running on Windows or not. 
-#' @export
-#' @examples
-#' \dontrun{
-#' is.windows() # returns TRUE on my machine.
-#' }
-is.windows <- function(...) unname(Sys.info()["sysname"] == "Windows")
-# inspiration: http://dennislwm-star.blogspot.sg/2012/11/r-is-almost-platform-independent.html
-
-
-#' @title Checks if the R session is running within RStudio
-#' @description Returns TRUE/FALSE if the R session is running within RStudio or not.
-#' @details
-#' This function is used in order to check if a GUI can be added to the session or not.
-#' @return Returns TRUE/FALSE if the R session is running within RStudio or not.
-#' @export
-#' @examples
-#' \dontrun{
-#' is.RStudio() 
-#' }
-is.RStudio <- function() {
-   "tools:rstudio"  %in% search()
-}
-
-
-
-
-#' @title Checks if the R session is running within Rgui (Windows OS)
-#' @description Returns TRUE/FALSE if the R session is running within Rgui or not.
-#' @details
-#' This function is used in order to check if a GUI can be added to the session or not.
-#' @return Returns TRUE/FALSE if the R session is running within Rgui or not.
-#' @export
-#' @seealso \link{is.RStudio}, \link{is.windows}
-#' @examples
-#' \dontrun{
-#' is.Rgui() 
-#' }
-is.Rgui <- function() {
-   .Platform$GUI == "Rgui"
-}
-
-
 
 #' @title Adds a menu based GUI for updating R within Rgui
 #' @description Adds a menu based GUI for updating R within Rgui.
@@ -109,7 +60,7 @@ remove.installr.GUI <- function() {
 
 
 .onLoad <- function(libname, pkgname){
-   if(!is.windows()) warning("The 'installr' package was designed for installing software on Windows. \nIt appears that you are NOT running R on the Windows OS - hence it is not clear if the package has any useful functions to offer you at this point (I'm sorry...).")
+   # if(!is.windows()) warning("The 'installr' package was designed for installing software on Windows. \nIt appears that you are NOT running R on the Windows OS - hence it is not clear if the package has any useful functions to offer you at this point (I'm sorry...).")
    # Thanks for Romain: http://stackoverflow.com/questions/4369334/first-lib-idiom-in-r-packages
    
    # adding and removing menus from the Rgui when loading and detaching the library
@@ -123,6 +74,34 @@ remove.installr.GUI <- function() {
 # search()
 # detach("package:installr")
 
+
+
+
+
+.onAttach <- function(lib, pkg,...){
+   packageStartupMessage(installrWelcomeMessage())
+}
+
+
+installrWelcomeMessage <- function(){
+   
+   paste("\n",     
+         "Welcome to installr version ", utils:::packageDescription("installr")$Version, "\n",
+         "\n",
+         # "Type ?installr to access the overall documentation and\n",
+         # "vignette('installr') for the package vignette.\n",
+         # "You can execute a demo of the package via: demo(installr)\n",
+         # "\n",  
+         "More information is available on the installr project web-site:\n",
+         "https://github.com/talgalili/installr/\n",
+         "\n",               
+         "Contact: <tal.galili@gmail.com>\n",
+         "Suggestions and bug-reports can be submitted at: https://github.com/talgalili/installr/issues\n",
+         "\n",
+         "\t\t\tTo suppress the this message use:\n",
+         "\t\t\tsuppressPackageStartupMessages(library(installr))\n",  
+         sep="")
+}
 
 
 
@@ -145,11 +124,6 @@ remove.installr.GUI <- function() {
 # 'install.r'
 # 'updateR.r'
 
-# when a function is renamed, its document in man must be removed - otherwise it may cause problems with the built check (it will try to run the code in the example, and will fail.)
-# When all is done, run:
-# require(devtools)
-# build_win()
-# release()
 
 # IMPORTANT NOTICE: this will add Collate to the DESCRIPTION file, and if any new r file is added - it will need to be updated.
 # Collate:
@@ -157,3 +131,9 @@ remove.installr.GUI <- function() {
 # +    'install.r'
 # +    'updateR.r'
 # +    'zzz.r'
+
+# when a function is renamed, its document in man must be removed - otherwise it may cause problems with the built check (it will try to run the code in the example, and will fail.)
+# When all is done, run:
+# require(devtools)
+# build_win()
+# release()

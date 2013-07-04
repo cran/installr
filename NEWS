@@ -1,3 +1,74 @@
+installr 0.10.1 (2013-07-04)
+---------------------------
+
+OTHER NOTES:
+   * Fixed some .Rd width problems
+   * installr 0.10.1 is to be shipped to CRAN.
+
+
+installr 0.10.0 (2013-07-02)
+---------------------------
+
+NEW FUNCTIONS ADDED:
+   * uninstall.R
+   * is.empty - function added for checking if an object is empty (e.g: of zero length)
+   * install.Rdevel - usefull for when developing R packages (as this version contains the latest checks.)
+
+UPDATED FUNCTIONS:
+   * check.for.updates.R - added a date for the latest R version in the window prompt.
+
+OTHER NOTES:
+   * Moving to the versioning scheme suggested by Yihui (see: http://yihui.name/en/2013/06/r-package-versioning/)
+   * is.x.r file created - moving various "is.*" functions to this file.
+   * Added a welcome massage when loading the package.
+   * Updated the README.md with some of the newer functions.
+
+
+installr 0.9.5 (2013-06-12)
+---------------------------
+
+NEW FUNCTIONS ADDED:
+   * download_RStudio_CRAN_data
+   * read_RStudio_CRAN_data
+   * barplot_package_users_per_day
+   * lineplot_package_downloads
+   * format_RStudio_CRAN_data
+   * most_downloaded_packages
+
+UPDATED FUNCTIONS:
+   * require2 - the 'package' parameter no longer needs quotes. (just like in the require function)
+
+OTHER NOTES:
+   * RStudio_CRAN_data.r file created
+
+
+
+installr 0.9.4 (2013-05-21)
+---------------------------
+
+NEW FUNCTIONS ADDED:
+   * myip - return your ip address.
+   * freegeoip - Geolocate IP addresses in R (contributed by Heuristic Andrew)
+   * restart_RGui - a function to restart Rgui from Rgui
+   
+UPDATED FUNCTIONS:
+   * require2 - added the "ask" parameter.
+
+OTHER NOTES:
+   * geo_functions.r file created
+   * cranometer - function moved to the geo_functions.r file.
+
+
+installr 0.9.3 (2013-05-18)
+---------------------------
+
+UPDATED FUNCTIONS:
+   * install.R - started using checkMD5sums2 instead of checkMD5sums in order to allow the manual removal of the files ‘etc/Rconsole’ and ‘etc/Rprofile.site’ from the checksums (they are changed during the R installation process, and always give an error massage)
+   * checkMD5sums2 - added the omit_files parameter (allowing the removal of the files ‘etc/Rconsole’ and ‘etc/Rprofile.site’ from the checksums of an R installation)
+   * get.installed.R.folders - making the function more robust, by having it rely on the README files instead of the folder names. (based on a bug report by GilesCrane - thanks.)
+   * R_version_in_a_folder function added (get the version of R installed in a folder. Based on the README file name inside the folder)
+
+
 installr 0.9.2 (2013-05-14)
 ---------------------------
 
@@ -211,9 +282,8 @@ OTHER NOTES:
 
 TODO for future releases:
 -------------------------
-	* uninstall.R() for the old version of R (including the library folder)
 	* Better integration with the "global library" strategy
-   * make the os.manage work by running an Rscript, in order to allow for their use in long running of knitr/Sweave projects.
+	* make the os.manage work by running an Rscript, in order to allow for their use in long running of knitr/Sweave projects.
    * Add a rate function for the package
    * Add automatic check for a new R version every X time.
    * a way to copy/move Rprofile.site from one installation to the next such as "C:\Program Files\R\R-2.15.2\etc\Rprofile.site" to "C:\Program Files\R\R-2.15.3\etc\Rprofile.site"? (requested by: Farrel Buchinsky)
@@ -221,4 +291,6 @@ TODO for future releases:
    *add a general package help file.
    * Fix install.RStudio to act differently in case it is being run from within RStudio (keeping the installation file for the user to run it)
    *  Add control on which mirror to use when running install.R()
-   * add a welcome massage like: require(googleVis)
+   *  allow a user to browse and find the old and new R installation on his system, in case there is a change in file directory from the standard directory structure.
+   * consider having a way to deal with R version installed in other folders.
+   * create updateRdevel?
