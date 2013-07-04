@@ -89,6 +89,12 @@
   the Rgui of your new R. \item Lastely - you can close the
   current session of your old R. }
 }
+\details{
+  It is worth noting that the function assumes that you are
+  installing R in the same directory as before. That is, if
+  the old R was on: D:\R\R-3.0.0 then the new R will be on
+  D:\R\R-3.0.1.
+}
 \examples{
 \dontrun{
 updateR(T, T, T, T, T, T, T)
@@ -104,5 +110,6 @@ updateR() # will ask you what you want at every decision.
 \seealso{
   \link{check.for.updates.R}, \link{install.R},
   \link{copy.packages.between.libraries},
+  \link{uninstall.R}
 }
 

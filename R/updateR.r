@@ -4,9 +4,15 @@
 #' @param package the name of an installed package
 #' @param dir the path to the top-level directory of an installed package.
 #' @param md5file the exact path of the md5file to compare the dir with
+#' @param omit_files a character vector with the files or file diractories to not include in the checksums
 #' @return checkMD5sums returns a logical, NA if there is no 'MD5' file to be checked.
 #' @seealso \link[tools]{checkMD5sums}
-checkMD5sums2 <- function (package, dir, md5file) 
+#' @examples
+#' \dontrun{
+#' checkMD5sums2(dir=R.home()) # doesn't work for R 3.0.0 or R 3.0.1
+#' checkMD5sums2(dir=R.home(), omit_files = c("etc/Rconsole", "etc/Rprofile.site")) # will work!
+#' }
+checkMD5sums2 <- function (package, dir, md5file, omit_files)
 {
    library(tools) # making sure this is used.
    
@@ -20,6 +26,13 @@ checkMD5sums2 <- function (package, dir, md5file)
          return(NA)
    }
    inlines <- readLines(md5file)
+   
+   # added in order to remove files from the checksums (used for problemetic cases with R)
+   if(!missing(omit_files)) {
+      omit_files <- paste(omit_files, collapse = "|")
+      inlines <- inlines[-grep(omit_files, inlines)]      
+   }   
+   
    xx <- sub("^([0-9a-fA-F]*)(.*)", "\\1", inlines)
    nmxx <- names(xx) <- sub("^[0-9a-fA-F]* [ |*](.*)", "\\1", 
                             inlines)
@@ -129,6 +142,13 @@ check.for.updates.R <- function(notify_user = TRUE,
    latest_R_version  <- regmatches(target_line, m) 
    latest_R_version  <- gsub(pattern="R-|-win" ,"", latest_R_version) # remove junk text
    
+   pat <- "Last change: [0-9.]+-[0-9.]+-[0-9.]+"; 
+   target_line <- grep(pat, page, value = TRUE); 
+   m <- regexpr(pat, target_line); 
+   latest_R_date  <- regmatches(target_line, m) 
+   latest_R_date  <- gsub(pattern="Last change: " ,"", latest_R_date) # remove junk text
+   
+   
    current_R_version <- as.character(getRversion()) # paste(R.version$major, R.version$minor, sep=".")
    
    # Turn the version character into a number
@@ -136,11 +156,12 @@ check.for.updates.R <- function(notify_user = TRUE,
    current_R_version_long <- turn.version.to.number(current_R_version)   
    
    there_is_a_newer_version <- current_R_version_long < latest_R_version_long # TRUE = there IS a need to update (since the latest version is higher then what we currently have)
-
+   
    if(there_is_a_newer_version) {
-      message_text <-   paste("There is a newer version of R for you to download!\n",
-                                  "You are using R version: ", gsub("R version", "", R.version$version.string), "\n",
-                                  "And the latest R version is: ", latest_R_version, "\n")      
+      message_text <-   paste("There is a newer version of R for you to download!\n\n",
+                              "You are using R version:    \t", gsub("R version", "", R.version$version.string), "\n",
+                              "And the latest R version is:\t ", latest_R_version, " (",latest_R_date,")", "\n",
+                              sep = "")  
    } else {
       message_text <- paste("No need to update. You are using the latest R version: \n", R.version$version.string)
    }   
@@ -158,7 +179,7 @@ check.for.updates.R <- function(notify_user = TRUE,
    return(there_is_a_newer_version)
 }
 
-
+# check.for.updates.R() 
 
 
 
@@ -174,7 +195,7 @@ check.for.updates.R <- function(notify_user = TRUE,
 #' browse.latest.R.NEWS() 
 #' }
 browse.latest.R.NEWS <- function(
-                                URL = "http://cran.rstudio.com/bin/windows/base/",...) {
+   URL = "http://cran.rstudio.com/bin/windows/base/",...) {
    page_with_download_url <- URL
    page   <- readLines(page_with_download_url, warn = FALSE)
    pat <- "NEWS.R-[0-9.]+.html"# this is the structure of the link...
@@ -190,26 +211,33 @@ browse.latest.R.NEWS <- function(
 
 
 #' @title Downloads and installs the latest R version
+#' @export
 #' @description Fetches the latest (not development!) R version
 #' @details
-#' If you are not sure if you need to update R or not, you are 
+#' If you are not sure if you need to update R or not, 
 #' It is better to use updateR for updating R, since it includes more options.
 #' But in case you wish to only install R, with no other steps taken (for example, taking care of your old packages), then you can use install.R()
+#' 
+#' See the \link{install.Rdevel} function for installing the latest R-devel version.
 #' @param page_with_download_url URL from which the latest stable version of R can be downloaded from.
+#' @param pat the pattern of R .exe file to download
 #' @param to_checkMD5sums Should we check that the new R installation has the files we expect it to (by checking the MD5 sums)? default is TRUE.  It assumes that the R which was isntalled is the latest R version.
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @return TRUE/FALSE - was the installation of R successful or not.
-#' @export
+#' @seealso \link{uninstall.R}, \link{install.Rdevel}, \link{updateR}, \link{shell}
+#' @references \url{http://cran.rstudio.com/bin/windows/base/}
 #' @examples
 #' \dontrun{
 #' install.R() 
 #' }
-install.R <- function(page_with_download_url = "http://cran.rstudio.com/bin/windows/base/", to_checkMD5sums = TRUE,...) {
+install.R <- function(page_with_download_url = "http://cran.rstudio.com/bin/windows/base/", 
+                      pat = "R-[0-9.]+-win.exe",
+                      to_checkMD5sums = TRUE,...) {
    # I'm using the rsudio cran since it redirects to other servers wourld wide.
    # here there is a question on how to do it with the different mirrors. (maybe to add it as an option?)
    # this might be a good time for the "find the best mirror" function.   
    page   <- readLines(page_with_download_url, warn = FALSE)
-   pat <- "R-[0-9.]+-win.exe"; 
+   ### pat <- "R-[0-9.]+-win.exe"; # moved to the function's parameters list.
    target_line <- grep(pat, page, value = TRUE); 
    m <- regexpr(pat, target_line); 
    exe_filename   <- regmatches(target_line, m) 
@@ -222,7 +250,7 @@ install.R <- function(page_with_download_url = "http://cran.rstudio.com/bin/wind
    if(to_checkMD5sums)    {
       new_R_path <- get.installed.R.folders()[1]
       require(tools)
-      pass_checkMD5sums <- checkMD5sums(dir = new_R_path)
+      pass_checkMD5sums <- checkMD5sums2(dir=new_R_path, omit_files = c("etc/Rconsole", "etc/Rprofile.site")) # will work!         
       if(!pass_checkMD5sums) {
          warning("There was some problem with installing R.  Some files are not what they should be (e.g: check MD5 sums did not pass all the tests). \n  You can try installing R again (either manually or through install.R()), \n  and if the problem persists you can file a bug report by running:  bug.report(package = 'installr') ")
          return(FALSE)
@@ -240,6 +268,34 @@ install.R <- function(page_with_download_url = "http://cran.rstudio.com/bin/wind
 
 
 
+
+
+
+#' @title Downloads and installs the latest Rdevel version
+#' @export
+#' @description Fetches the latest (development!) R version
+#' @details
+#' This is a development version of R. It likely contains bugs, 
+#' so be careful if you use it. Please don't report bugs in this version through the usual 
+#' R bug reporting system, please report them on the r-devel mailing list
+#' ---but only if they persist for a few days.
+#' @param exe_URL A character with a link to an installer file (with the .exe file extension)
+#' @param ... extra parameters to pass to \link{install.URL}
+#' @return TRUE/FALSE - was the installation of R successful or not.
+#' @seealso \link{install.R}, \link{updateR}
+#' @references \url{http://cran.rstudio.com/bin/windows/base/rdevel.html}
+#' @examples
+#' \dontrun{
+#' install.Rdevel() 
+#' }
+install.Rdevel <- function(exe_URL = "http://cran.rstudio.com/bin/windows/base/R-devel-win.exe", ...) {
+   install.URL(exe_URL)   
+}
+
+
+
+
+
 #' @title Turns version to number (for 1 value only)
 #' @param version_with_dots A character value - of the version of R (for example 2.15.2)
 #' @return A "number" representation of the version (for example: 2015002)
@@ -247,6 +303,7 @@ install.R <- function(page_with_download_url = "http://cran.rstudio.com/bin/wind
 #' @examples
 #' \dontrun{
 #' turn.version.to.number1("2.15.2")
+#' turn.version.to.number1("3.0.1")
 #' }
 turn.version.to.number1 <- function(version_with_dots) {
    # version_with_dots is a character of the form xx.xx.xx
@@ -309,6 +366,31 @@ turn.number.version <- function(number_to_dots) {
 
 
 
+#' @title Get the version of the R installed in a folder
+#' @export
+#' @description 
+#' Get the version of the R installed in a folder based on the structure of the filename README.R-... (where ... is a version number for R).
+#' This function helps detect the version number of an R installation even if the name of the folder is not standard.
+#' @param folder The folder for which we wish to know the R version.
+#' @return Returns a character vector of the R version (or NA, if this is not an R installation folder)
+#' @seealso \link{get.installed.R.folders}
+#' @examples
+#' \dontrun{
+#' R_version_in_a_folder(R.home()) 
+#' # returns the version of the current R installation
+#' }
+R_version_in_a_folder <- function(folder) { 
+#    folder = R.home()
+   files <- list.files(folder)
+   ss <- grep("README.R-[0-9]+.[0-9]+.[0-9]+$", files)
+   if(length(ss)==0) return(NA) # this means that the current folder is NOT an R installation folder with the file README.R-numbers
+   README_x <- files[ss] # for example: "README.R-3.0.1"   
+   
+   # alternative to start=10:  regexpr("[0-9]+.[0-9]+.[0-9]", README_x)
+   substr(README_x, start=10, stop = nchar(README_x))       
+}
+   
+
 
 
 
@@ -336,18 +418,31 @@ turn.number.version <- function(number_to_dots) {
 #' # installed (in different versions) - no sorting of 
 #' # the folder names was performed
 #' }
-get.installed.R.folders <- function(sort_by_version = T, add_version_to_name = T) {
+get.installed.R.folders <- function(sort_by_version = TRUE, add_version_to_name = TRUE) {
    # get the parent folder of the current R installation
    R_parent_folder <- paste(head(strsplit(R.home(), "/|\\\\")[[1]], -1), collapse = "/") # the strsplit is seperating the path whether it is / or \\ (but since \\ is a problem, I need to cancel it with \\\\)      
    items_in_R_parent_folder <- list.files(R_parent_folder)
-   ss_R_subfolders_in_R_parent_folder <- grepl("R-[0-9]+.[0-9]+.[0-9]+$", items_in_R_parent_folder)
-   # notice the use of $ at the end of the regex
-   # Good regex syntax http://laurikari.net/tre/documentation/regex-syntax/
-   R_subfolders <- items_in_R_parent_folder[ss_R_subfolders_in_R_parent_folder]
    
-   R_folders <- file.path(R_parent_folder, R_subfolders) # a vector with the full path folders of all of the R installations (Assuming they are all on the same folder)
-   R_folders_versions <- gsub("R-", "", R_subfolders)
-   R_folders_versions_number <- turn.version.to.number(R_folders_versions)
+   R_folders <- file.path(R_parent_folder, items_in_R_parent_folder) # some of these may NOT be R folders
+   R_folders_versions <- sapply(R_folders, R_version_in_a_folder)
+
+   # remove NON R installation folders (for example "library")
+   ss_R_folders <- !is.na(R_folders_versions)
+   R_folders <- R_folders[ss_R_folders]
+   R_folders_versions <- R_folders_versions[ss_R_folders]
+   
+### old way of doing this which relied on the folder being of the form:  D:/R/R-3.0.1  
+#    ss_R_subfolders_in_R_parent_folder <- grepl("R-[0-9]+.[0-9]+.[0-9]+$", items_in_R_parent_folder)
+#    # notice the use of $ at the end of the regex
+#    # Good regex syntax http://laurikari.net/tre/documentation/regex-syntax/
+#    R_subfolders <- items_in_R_parent_folder[ss_R_subfolders_in_R_parent_folder]
+#    
+#    R_folders <- file.path(R_parent_folder, R_subfolders) # a vector with the full path folders of all of the R installations (Assuming they are all on the same folder)
+#    R_folders_versions <- gsub("R-", "", R_subfolders)
+
+   
+   
+   R_folders_versions_number <- turn.version.to.number(R_folders_versions)   
    
    if(add_version_to_name) names(R_folders) <- R_folders_versions   
    
@@ -358,6 +453,8 @@ get.installed.R.folders <- function(sort_by_version = T, add_version_to_name = T
    return(R_folders)            
 }
 
+# for testing:
+#turn.version.to.number = installr:::turn.version.to.number
 
 
 
@@ -482,6 +579,9 @@ copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE
 #' \item You will be asked if to open the Rgui of your new R.
 #' \item Lastely - you can close the current session of your old R. 
 #' } 
+#' 
+#' @details
+#' It is worth noting that the function assumes that you are installing R in the same directory as before. That is, if the old R was on: D:\R\R-3.0.0 then the new R will be on D:\R\R-3.0.1.
 #' @param browse_news if TRUE (and if there is a newer version of R) - it opens the browser to the NEWS of the latest version of R, for the user to read through
 #' @param install_R TRUE/FALSE - if to install a new version of R (if one is available).  If missing (this is the default)  - the user be asked if to download R or not.Of course the installation part itself (the running of the .exe file) is dependent on the user.
 #' @param copy_packages TRUE/FALSE - if to copy your packages from the old version of R to the new version of R. If missing (this is the default)  - the user will be asked for his preference (he should say yes, unless he is using a global library folder).
@@ -494,7 +594,8 @@ copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE
 #' @param to_checkMD5sums Should we check that the new R installation has the files we expect it to (by checking the MD5 sums)? default is TRUE.  It assumes that the R which was isntalled is the latest R version. parameter is passed to install.R()
 #' @param ... Other arguments (this is currently not used in any way)
 #' @return a TRUE/FALSE value on whether or not R was updated.
-#' @seealso \link{check.for.updates.R}, \link{install.R}, \link{copy.packages.between.libraries}, 
+#' @seealso \link{check.for.updates.R}, \link{install.R}, 
+#' \link{copy.packages.between.libraries}, \link{uninstall.R}
 #' @examples
 #' \dontrun{
 #' updateR(T, T, T, T, T, T, T) 
@@ -516,7 +617,7 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
    if(!there_is_a_newer_version_of_R) return(F) # if we have the latest version - we might as well stop now...
    
    # else - there_is_a_newer_version_of_R==T
-
+   
    # should we open the NEWS?
    if(missing(browse_news)) browse_news <- ask.user.yn.question("Do you wish to see the NEWS regarding this new version of R?", use_GUI = use_GUI)
    if(browse_news) browse.latest.R.NEWS()      
@@ -535,13 +636,13 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
    if(missing(copy_packages)) copy_packages <- ask.user.yn.question("Do you wish to copy your packages from the older version of R to the newer version of R?")
    
    if(copy_packages) {
-#       ask.user.for.a.row(c("Yes"), "Did you finish running the installer for the new R?", "Press 1 (and Enter) if the installation of R is finished:")
+      #       ask.user.for.a.row(c("Yes"), "Did you finish running the installer for the new R?", "Press 1 (and Enter) if the installation of R is finished:")
       # should we keep the old packages?
       if(missing(keep_old_packages)) keep_old_packages <- ask.user.yn.question("Once your packages are copied to the new R, \ndo you wish to KEEP the packages from the library in the OLD R installation? \n(if you choose 'NO' - you will erase your packages in the old R version) ", use_GUI = use_GUI)
       # Next, copy (or MOVE):
       copy.packages.between.libraries(keep_old=keep_old_packages)   
    }
-
+   
    # should we update_packages?
    if(missing(update_packages)) update_packages <- ask.user.yn.question("Do you wish to update your packages in the newely installed R? ", use_GUI = use_GUI)
    
@@ -550,7 +651,7 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
       update_packages_expression <- paste(new_Rscript_path, ' -e " setInternet2(TRUE); options(repos=structure(c(CRAN=\'http://cran.rstudio.com/\'))); update.packages(checkBuilt=TRUE, ask=F) "')
       #    update_packages_expression <- paste(new_Rscript_path, ' -e "date()"')
       #    update_packages_expression <- paste(new_Rscript_path, ' -e "print(R.version)"')
-      shell(update_packages_expression, wait = T, intern = T)  
+      shell(update_packages_expression, wait = TRUE, intern = TRUE)  
       # makes sure the user will not be able to move on to open the new Rgui, until all of its packages are updated
       # also, makes sure the user will see the output of the update.packages function.
    }
@@ -568,7 +669,7 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
    if(missing(quit_R)) quit_R <- ask.user.yn.question("Do you wish to quit R (your workspace will NOT be saved)? ", use_GUI = use_GUI)
    if(quit_R) quit(save = "no")
    
-      
+   
    return(TRUE)
 }
 
@@ -577,12 +678,54 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
 
 
 
-uninstall.R <- function() {
+#' @title Uninstall an R version
+#' @export
+#' @aliases uninstall.r
+#' @description 
+#' Choose an R version to uninstall via a menubar. 
+#' By default, the function allows the user to pick an R version to uninstall from a list.
+#' Also, the function can be called with using "r_version", where multiple R versions can be supplied
+#' and all will be uninstalled.
+#' @param r_version a character vector for R versions to uninstall (the format is of the style: "2.15.3"). 
+#' default is empty - resulting in a prompt massage asking the user what to do.
+#' @param use_GUI If asking the user which R version to uninstall, should the GUI be used? (default is TRUE) 
+#' @return the output of \link{shell} running the uninstaller
+#' @seealso \link{install.R}, \link{updateR}, \link{shell}
+#' @examples
+#' \dontrun{
+#' uninstall.R() # choose an R version to uninstall
+#' uninstall.R("2.15.3") # will uninstall R 2.15.3
+#' uninstall.R(c("2.15.3", "2.14.0")) # will uninstall two R versions (if both exists)
+#' uninstall.R("10.10.0") # would pop up the menu options (until R 10.10.0 will be released :D )
+#' }
+uninstall.R <- function(r_version, use_GUI = TRUE) {
    # notice that running the uninstall of R does not remove the old library folder!
+   
+   # get R folders
+   R_folders <- get.installed.R.folders()
+   choices <- names(R_folders)   
+   
+   #which R version to uninstall?
+   if(!missing(r_version)) the_answer <- which(choices %in% r_version)   
+   
+   if(missing(r_version) || is.empty(the_answer)) {
+            # note: the double | (||) is essential if r_version is missing - 
+            #        then the_answer would not be created...
+      the_answer <- menu(choices, graphics = use_GUI, title = "Which R version would you like to UN-install?")            
+   }
+   
+   # uninstall R!
+   for(i in seq_along(the_answer)) {
+      exe_path <- file.path(R_folders[the_answer[i]], "unins000.exe")
+      shell(exe_path, wait = F) # start new R gui.  The wait =F makes sure we will be able to close R afterwords.
+   }
 }
 
 
 
+
+#' @export
+uninstall.r <- function(...) uninstall.R(...)
 
 
 
