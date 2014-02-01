@@ -1,27 +1,30 @@
-\name{most_downloaded_packages}
-\alias{most_downloaded_packages}
-\title{Most downloaded packages}
+\name{pkgDNLs_worldmapcolor}
+\alias{pkgDNLs_worldmapcolor}
+\title{Worldmap colored by the number of downloads for a given package}
 \source{
 \url{http://www.nicebread.de/finally-tracking-cran-packages-downloads/}
 }
 \usage{
-most_downloaded_packages(dataset, n = 6L, ...)
+pkgDNLs_worldmapcolor(pkg_name, dataset, remove_dups = TRUE, ...)
 }
 \arguments{
-  \item{dataset}{a dataset output from running
-  \link{read_RStudio_CRAN_data}, after going through
-  \link{format_RStudio_CRAN_data}.}
+  \item{pkg_name}{a character string of the package we are
+  interested in.}
 
-  \item{n}{the number of top packages to show.}
+  \item{dataset}{a dataset output from running
+  \link{read_RStudio_CRAN_data}.}
+
+  \item{remove_dups}{logical (default is TRUE). Should the
+  duplicate user ids (based on their ips) be removed.}
 
   \item{...}{not in use.}
 }
 \value{
-a table of top packages by downloads (a numeric vector with
-packages as names)
+a ggplot object
 }
 \description{
-Gives the top "x" most downloaded packages.
+Plots a worldmap colored by the number of users
+installation for a given package
 }
 \details{
 RStudio maintains its own CRAN mirror,
@@ -35,17 +38,20 @@ RStudio_CRAN_data_folder <-
                                  END = '2013-04-05')
                                  # around the time R 3.0.0 was released
 my_RStudio_CRAN_data <- read_RStudio_CRAN_data(RStudio_CRAN_data_folder)
-my_RStudio_CRAN_data <- format_RStudio_CRAN_data(my_RStudio_CRAN_data)
 head(my_RStudio_CRAN_data)
-most_downloaded_packages(my_RStudio_CRAN_data)
 
-top_packages <- names(most_downloaded_packages(my_RStudio_CRAN_data))
-lineplot_package_downloads(pkg_names = top_packages, dataset = my_RStudio_CRAN_data)
+wm <- pkgDNLs_worldmapcolor(pkg_name="installr", dataset = my_RStudio_CRAN_data)
+wm
 
 }
+}
+\author{
+Boris Hejblum
 }
 \seealso{
 \link{download_RStudio_CRAN_data},
-\link{read_RStudio_CRAN_data},\link{barplot_package_users_per_day}
+\link{read_RStudio_CRAN_data},
+\link{barplot_package_users_per_day},
+\link[ggplot2]{ggplot}
 }
 

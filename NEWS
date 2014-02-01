@@ -1,3 +1,122 @@
+installr 0.13.3 (2014-02-01)
+---------------------------
+
+OTHER NOTES:
+   * DESCRIPTION:
+      * Fixed the usage of person()
+      * minor tweaks to Title and Description
+   * installr 0.13.3 is to be shipped to CRAN (thanks to the patient guidance of Uwe Ligges!)
+
+installr 0.13.2 (2014-01-31)
+---------------------------
+
+OTHER NOTES:
+   * moved tools from imports to suggest in order to avoid "call not declared from" error.
+   * Added "RdTags" as an internal function, since using tools:::RdTags caused too many problems.
+   * Fixed a single "@" in a roxygen2 doc (which caused erros)
+   * Changed main e-mail to be @gmail instead of @math.tau.ac.il.
+   * installr 0.13.2 is to be shipped to CRAN.
+
+
+
+installr 0.13.1 (2014-01-31)
+---------------------------
+
+UPDATED FUNCTIONS:
+   * read_RStudio_CRAN_data - Added a packages= option to read_RStudio_CRAN_data. read_RStudio_CRAN_data fails on out-of-memory (in the rbindlist call) if you've downloaded many RStudio CRAN logs.  This patch adds a packages= option if you're only interested in a subset of packages, which subsets the daily log data on the fly.  Other such filters might also be added.
+   * Changed DESCRIPTION - removed maintainer (to be made automatically)
+
+OTHER NOTES:
+   * installr 0.13.1 is to be shipped to CRAN.
+
+
+installr 0.13.0 (2014-01-30)
+---------------------------
+
+UPDATED FUNCTIONS:
+   * make checkMD5 issue warnings (maybe with a dialog box) instead of errors (since the current state of affairs is more hassle than it is worth...)
+
+BUG FIXES:
+   * Updated some functions and documents in order to pass CRAN checks: RStudio_CRAN_data_folder, pkgDNLs_worldmapcolor, fetch_tag_from_Rd, add_to_.First_in_Rprofile.site, remove_from_.First_in_Rprofile.site, add_load_installr_on_startup_menu.
+   * README.md - some tweaks to work with the HTML option on CRAN.
+
+OTHER NOTES:
+   * installr 0.13.0 is to be shipped to CRAN.
+
+
+
+installr 0.12.2 (2013-11-26)
+---------------------------
+UPDATED FUNCTIONS:
+   * install.pandoc - added "to_restart" parameter. With a massage to remind the user they should restart their computer after pandoc is installed.
+
+
+installr 0.12.1 (2013-08-23)
+---------------------------
+BUG FIXES:
+   * install.URL - didn't work on Windows. It was because "system" did not run .exe, and "shell" was the correct choice to use here.
+
+
+installr 0.12.0 (2013-08-21)
+---------------------------
+NEW FUNCTIONS ADDED:
+   * pkgDNLs_worldmapcolor (kindly contributed by Boris Hejblum) - A worldmap colored by the number of downloads for a given package
+   * fetch_tag_from_Rd - A function to extract elements from R's help file.
+   * package_authors - finding all the authors for this (and other) packages.
+
+OTHER NOTES:
+   * Gave credit to other contributers of this package in the DESCRIPTION file (using the fetch_tag_from_Rd function). Contributers' names are sorted alphabetically.
+
+
+installr 0.11.0 (2013-08-17)
+---------------------------
+NEW FEATURES:
+   * Adds a menu-item on startup to allow the automatic loading of installr whenever starting R.
+
+NEW FUNCTIONS ADDED:
+   * add_load_installr_on_startup_menu
+   * add_remove_installr_from_startup_menu
+   * add_to_.First_in_Rprofile.site
+   * is_in_.First_in_Rprofile.site
+   * load_installr_on_startup
+   * remove_from_.First_in_Rprofile.site
+   * rm_installr_from_startup
+
+NEW FILES ADDED:
+   * startup.r
+
+installr 0.10.3 (2013-07-13)
+---------------------------
+IMPORTANT NOTES:
+   * TODO: this release is a step before 0.11.0 - when mac will be supported.
+
+UPDATED FUNCTIONS:
+   * checkMD5sums2 - added "..."
+   * check.for.updates.R - added a "pat" (pattern) parameter (this function might need more tweaking)
+   * install.URL - moved to using "system" instead of "shell" (purpose - to allow the function to be useful for mac users as well.)
+
+NEW FUNCTIONS ADDED:
+   * up_folder - gets a vector of characters of folder paths, and returns them after turning them into a file.path once their tail was trimmed (through head(n = - 1).
+
+
+BUG FIXES:
+   * install.Rtools - now returns FALSE gracefully if the user chooses to abort.
+
+OTHER NOTES:
+   * moved to using "system" instead of "shell" (purpose - to allow the function to be useful for mac users as well.)
+
+
+
+installr 0.10.2 (2013-07-06)
+---------------------------
+
+UPDATED FUNCTIONS:
+   * updateR - added a test to be sure the new R version was installed in the same relative directory as the old R version (otherwise, the copy-packages function should not work)
+
+OTHER NOTES:
+   * Updating the docs a bit (description).
+
+
 installr 0.10.1 (2013-07-04)
 ---------------------------
 
@@ -294,3 +413,6 @@ TODO for future releases:
    *  allow a user to browse and find the old and new R installation on his system, in case there is a change in file directory from the standard directory structure.
    * consider having a way to deal with R version installed in other folders.
    * create updateRdevel?
+   * install.Rpatch # TODO someday
+   * install.python # TODO someday
+   * install.java # with correct downloading for each type of windows R (version 32 or 64 bits...
