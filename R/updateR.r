@@ -5,6 +5,7 @@
 #' @param dir the path to the top-level directory of an installed package.
 #' @param md5file the exact path of the md5file to compare the dir with
 #' @param omit_files a character vector with the files or file diractories to not include in the checksums
+#' @param ... not used. (but good for future backward compatibility)
 #' @return checkMD5sums returns a logical, NA if there is no 'MD5' file to be checked.
 #' @seealso \link[tools]{checkMD5sums}
 #' @examples
@@ -12,9 +13,13 @@
 #' checkMD5sums2(dir=R.home()) # doesn't work for R 3.0.0 or R 3.0.1
 #' checkMD5sums2(dir=R.home(), omit_files = c("etc/Rconsole", "etc/Rprofile.site")) # will work!
 #' }
-checkMD5sums2 <- function (package, dir, md5file, omit_files)
+checkMD5sums2 <- function (package, dir, md5file, omit_files,...)
 {
-   library(tools) # making sure this is used.
+   require(tools) # making sure this is used.
+   # R code in the package should call library or require only exceptionally. Such calls are never needed for packages listed in ‘Depends’ as they will already be on the search path. It used to be common practice to use require calls for packages listed in ‘suggests’ in functions which used their functionality, but nowadays it is better to access such functionality via :: calls.
+   # from: http://cran.r-project.org/doc/manuals/R-exts.html
+
+
    
    if (missing(dir)) 
       dir <- find.package(package, quiet = TRUE)
@@ -40,7 +45,7 @@ checkMD5sums2 <- function (package, dir, md5file, omit_files)
    if (is.null(dot)) 
       stop("current working directory cannot be ascertained")
    setwd(dir)
-   x <- md5sum(dir(dir, recursive = TRUE))
+   x <- tools::md5sum(dir(dir, recursive = TRUE))
    setwd(dot)
    x <- x[names(x) != "MD5"]
    nmx <- names(x)
@@ -122,6 +127,7 @@ ask.user.yn.question <- function(question, use_GUI = TRUE, add_lines_before = TR
 #' @param notify_user if to print to you (the user) what is the latest version and what version you are currently using.
 #' @param use_GUI a logical indicating whether a graphics menu should be used if available.  If TRUE, and on Windows, it will use \link{winDialog}, otherwise it will use \link{cat}.
 #' @param page_with_download_url the URL of the page from which R can be downloaded.
+#' @param pat pattern to search for when looking for a newer R version
 #' @return TRUE/FALSE - if there is a newer version of R to install or not.
 #' @examples
 #' \dontrun{
@@ -134,9 +140,9 @@ ask.user.yn.question <- function(question, use_GUI = TRUE, add_lines_before = TR
 #' }
 check.for.updates.R <- function(notify_user = TRUE, 
                                 use_GUI = TRUE, 
-                                page_with_download_url = "http://cran.rstudio.com/bin/windows/base/") {
-   page   <- readLines(page_with_download_url, warn = FALSE)
-   pat <- "R-[0-9.]+-win"; 
+                                page_with_download_url = "http://cran.rstudio.com/bin/windows/base/",
+                                pat = "R-[0-9.]+-win") {
+   page   <- readLines(page_with_download_url, warn = FALSE)    
    target_line <- grep(pat, page, value = TRUE); 
    m <- regexpr(pat, target_line); 
    latest_R_version  <- regmatches(target_line, m) 
@@ -224,7 +230,7 @@ browse.latest.R.NEWS <- function(
 #' @param to_checkMD5sums Should we check that the new R installation has the files we expect it to (by checking the MD5 sums)? default is TRUE.  It assumes that the R which was isntalled is the latest R version.
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @return TRUE/FALSE - was the installation of R successful or not.
-#' @seealso \link{uninstall.R}, \link{install.Rdevel}, \link{updateR}, \link{shell}
+#' @seealso \link{uninstall.R}, \link{install.Rdevel}, \link{updateR}, \link{system}
 #' @references \url{http://cran.rstudio.com/bin/windows/base/}
 #' @examples
 #' \dontrun{
@@ -253,7 +259,7 @@ install.R <- function(page_with_download_url = "http://cran.rstudio.com/bin/wind
       pass_checkMD5sums <- checkMD5sums2(dir=new_R_path, omit_files = c("etc/Rconsole", "etc/Rprofile.site")) # will work!         
       if(!pass_checkMD5sums) {
          warning("There was some problem with installing R.  Some files are not what they should be (e.g: check MD5 sums did not pass all the tests). \n  You can try installing R again (either manually or through install.R()), \n  and if the problem persists you can file a bug report by running:  bug.report(package = 'installr') ")
-         return(FALSE)
+         # return(FALSE)
       }
    }
    
@@ -292,6 +298,8 @@ install.Rdevel <- function(exe_URL = "http://cran.rstudio.com/bin/windows/base/R
    install.URL(exe_URL)   
 }
 
+
+# install.Rpatch # TODO someday
 
 
 
@@ -611,10 +619,13 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
    # this function checks if we have the latest version of R
    # IF not - it notifies the user - and leaves.
    # If there is a new version - it offers the user to download and install it.   
+
+   old_R_path <- get.installed.R.folders()[1]
+   
    
    there_is_a_newer_version_of_R <- check.for.updates.R(print_R_versions)
    
-   if(!there_is_a_newer_version_of_R) return(F) # if we have the latest version - we might as well stop now...
+   if(!there_is_a_newer_version_of_R) return(FALSE) # if we have the latest version - we might as well stop now...
    
    # else - there_is_a_newer_version_of_R==T
    
@@ -625,13 +636,26 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
    
    # should we install R?
    if(missing(install_R)) install_R <- ask.user.yn.question("Do you wish to install the latest version of R?", use_GUI = use_GUI)
-   if(!install_R) return(F) # if not - return F
+   if(!install_R) return(FALSE) # if not - return F
    
    # if we got this far, the user wants to install the latest version of R (and his current version is old)
-   cat("Installing the newest version of R, please wait for the installer file to download and run, and be sure to click 'next' as needed...\n")
+   cat("Installing the newest version of R,\n please wait for the installer file to be download and executed.\n Be sure to click 'next' as needed...\n")
    did_R_install <- install.R(to_checkMD5sums = to_checkMD5sums) 
    if(!did_R_install) return(FALSE) 
    new_R_path <- get.installed.R.folders()[1]
+
+   # I could have also used:
+   #    if(unname(up_folder(new_R_path))!=unname(up_folder(old_R_path))) {
+   # but if the new R is installed somehwere else, then when fetching
+   # the new R version, it will still search for it in the old R installation
+   # folder.  Hence, the new and old R paths will be the same.
+   if(new_R_path==old_R_path) {
+      cat("
+We can not seem to find the location if the new R you have installed.
+The rest of the updating process is aborted, please take care to copy
+your packages to the new R installation.\n")
+      return(TRUE)
+   }
    
    if(missing(copy_packages)) copy_packages <- ask.user.yn.question("Do you wish to copy your packages from the older version of R to the newer version of R?")
    
@@ -651,7 +675,7 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
       update_packages_expression <- paste(new_Rscript_path, ' -e " setInternet2(TRUE); options(repos=structure(c(CRAN=\'http://cran.rstudio.com/\'))); update.packages(checkBuilt=TRUE, ask=F) "')
       #    update_packages_expression <- paste(new_Rscript_path, ' -e "date()"')
       #    update_packages_expression <- paste(new_Rscript_path, ' -e "print(R.version)"')
-      shell(update_packages_expression, wait = TRUE, intern = TRUE)  
+      system(update_packages_expression, wait = TRUE, intern = TRUE)  
       # makes sure the user will not be able to move on to open the new Rgui, until all of its packages are updated
       # also, makes sure the user will see the output of the update.packages function.
    }
@@ -662,7 +686,7 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
    if(start_new_R) {
       new_Rexe_path <- file.path(new_R_path, "bin/x64/Rgui.exe")      
       if(!file.exists(new_Rexe_path)) new_Rexe_path <- file.path(new_R_path, "bin/i386/Rgui.exe")
-      shell(new_Rexe_path, wait = F) # start new R gui.  The wait =F makes sure we will be able to close R afterwords.
+      system(new_Rexe_path, wait = F) # start new R gui.  The wait =F makes sure we will be able to close R afterwords.
    }   
    
    # should we turn R off?
@@ -689,8 +713,8 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
 #' @param r_version a character vector for R versions to uninstall (the format is of the style: "2.15.3"). 
 #' default is empty - resulting in a prompt massage asking the user what to do.
 #' @param use_GUI If asking the user which R version to uninstall, should the GUI be used? (default is TRUE) 
-#' @return the output of \link{shell} running the uninstaller
-#' @seealso \link{install.R}, \link{updateR}, \link{shell}
+#' @return the output of \link{system} running the uninstaller
+#' @seealso \link{install.R}, \link{updateR}, \link{system}
 #' @examples
 #' \dontrun{
 #' uninstall.R() # choose an R version to uninstall
@@ -717,7 +741,7 @@ uninstall.R <- function(r_version, use_GUI = TRUE) {
    # uninstall R!
    for(i in seq_along(the_answer)) {
       exe_path <- file.path(R_folders[the_answer[i]], "unins000.exe")
-      shell(exe_path, wait = F) # start new R gui.  The wait =F makes sure we will be able to close R afterwords.
+      system(exe_path, wait = F) # start new R gui.  The wait =F makes sure we will be able to close R afterwords.
    }
 }
 

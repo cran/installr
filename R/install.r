@@ -1,6 +1,5 @@
 
 
-
 #' @title Extract the file name from some URL
 #' @description Gets a character of link to some file, and returns the name of the file in this link.
 #' @details
@@ -14,8 +13,31 @@
 #' url <- "http://cran.r-project.org/bin/windows/base/R-2.15.3-win.exe"
 #' file.name.from.url(url) # returns: "R-2.15.3-win.exe"
 #' }
-file.name.from.url <- function(URL) tail(strsplit(URL,   "/")[[1]],1)
+file.name.from.url <- function(URL) {
+ #  tail(strsplit(URL,   "/")[[1]],1)
+   # corrected to use R's base function thanks to Uwe's remark.
+   basename(URL)
+}
 
+
+
+
+#' @title Performs "up-level" on a folder string
+#' @export
+#' @description Gets a character vector of folder strings and
+#'  returns the same vector after removing the end of the folder path.
+#' @param FOLDER a character vector of folders
+#' @param n passed to n in function \link{head}
+#' @param ... not used.
+#' @return The name of the file in the URL
+#' @examples
+#' up_folder(FOLDER = c("D:/R/R-3.0.1", "D:/R/R-3.0.2", "D:/R/R-3.0.3"))
+up_folder <- function(FOLDER, n = -1,...) {
+#    strsplit("a\\b/c",   "/|\\\\")
+   splitted_folders <- lapply(FOLDER, strsplit,   split="/|\\\\")
+   tailed_splitted_folders <- lapply(splitted_folders, function(x) {head(x[[1]], n = n)})
+   sapply(tailed_splitted_folders, paste, collapse = "/")
+}
 
 
 
@@ -30,7 +52,7 @@ file.name.from.url <- function(URL) tail(strsplit(URL,   "/")[[1]],1)
 #' @param zip_URL a link to a ZIP R package Binary.
 #' @return Invisible NULL
 #' @export
-#' @seealso \code{\link{install.packages}}
+#' @seealso \code{\link{install.packages}}, \code{\link[R.utils]{installPackages}}
 #' @examples
 #' \dontrun{
 #' install.packages.zip("http://cran.r-project.org/bin/windows/contrib/r-release/devtools_1.1.zip")
@@ -76,7 +98,11 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, ...) {
       wait <- TRUE
       warning("wait was set to TRUE since you wanted to installation file removed. In order to be able to run the installer AND remove the file - we must first wait for the isntaller to finish running before removing the file.")
    }
-   shell_output <- shell(exe_filename, wait = wait,...) # system(exe_filename) # I suspect shell works better than system
+   if(is.windows()) {
+      shell_output <- shell(exe_filename, wait = wait,...) # system(exe_filename) # I suspect shell works better than system
+   } else {
+      shell_output <- system(exe_filename, wait = wait,...) # system(exe_filename) # I suspect shell works better than system
+   }   
    if(!keep_install_file) unlink(exe_filename, force = TRUE) # on.exit(unlink(exe_filename)) # on.exit doesn't work in case of problems in the running of the file
    # unlink can take some time until done, for some reason.
       #    file.remove(exe_filename)
@@ -104,6 +130,9 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, ...) {
 #' @author GERGELY DAROCZI, G. Grothendieck, Tal Galili
 #' @param URL a link to the list of download links of pandoc
 #' @param use_regex (default TRUE) should the regex method be used to extract exe links, or should the XML package be used.
+#' @param to_restart boolean. Should the computer be restarted 
+#'  after pandoc is installed? (if missing then the user is prompted 
+#' 	for a decision)
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @source \url{http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command}
 #' @examples
@@ -112,7 +141,7 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, ...) {
 #' }
 install.pandoc <- function(
    URL = 'http://code.google.com/p/pandoc/downloads/list',
-   use_regex = TRUE,...
+   use_regex = TRUE, to_restart,...
 ) {
    page_with_download_url <- URL
    # source: http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
@@ -136,6 +165,21 @@ install.pandoc <- function(
    }
    
    install.URL(URL,...)
+   
+   if(missing(to_restart)) {
+	   if(is.windows()) {
+			you_should_restart <- "You should restart your computer\n in order for pandoc to work properly"
+		  winDialog(type = "ok", message = you_should_restart)
+		  choices <- c("Yes", "No")
+		  question <- "Do you want to restart your computer now?"
+		  the_answer <- menu(choices, graphics = "TRUE", title = question)
+		  to_restart <- the_answer == 1L 
+		}   else {
+			to_restart <- FALSE
+		}
+	}
+   if(to_restart) os.restart()
+   
 }
 
 #' @title Check if a number is integer
@@ -368,6 +412,8 @@ install.Rtools <- function(choose_version = FALSE,
       choices <- paste(TABLE[,"Download"], " (",TABLE[,2],")", sep = "")      
       ROW_id <- menu(choices, graphics = use_GUI, title = "Which Rtools would you like to download?")      
       
+      if(ROW_id == 0) return(FALSE)
+      
       exe_filename <- TABLE[ROW_id,"Download"] # the version the user asked for
    }      
    
@@ -433,7 +479,7 @@ install.git <- function(page_with_download_url="http://git-scm.com/download/win"
 #' download page: \url{http://notepad-plus-plus.org/download/}
 #' @examples
 #' \dontrun{
-#' install.notepadpp() # installs the latest version of git
+#' install.notepadpp() # installs the latest version of Notepad++
 #' }
 install.notepadpp <- function(page_with_download_url="http://notepad-plus-plus.org/download/",...) {
    # "http://git-scm.com/download/win"
@@ -469,7 +515,7 @@ install.notepadpp <- function(page_with_download_url="http://notepad-plus-plus.o
 #' download page: \url{http://sourceforge.net/projects/npptor/}
 #' @examples
 #' \dontrun{
-#' install.npptor() # installs the latest version of npptor
+#' install.npptor() # installs the latest version of NppToR
 #' }
 install.npptor <- function(URL="http://sourceforge.net/projects/npptor/files/npptor%20installer/",...) {
    page_with_download_url <- URL
@@ -507,7 +553,7 @@ install.npptor <- function(URL="http://sourceforge.net/projects/npptor/files/npp
 #' MikTeX download page: \url{http://miktex.org/download}
 #' @examples
 #' \dontrun{
-#' install.MikTeX() # installs the latest version of git
+#' install.MikTeX() # installs the latest version of MikTeX
 #' }
 install.MikTeX  <- function(version, page_with_download_url="http://miktex.org/download",...) {
    if(missing(version)) {
@@ -569,7 +615,7 @@ install.miktex <- function(...) install.MikTeX(...)
 #' } 
 #' @examples
 #' \dontrun{
-#' install.LyX() # installs the latest version of git
+#' install.LyX() # installs the latest version of LyX
 #' }
 install.LyX  <- function(page_with_download_url="http://www.lyx.org/Download", new_installation, ...) {    
 
@@ -625,7 +671,7 @@ install.lyx <- function(...) install.LyX(...)
 #' } 
 #' @examples
 #' \dontrun{
-#' install.RStudio() # installs the latest version of git
+#' install.RStudio() # installs the latest version of RStudio
 #' }
 install.RStudio  <- function(page_with_download_url="http://www.rstudio.com/ide/download/desktop",...) {    
    # get download URL:
@@ -662,7 +708,7 @@ install.rstudio <- function(...) install.RStudio(...)
 #' } 
 #' @examples
 #' \dontrun{
-#' install.ImageMagick() # installs the latest version of git
+#' install.ImageMagick() # installs the latest version of ImageMagick
 #' }
 install.ImageMagick  <- function(URL="http://www.imagemagick.org/script/binary-releases.php",...) {    
    page_with_download_url <- URL
@@ -813,7 +859,7 @@ install.latex2rtf <- function(...) install.LaTeX2RTF(...)
 #' } 
 #' @examples
 #' \dontrun{
-#' install.Cygwin() # installs the latest version of SWFTools
+#' install.Cygwin() # installs the latest version of Cygwin
 #' }
 install.Cygwin  <- function(URL = "http://cygwin.com/setup.exe",...) {    
 #    # get download URL:
@@ -864,7 +910,7 @@ install.cygwin <- function(...) install.Cygwin(...)
 #' } 
 #' @examples
 #' \dontrun{
-#' install.7zip() # installs the latest version of SWFTools
+#' install.7zip() # installs the latest version of 7-Zip
 #' }
 install.7zip  <- function(page_with_download_url="http://www.7-zip.org/download.html",...) {    
    # get download URL:
@@ -987,7 +1033,7 @@ system.PATH <- function() strsplit(shell("echo %PATH% ", intern= TRUE), ";")[[1]
 #' } 
 #' @examples
 #' \dontrun{
-#' install.GitHub() # installs the latest version of git
+#' install.GitHub() # installs the latest version of GitHub for windows
 #' }
 install.GitHub <- function(URL = "http://github-windows.s3.amazonaws.com/GitHubSetup.exe",...) {
    # https://help.github.com/articles/set-up-git
@@ -1070,7 +1116,8 @@ source.https <- function(URL,..., remove_r_file = T) {
 require2 <- function(package, ask= TRUE, ...) {
    package <- as.character(substitute(package))
    if(!suppressWarnings(require(package=package, character.only = TRUE))) {
-      install_package <- ask.user.yn.question(paste("Package ",package, " is not installed. Should it be installed?"))
+      install_package <- ask.user.yn.question(paste("Package ",package, 
+                                                    " is not installed. Do you want to install it now?"))
       if(install_package) install.packages(pkgs=package)
    }
    require(package=package, character.only = TRUE)
@@ -1177,4 +1224,165 @@ installr <- function(use_GUI = TRUE, ...) {
 
 
 
+
+# http://stackoverflow.com/questions/8809004/escaping-in-roxygen2-style-documentation
+
+
+
+
+#' @title Access tag elements from R's Rd file
+#' @export
+#' @description
+#' A function to extract elements from R's help file.
+#' 
+#' It is useful, for example, for going through a package and 
+#' discover who are its authors (useful for me to help me give proper
+#' credit in the DESCRIPTION file).
+#' 
+#' @param package a character string of the package we are interested in.
+#' @param tag a character vector of tag(s) to get from a package's Rd files.
+#' @param ... not in use.
+#' @author Thomas J. Leeper <thosjleeper@@gmail.com>
+#' @return a character vector with the tag's contant, and the name of the 
+#' Rd source of the function the tag came from.
+#' @source \url{http://stackoverflow.com/questions/17909081/access-elements-from-rs-rd-file}
+#' @seealso \link{package_authors}
+#' @examples
+#' \dontrun{
+#' fetch_tag_from_Rd("installr", "\\author")
+#' fetch_tag_from_Rd("knitr", "\\author")
+#' fetch_tag_from_Rd("lubridate", "\\author")
+#' 
+#' fetch_tag_from_Rd("installr", "\\source")
+#' 
+#' # get all the authors for this package
+#' unique(unname(fetch_tag_from_Rd("installr", "\\author")))
+#'
+#' fetch_tag_from_Rd("installr", "\\author")
+#' package_authors("installr")
+#' 
+#' }
+fetch_tag_from_Rd <- function(package, tag = "\\author",...){
+	require(tools)
+
+	# from "tools" but it is not exported
+	# RdTags <- function (Rd) 
+    # {
+       # res <- sapply(Rd, attr, "Rd_tag")
+       # if (!length(res)) 
+          # res <- character()
+       # res
+    # }
+	RdTags <- function (Rd) 
+		{
+			res <- sapply(Rd, attr, "Rd_tag")
+			if (!length(res)) 
+				res <- character()
+			res
+		}
+	# tools:::RdTags
+	# This is causing too many errors...
+	
+   db <- tools::Rd_db(package)
+   tag_content <- lapply(db,function(x) {
+      tags <- RdTags(x)
+      if(tag %in% tags){
+         # return a crazy list of results
+         #out <- x[which(tmp=="\\author")]
+         # return something a little cleaner
+         out <- paste(unlist(x[which(tags %in% tag)]),collapse="")
+      }
+      else
+         out <- NULL
+      invisible(out)
+   })
+   tag_content <- gsub("\n","",unlist(tag_content)) # further cleanup
+   
+   return(tag_content)
+}
+
+
+
+#' @title Access (and clean) author elements from R's Rd file
+#' @export
+#' @details
+#' List authors for a package from its "author" tag elements from its Rd files.
+#' The function also seperate lists of authors, and cleans the output a bit 
+#' (from spaces at the beginning of the strings).
+#' 
+#' @param package a character string of the package we are interested in.
+#' @param to_strsplit logical (TRUE). Should the authors strings be split
+#' (in cases of a "and" or a comma ",")?
+#' @param split a character scalar to be passed to \link{strsplit} split paramter.
+#' default is c(",|and)
+#' @param to_table logical (FALSE). Should the authors strings be listed in a
+#' table - showing a count of how many .Rd files they were listed in?
+#' If not - a unique list is produced.
+#' @param ... not used.
+#' @return a character vector with a package authors (as extracted from 
+#' the author tag in the .Rd files)
+#' 
+#' @seealso \link{fetch_tag_from_Rd}
+#' 
+#' @references
+#' Useful for updating your DESCRIPTION file:
+#' 
+#' \url{http://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file}
+#' 
+#' @examples
+#' \dontrun{
+#' 
+#' # before:
+#' fetch_tag_from_Rd("installr", "\\author")
+#' # after:
+#' package_authors("installr")
+#' sort(package_authors("installr")) # sorted name list...
+#' 
+#' 
+#' ## From the top R packages list: 
+#' ## http://www.r-statistics.com/2013/06/top-100-r-packages-for-2013-jan-may/
+#' package_authors("plyr")
+#' package_authors("digest")
+#' package_authors("ggplot2")
+#' package_authors("colorspace")
+#' package_authors("stringr") # empty string.
+#' 
+#' package_authors("knitr")
+#' package_authors("MASS")
+#' package_authors("rpart")
+#' package_authors("Rcpp")
+#' 
+#' 
+#' }
+package_authors <- function(package, to_strsplit = TRUE, split=c(",|and"), to_table = FALSE, ...) {
+   authors <- unname(fetch_tag_from_Rd(package, "\\author"))
+   
+   if(length(authors) == 0) {
+      cat("No author tag found for this package.\n")
+      return(invisible(authors))
+   }
+
+   # split multiple authors in the same string:
+   if(to_strsplit) {
+      authors <- unlist(strsplit(authors,split=split))      
+   }
+   
+   # Remove empty spaces from the begining of the strings
+   authors <- gsub("^ *","",authors) 
+   
+   # Remove empty char.
+   ss_empty <- which(nchar(authors)==0)
+   if(length(ss_empty) > 0) {
+      authors <- authors[-ss_empty]   
+   }  
+   
+   if(to_table) {
+      authors <- sort(table(authors))   
+   } else {
+      # Keep unique names
+      authors <- unique(authors)      
+   }   
+
+   return(authors)
+}
 
