@@ -78,6 +78,8 @@ install.packages.zip <- function(zip_URL) {
 #' @param exe_URL A character with a link to an installer file (with the .exe file extension)
 #' @param keep_install_file If TRUE - the installer file will not be erased after it is downloaded and run.
 #' @param wait should the R interpreter wait for the command to finish? The default is to NOT wait.
+#' @param download_dir A character of the directory into which to download the file. (default is \link{tempdir}())
+#' @param massage boolean. Should a massage on the file be printed or not (default is TRUE)
 #' @param ... parameters passed to 'shell'
 #' @return invisible(TRUE/FALSE) - was the installation successful or not. (this is based on the output of shell of running the command being either 0 or 1/2.  0 means the file was succesfully installed, while 1 or 2 means there was a failure in running the installer.)
 #' @seealso \link{shell}
@@ -87,23 +89,40 @@ install.packages.zip <- function(zip_URL) {
 #' \dontrun{
 #' install.URL("adfadf") # shows the error produced when the URL is not valid.
 #' }
-install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, ...) {
+install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, download_dir = tempdir(), massage = TRUE, ...) {
    # source: http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
    # input: a url of an .exe file to install
    # output: it runs the .exe file (for installing something)   
-   exe_filename <- file.path(tempdir(), file.name.from.url(exe_URL))   # the name of the zip file MUST be as it was downloaded...   
+   exe_filename <- file.path(download_dir, file.name.from.url(exe_URL))   # the name of the zip file MUST be as it was downloaded...   
    tryCatch(download.file(exe_URL, destfile=exe_filename, mode = 'wb'), 
-            error = function(e) cat("\nExplenation of the error: You didn't enter a valid .EXE URL. \nThis is likely to have happened because there was a change in the software download page, \nand the function you just ran no longer works. \n\n This is often caused by a change in the URL of the installer file in the download page of the software \n(making our function unable to know what to download). \n\n Please e-mail: tal.galili@gmail.com and let me know this function needs updating/fixing - thanks!\n"))  
+            error = function(e) {
+               cat("\nExplenation of the error: You didn't enter a valid .EXE URL. \nThis is likely to have happened because there was a change in the software download page, \nand the function you just ran no longer works. \n\n This is often caused by a change in the URL of the installer file in the download page of the software \n(making our function unable to know what to download). \n\n Please e-mail: tal.galili@gmail.com and let me know this function needs updating/fixing - thanks!\n")                              
+               })  
+   
+   # check if we downloaded the file.
+   if(file.exists(exe_filename)) {
+      if(massage) cat("\nThe file was downloaded succesfully into:\n", exe_filename, "\n")
+   } else {
+      if(massage) cat("\nWe failed to download the file into:\n", exe_filename, "\nfunctions is stepped.")
+      return(invisible(FALSE))      
+   }
+   
    if(!keep_install_file & !wait) {
       wait <- TRUE
-      warning("wait was set to TRUE since you wanted to installation file removed. In order to be able to run the installer AND remove the file - we must first wait for the isntaller to finish running before removing the file.")
+      if(massage) cat("wait was set to TRUE since you wanted to installation file removed. In order to be able to run the installer AND remove the file - we must first wait for the installer to finish running before removing the file.")
    }
+
+   if(massage) cat("\nRunning the installer now...\n")
+   
    if(is.windows()) {
       shell_output <- shell(exe_filename, wait = wait,...) # system(exe_filename) # I suspect shell works better than system
    } else {
       shell_output <- system(exe_filename, wait = wait,...) # system(exe_filename) # I suspect shell works better than system
    }   
-   if(!keep_install_file) unlink(exe_filename, force = TRUE) # on.exit(unlink(exe_filename)) # on.exit doesn't work in case of problems in the running of the file
+   if(!keep_install_file) {
+      if(massage) cat("\nInstallation status: ", shell_output == 0 ,". Removing the file:\n", exe_filename, "\n (In the future, you may keep the file by setting keep_install_file=TRUE) \n")
+      unlink(exe_filename, force = TRUE) # on.exit(unlink(exe_filename)) # on.exit doesn't work in case of problems in the running of the file
+   }
    # unlink can take some time until done, for some reason.
       #    file.remove(exe_filename)
       #    file.info(exe_filename)
@@ -129,7 +148,7 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, ...) {
 #' @export
 #' @author GERGELY DAROCZI, G. Grothendieck, Tal Galili
 #' @param URL a link to the list of download links of pandoc
-#' @param use_regex (default TRUE) should the regex method be used to extract exe links, or should the XML package be used.
+#' @param use_regex (default TRUE) - defunced (kept for legacy purposes).
 #' @param to_restart boolean. Should the computer be restarted 
 #'  after pandoc is installed? (if missing then the user is prompted 
 #' 	for a decision)
@@ -147,8 +166,9 @@ install.pandoc <- function(
    # source: http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
    # published on: http://www.r-statistics.com/2013/02/installing-pandoc-from-r-on-windows/
    
+   if(!use_regex) warning("use_regex is no longer supported, you can stop using it from now on...")
    
-   if(use_regex) {
+#    if(use_regex) {
       page     <- readLines(page_with_download_url, warn = FALSE)
       #"//pandoc.googlecode.com/files/pandoc-1.11.1.msi"
       pat <- "//pandoc.googlecode.com/files/pandoc-[0-9.]+.msi"
@@ -156,15 +176,18 @@ install.pandoc <- function(
       m <- regexpr(pat, target_line); 
       URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
       URL      <- paste('http', URL, sep = ':')
-   } else { # use XML
-      if(!require(XML)) stop("You need to install the {XML} package in order to use this function.")
-      page     <- readLines(page_with_download_url, warn = FALSE)
-      pagetree <- htmlTreeParse(page, error=function(...){}, useInternalNodes = TRUE, encoding='UTF-8')
-      URL      <- xpathSApply(pagetree, '//tr[2]//td[1]//a ', xmlAttrs)[1]
-      URL      <- paste('http', URL, sep = ':')
-   }
+#    } else { # use XML
+#       if(!require(XML)) stop("You need to install the {XML} package in order to use this function.")
+#       page     <- readLines(page_with_download_url, warn = FALSE)
+#       pagetree <- htmlTreeParse(page, error=function(...){}, useInternalNodes = TRUE, encoding='UTF-8')
+#       URL      <- xpathSApply(pagetree, '//tr[2]//td[1]//a ', xmlAttrs)[1]
+#       URL      <- paste('http', URL, sep = ':')
+#    }
    
-   install.URL(URL,...)
+   installed <- install.URL(URL,...)
+   
+   # if the installation failed, no need to ask about restarting the computer!
+   if(!installed) return(invisible(FALSE))
    
    if(missing(to_restart)) {
 	   if(is.windows()) {
@@ -849,7 +872,7 @@ install.latex2rtf <- function(...) install.LaTeX2RTF(...)
 #' @description Allows the user to downloads and install the latest version of Cygwin for Windows.
 #' @details
 #' Cygwin is a collection of tools which provide a Linux look and feel environment for Windows.
-#' @param URL the URL of the Cygwin setup.exe file.
+#' @param bit Specify 32 bit or 64 for your particular version of Windows.
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @return TRUE/FALSE - was the installation successful or not.
 #' @export
@@ -861,7 +884,7 @@ install.latex2rtf <- function(...) install.LaTeX2RTF(...)
 #' \dontrun{
 #' install.Cygwin() # installs the latest version of Cygwin
 #' }
-install.Cygwin  <- function(URL = "http://cygwin.com/setup.exe",...) {    
+install.Cygwin  <- function(bit = 32, ...) {    
 #    # get download URL:
 #    page     <- readLines(page_with_download_url, warn = FALSE)
 #    # http://swftools.org/swftools-0.9.0.exe
@@ -870,7 +893,14 @@ install.Cygwin  <- function(URL = "http://cygwin.com/setup.exe",...) {
 #    m <- regexpr(pat, target_line); 
 #    URL      <- regmatches(target_line, m) # (The http still needs to be prepended.   
    # install.
-   install.URL(URL,...)   
+   if(bit == 32){
+      install.URL("http://cygwin.com/setup-x86.exe", ...)
+   }
+
+   if(bit == 32){
+      install.URL("http://cygwin.com/setup-x86_64.exe", ...)
+   }
+
 }
 
 #' @export

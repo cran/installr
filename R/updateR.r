@@ -16,7 +16,7 @@
 checkMD5sums2 <- function (package, dir, md5file, omit_files,...)
 {
    require(tools) # making sure this is used.
-   # R code in the package should call library or require only exceptionally. Such calls are never needed for packages listed in ‘Depends’ as they will already be on the search path. It used to be common practice to use require calls for packages listed in ‘suggests’ in functions which used their functionality, but nowadays it is better to access such functionality via :: calls.
+   # R code in the package should call library or require only exceptionally. Such calls are never needed for packages listed in ?Depends? as they will already be on the search path. It used to be common practice to use require calls for packages listed in ?suggests? in functions which used their functionality, but nowadays it is better to access such functionality via :: calls.
    # from: http://cran.r-project.org/doc/manuals/R-exts.html
 
 
@@ -228,6 +228,8 @@ browse.latest.R.NEWS <- function(
 #' @param page_with_download_url URL from which the latest stable version of R can be downloaded from.
 #' @param pat the pattern of R .exe file to download
 #' @param to_checkMD5sums Should we check that the new R installation has the files we expect it to (by checking the MD5 sums)? default is TRUE.  It assumes that the R which was isntalled is the latest R version.
+#' @param keep_install_file If TRUE - the installer file will not be erased after it is downloaded and run.
+#' @param download_dir A character of the directory into which to download the file. (default is \link{tempdir}())
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @return TRUE/FALSE - was the installation of R successful or not.
 #' @seealso \link{uninstall.R}, \link{install.Rdevel}, \link{updateR}, \link{system}
@@ -238,7 +240,10 @@ browse.latest.R.NEWS <- function(
 #' }
 install.R <- function(page_with_download_url = "http://cran.rstudio.com/bin/windows/base/", 
                       pat = "R-[0-9.]+-win.exe",
-                      to_checkMD5sums = TRUE,...) {
+                      to_checkMD5sums = TRUE,
+                      keep_install_file = FALSE,
+                      download_dir = tempdir(),
+                      ...) {
    # I'm using the rsudio cran since it redirects to other servers wourld wide.
    # here there is a question on how to do it with the different mirrors. (maybe to add it as an option?)
    # this might be a good time for the "find the best mirror" function.   
@@ -249,7 +254,7 @@ install.R <- function(page_with_download_url = "http://cran.rstudio.com/bin/wind
    exe_filename   <- regmatches(target_line, m) 
    URL <- paste(page_with_download_url, exe_filename, sep = '')
    
-   did_R_install <- install.URL(URL,...)
+   did_R_install <- install.URL(URL, keep_install_file = keep_install_file,download_dir=download_dir, ...)
    if(!did_R_install) return(FALSE) 
    
    # checks the MD5sums from the new R installation:
@@ -379,6 +384,7 @@ turn.number.version <- function(number_to_dots) {
 #' @description 
 #' Get the version of the R installed in a folder based on the structure of the filename README.R-... (where ... is a version number for R).
 #' This function helps detect the version number of an R installation even if the name of the folder is not standard.
+#' If multiple versions were installed, overwriting each other, the most recent is selected.
 #' @param folder The folder for which we wish to know the R version.
 #' @return Returns a character vector of the R version (or NA, if this is not an R installation folder)
 #' @seealso \link{get.installed.R.folders}
@@ -395,7 +401,9 @@ R_version_in_a_folder <- function(folder) {
    README_x <- files[ss] # for example: "README.R-3.0.1"   
    
    # alternative to start=10:  regexpr("[0-9]+.[0-9]+.[0-9]", README_x)
-   substr(README_x, start=10, stop = nchar(README_x))       
+   versions <- sort(substr(README_x, start=10, stop = nchar(README_x)))
+   # Only take last if there are multiple
+   versions[length(versions)]
 }
    
 
@@ -433,11 +441,18 @@ get.installed.R.folders <- function(sort_by_version = TRUE, add_version_to_name 
    
    R_folders <- file.path(R_parent_folder, items_in_R_parent_folder) # some of these may NOT be R folders
    R_folders_versions <- sapply(R_folders, R_version_in_a_folder)
-
+   #    R_folders = "C:/R-3.0.2"     
+   if(all(is.na(R_folders_versions))) warning("Could not find any R installation on your system.")
+   
    # remove NON R installation folders (for example "library")
    ss_R_folders <- !is.na(R_folders_versions)
    R_folders <- R_folders[ss_R_folders]
    R_folders_versions <- R_folders_versions[ss_R_folders]
+   
+   # Fix thanks to Dieter Menne:
+   R_folders_versions <- unlist(R_folders_versions)
+   # this might resolve some cases - but it is not yet clear to me that it does.
+   
    
 ### old way of doing this which relied on the folder being of the form:  D:/R/R-3.0.1  
 #    ss_R_subfolders_in_R_parent_folder <- grepl("R-[0-9]+.[0-9]+.[0-9]+$", items_in_R_parent_folder)
@@ -600,6 +615,8 @@ copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE
 #' @param print_R_versions if to tell the user what version he has and what is the latest version (default is TRUE)
 #' @param use_GUI a logical indicating whether a graphics menu should be used if available.  If TRUE, and on Windows, it will use \link{winDialog}, otherwise it will use \link[utils]{menu}.
 #' @param to_checkMD5sums Should we check that the new R installation has the files we expect it to (by checking the MD5 sums)? default is TRUE.  It assumes that the R which was isntalled is the latest R version. parameter is passed to install.R()
+#' @param keep_install_file If TRUE - the installer file will not be erased after it is downloaded and run.
+#' @param download_dir A character of the directory into which to download the file. (default is \link{tempdir}())
 #' @param ... Other arguments (this is currently not used in any way)
 #' @return a TRUE/FALSE value on whether or not R was updated.
 #' @seealso \link{check.for.updates.R}, \link{install.R}, 
@@ -615,7 +632,8 @@ copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE
 #' 
 #' updateR() # will ask you what you want at every decision.
 #' }
-updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  update_packages, start_new_R, quit_R,  print_R_versions=TRUE, use_GUI = TRUE, to_checkMD5sums = TRUE, ...) {
+updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  update_packages, start_new_R, quit_R,  print_R_versions=TRUE, use_GUI = TRUE, 
+                    to_checkMD5sums = TRUE, keep_install_file = FALSE, download_dir = tempdir(), ...) {
    # this function checks if we have the latest version of R
    # IF not - it notifies the user - and leaves.
    # If there is a new version - it offers the user to download and install it.   
@@ -640,7 +658,7 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
    
    # if we got this far, the user wants to install the latest version of R (and his current version is old)
    cat("Installing the newest version of R,\n please wait for the installer file to be download and executed.\n Be sure to click 'next' as needed...\n")
-   did_R_install <- install.R(to_checkMD5sums = to_checkMD5sums) 
+   did_R_install <- install.R(to_checkMD5sums = to_checkMD5sums, keep_install_file = keep_install_file, download_dir = download_dir) 
    if(!did_R_install) return(FALSE) 
    new_R_path <- get.installed.R.folders()[1]
 
