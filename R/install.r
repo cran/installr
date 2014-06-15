@@ -1,3 +1,21 @@
+# Copyright (C) Tal Galili
+#
+# This file is part of installr.
+#
+# installr is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# installr is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+#  A copy of the GNU General Public License is available at
+#  http://www.r-project.org/Licenses/
+#
+
 
 
 #' @title Extract the file name from some URL
@@ -70,6 +88,51 @@ install.packages.zip <- function(zip_URL) {
 
 
 
+
+#' @title uninstalls (removes) Installed Packages
+#' @export
+#' @description 
+#' A wrapper for \link{remove.packages}. Usefull since it also works if the 
+#' package is currently loaded into the workspace.
+#' @param pkgs a character vector with the names of the packages to be removed.
+#' @param lib a character vector giving the library directories to remove the packages from. 
+#' If missing, defaults to the first element in \link{.libPaths}.
+#' @param warning boolean (TRUE), should a massage be printed in various cases.
+#' @param ... currently ignored.
+#' @return Invisible NULL
+#' @seealso \code{\link{install.packages}}, \code{\link{remove.packages}},
+#' \code{\link[installr]{install.packages.zip}}
+#' @examples
+#' \dontrun{
+#' install.packages(c("reshape", "plyr"))
+#' require(plyr)
+#' uninstall.packages(c("reshape", "plyr"))
+#' install.packages(c("reshape", "plyr"))
+#' }
+uninstall.packages <- function(pkgs,lib, warning = TRUE, ...) {   
+   
+   if(missing(lib)) lib <- .libPaths()[1]   
+   
+   uninstall_1_pkg <- function(pkg,lib,...) {      
+      pkg_pkg <- paste("package:", pkg, sep = "")
+      if (pkg_pkg %in% search()) { detach(pkg_pkg, unload=TRUE, character.only=TRUE) }
+      if (pkg %in% rownames(installed.packages())) { 
+         remove.packages(pkg,lib) 
+      } else {
+         if(warning) warning(paste("Package {", pkg , "}, was not installed in ", lib, "\n", sep=""))
+      }
+   }
+   uninstall_n_pkg <- Vectorize(FUN=uninstall_1_pkg, vectorize.args=c("pkg"))
+   
+   uninstall_n_pkg(pkgs,lib,...)
+   
+   invisible(NULL)
+}
+# a simple example of use:
+# install.packages.zip(zip_URL="http://cran.r-project.org/bin/windows/contrib/r-release/TeachingSampling_2.0.1.zip")
+
+
+
 #' @title Downloads and runs a .exe installer file for some software from a URL
 #' @description Gets a character with a link to an installer file, downloads it, runs it, and then erases it.
 #' @details
@@ -80,6 +143,7 @@ install.packages.zip <- function(zip_URL) {
 #' @param wait should the R interpreter wait for the command to finish? The default is to NOT wait.
 #' @param download_dir A character of the directory into which to download the file. (default is \link{tempdir}())
 #' @param massage boolean. Should a massage on the file be printed or not (default is TRUE)
+#' @param installer_option A character of the command line arguments
 #' @param ... parameters passed to 'shell'
 #' @return invisible(TRUE/FALSE) - was the installation successful or not. (this is based on the output of shell of running the command being either 0 or 1/2.  0 means the file was succesfully installed, while 1 or 2 means there was a failure in running the installer.)
 #' @seealso \link{shell}
@@ -89,21 +153,22 @@ install.packages.zip <- function(zip_URL) {
 #' \dontrun{
 #' install.URL("adfadf") # shows the error produced when the URL is not valid.
 #' }
-install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, download_dir = tempdir(), massage = TRUE, ...) {
+install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, download_dir = tempdir(), massage = TRUE, installer_option = NULL, ...) {
    # source: http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
    # input: a url of an .exe file to install
    # output: it runs the .exe file (for installing something)   
    exe_filename <- file.path(download_dir, file.name.from.url(exe_URL))   # the name of the zip file MUST be as it was downloaded...   
    tryCatch(download.file(exe_URL, destfile=exe_filename, mode = 'wb'), 
             error = function(e) {
-               cat("\nExplenation of the error: You didn't enter a valid .EXE URL. \nThis is likely to have happened because there was a change in the software download page, \nand the function you just ran no longer works. \n\n This is often caused by a change in the URL of the installer file in the download page of the software \n(making our function unable to know what to download). \n\n Please e-mail: tal.galili@gmail.com and let me know this function needs updating/fixing - thanks!\n")                              
+               cat("\nExplenation of the error: You didn't enter a valid .EXE URL. \nThis is likely to have happened because there was a change in the software download page, \nand the function you just ran no longer works. \n\n This is often caused by a change in the URL of the installer file in the download page of the software \n(making our function unable to know what to download). \n\n Please e-mail: tal.galili@gmail.com and let me know this function needs updating/fixing - thanks!\n")
+               return(invisible(FALSE))
                })  
    
    # check if we downloaded the file.
    if(file.exists(exe_filename)) {
       if(massage) cat("\nThe file was downloaded succesfully into:\n", exe_filename, "\n")
    } else {
-      if(massage) cat("\nWe failed to download the file into:\n", exe_filename, "\nfunctions is stepped.")
+      if(massage) cat("\nWe failed to download the file into:\n", exe_filename, "\n(i.e.: the installation failed)\n")
       return(invisible(FALSE))      
    }
    
@@ -114,10 +179,17 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, downloa
 
    if(massage) cat("\nRunning the installer now...\n")
    
+
+   if(!is.null(installer_option)){
+      install_cmd <- paste(exe_filename, installer_option)
+   } else{
+      install_cmd <- exe_filename
+   }
+
    if(is.windows()) {
-      shell_output <- shell(exe_filename, wait = wait,...) # system(exe_filename) # I suspect shell works better than system
+      shell_output <- shell(install_cmd, wait = wait,...) # system(exe_filename) # I suspect shell works better than system
    } else {
-      shell_output <- system(exe_filename, wait = wait,...) # system(exe_filename) # I suspect shell works better than system
+      shell_output <- system(install_cmd, wait = wait,...) # system(exe_filename) # I suspect shell works better than system
    }   
    if(!keep_install_file) {
       if(massage) cat("\nInstallation status: ", shell_output == 0 ,". Removing the file:\n", exe_filename, "\n (In the future, you may keep the file by setting keep_install_file=TRUE) \n")
@@ -148,7 +220,7 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, downloa
 #' @export
 #' @author GERGELY DAROCZI, G. Grothendieck, Tal Galili
 #' @param URL a link to the list of download links of pandoc
-#' @param use_regex (default TRUE) - defunced (kept for legacy purposes).
+#' @param use_regex (default TRUE) - deprecated (kept for legacy purposes).
 #' @param to_restart boolean. Should the computer be restarted 
 #'  after pandoc is installed? (if missing then the user is prompted 
 #' 	for a decision)
@@ -159,30 +231,36 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, downloa
 #' install.pandoc() 
 #' }
 install.pandoc <- function(
-   URL = 'http://code.google.com/p/pandoc/downloads/list',
+   URL = 'https://github.com/jgm/pandoc/releases',
    use_regex = TRUE, to_restart,...
 ) {
    page_with_download_url <- URL
    # source: http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
    # published on: http://www.r-statistics.com/2013/02/installing-pandoc-from-r-on-windows/
    
+   # https://github.com/jgm/pandoc/releases/download/1.12.4/pandoc-1.12.4.msi.Windows.installer.msi
+   
    if(!use_regex) warning("use_regex is no longer supported, you can stop using it from now on...")
    
-#    if(use_regex) {
       page     <- readLines(page_with_download_url, warn = FALSE)
       #"//pandoc.googlecode.com/files/pandoc-1.11.1.msi"
-      pat <- "//pandoc.googlecode.com/files/pandoc-[0-9.]+.msi"
-      target_line <- grep(pat, page, value = TRUE); 
+      # https://github.com/jgm/pandoc/releases/download/1.12.4/pandoc-1.12.4-windows.msi
+      # https://github.com/jgm/pandoc/releases/download/1.12.4.2/pandoc-1.12.4.2-1-windows.msi
+#    pat <- "jgm/pandoc/releases/download/[0-9.]+/pandoc-[0-9.]+-windows\\.msi"
+   pat <- "jgm/pandoc/releases/download/[0-9.]+/pandoc-[0-9.-]+-windows\\.msi"
+   #    grep(pat, page, value = TRUE, fixed = F)
+#    glob2rx("jgm/pandoc/releases/download/1.12.4/pandoc-1.12.4.msi.Windows.installer.msi")
+#    grep("aaa[:graph:]*", "aaasdfadsfa  adaf / sdfa", value = TRUE)
+   
+      target_line <- grep(pat, page, value = TRUE)
       m <- regexpr(pat, target_line); 
       URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
-      URL      <- paste('http', URL, sep = ':')
-#    } else { # use XML
-#       if(!require(XML)) stop("You need to install the {XML} package in order to use this function.")
-#       page     <- readLines(page_with_download_url, warn = FALSE)
-#       pagetree <- htmlTreeParse(page, error=function(...){}, useInternalNodes = TRUE, encoding='UTF-8')
-#       URL      <- xpathSApply(pagetree, '//tr[2]//td[1]//a ', xmlAttrs)[1]
-#       URL      <- paste('http', URL, sep = ':')
-#    }
+      URL      <- head(URL,1)
+# https://github.com/jgm/pandoc/releases/download/1.12.4/pandoc-1.12.4.msi.Windows.installer.msi
+      URL      <- paste('https://github.com/', 
+                        URL, 
+#                         ".Windows.installer.msi",
+                        sep = '')
    
    installed <- install.URL(URL,...)
    
@@ -473,7 +551,9 @@ install.git <- function(page_with_download_url="http://git-scm.com/download/win"
    # get download URL:
    page     <- readLines(page_with_download_url, warn = FALSE)
    # https://msysgit.googlecode.com/files/Git-1.8.1.2-preview20130201.exe
-   pat <- "//msysgit.googlecode.com/files/Git-[0-9.]+-preview[0-9.]+.exe"; 
+#    pat <- "//msysgit.googlecode.com/files/Git-[0-9.]+-preview[0-9.]+.exe"; 
+# https://github.com/msysgit/msysgit/releases/download/Git-1.9.4-preview20140611/Git-1.9.4-preview20140611.exe
+   pat <- "//github.com/msysgit/msysgit/releases/download/Git-[0-9.]+-preview[0-9.]+/Git-[0-9.]+-preview[0-9.]+.exe"; 
    target_line <- grep(pat, page, value = TRUE); 
    m <- regexpr(pat, target_line); 
    URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
@@ -482,6 +562,7 @@ install.git <- function(page_with_download_url="http://git-scm.com/download/win"
    # install.
    install.URL(URL,...)   
 }
+
 
 
 

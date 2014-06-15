@@ -1,3 +1,25 @@
+# Copyright (C) Tal Galili
+#
+# This file is part of installr.
+#
+# installr is free software: you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 2 of the License, or
+# (at your option) any later version.
+#
+# installr is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+#  A copy of the GNU General Public License is available at
+#  http://www.r-project.org/Licenses/
+#
+
+
+
+
+
 # file.name.from.url <- function(URL) tail(strsplit(URL,   "/")[[1]],1)
 # # sapply(urls, file.name.from.url)
 
@@ -16,6 +38,9 @@
 #' @param trunc_END_date_to_today default is TRUE. Makes sure that if END date is later then today,
 #'  the END date will be change to today
 #'  (since otherwise, we will only get many 404 errors)
+#' @param override boolean (default is FALSE) - should the function download files that
+#' are already available in the temp folder
+#' @param massage boolean (default is TRUE) - should a massage be printed in interesting cases.
 #' @param ... not in use.
 #' @return Returns the value of log_folder.
 #' @seealso \link{download_RStudio_CRAN_data}, \link{read_RStudio_CRAN_data},\link{barplot_package_users_per_day}
@@ -33,7 +58,13 @@
 #' barplot_package_users_per_day("installr", my_RStudio_CRAN_data)
 #' barplot_package_users_per_day("plyr", my_RStudio_CRAN_data)
 #' }
-download_RStudio_CRAN_data <- function(START = as.Date(Sys.time())-5, END = as.Date(Sys.time()), log_folder = tempdir(), trunc_END_date_to_today = TRUE,...) {
+download_RStudio_CRAN_data <- function(START = as.Date(Sys.time())-5, 
+                                       END = as.Date(Sys.time()), 
+                                       log_folder = tempdir(), 
+                                       trunc_END_date_to_today = TRUE,
+                                       override = FALSE,
+                                       massage = TRUE,
+                                       ...) {
    # Here's an easy way to get all the URLs in R
    START <- as.Date(START)
    END <- as.Date(END)
@@ -51,16 +82,28 @@ download_RStudio_CRAN_data <- function(START = as.Date(Sys.time())-5, END = as.D
    missing_days <- setdiff(all_days, tools::file_path_sans_ext(dir(), TRUE))
 
 
+   avilable_files <- list.files(log_folder)
+   
    # download files
    for(i in seq_along(urls)) {
-      zip_filename <- file.path(log_folder, file.name.from.url(urls[i]))
-      tryCatch(download.file(urls[i], destfile=zip_filename, mode = 'wb'), error = function(e) e)
+      zip_filename <- file.path(file.name.from.url(urls[i]))
+      zip_filename_path <- file.path(log_folder, zip_filename)
+      
+      # if the file is here, and I should NOT override - then skip
+      if(zip_filename %in% avilable_files & !override) {
+         if(massage) cat("The file: ", zip_filename, " is already available in the folder - skipping it\n")
+         # do nothing - skip
+      } else { # download
+         tryCatch(download.file(urls[i], destfile=zip_filename_path, mode = 'wb'), error = function(e) e)
+      }      
    }
-
-   return(log_folder)
+   
+   if(massage) cat("Files where downloaded to: ", log_folder, "\n")
+   
+   return(invisible(log_folder))
 }
 # unlink(list.files(tempdir()))
-
+# download_RStudio_CRAN_data()
 # http://www.r-bloggers.com/where-is-the-r-activity/
 # source:  http://psychwire.wordpress.com/2011/06/03/merge-all-files-in-a-directory-using-r-into-a-single-dataframe/
 
@@ -130,10 +173,15 @@ read_RStudio_CRAN_data <- function(log_folder = tempdir(), use_data_table = TRUE
    } else {
       dataset <- do.call("rbind",logs)
    }
-   
+
+   if(("data.table" %in% class(dataset))) {
+      dataset <- as.data.frame(dataset)
+   }
+
    return(dataset)
 }
 
+# a= read_RStudio_CRAN_data()
 
 
 #' @title Format the RStudio CRAN mirror data into the data.table format
@@ -388,31 +436,18 @@ pkgDNLs_worldmapcolor <- function(pkg_name, dataset, remove_dups=TRUE, ...){
   names(counts) <- c("country", "count")
   
   
-  data("WorldBordersData", envir = environment()) #loading the world map definition file
-  # downloaded as a shapefile of the world map from Natural Earth:
-  # http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip
-  # and unzip it in the 'shp.file.repos' repository
+  data("WorldBordersData", envir = environment(), package="installr") # loading the world map definition file
+  ## downloaded as a shapefile of the world map from Natural Earth:
+  ## http://www.naturalearthdata.com/http//www.naturalearthdata.com/download/110m/cultural/ne_110m_admin_0_countries.zip
+  ## and extract (unzip) it in the 'shp.file.repos' repository
+  # library(maptools)
   # world<-readShapePoly(fn=paste(shp.file.repos, "ne_110m_admin_0_countries", sep="/"))
   # ISO_full <- as.character(world@data$iso_a2)
   # ISO_full[146] <- "SOM"  # The iso identifier for the Republic of Somaliland is missing
   # ISO_full[89]  <- "KV" # as for the Republic of Kosovo
   # ISO_full[39]  <- "CYP" # as for Cyprus
-
   
-  # solving the following:
-  # pkgDNLs_worldmapcolor: no visible binding for global variable 'long'
-  # This doesn't work:
-#   if(getRversion() >= "2.15.1")  utils::globalVariables(
-#      c("ISO_full","long","lat","group","dnls")
-#      )
-   # this does... 
-   # http://stackoverflow.com/questions/8096313/no-visible-binding-for-global-variable-note-in-r-cmd-check
-  ISO_full <- get("ISO_full")
-  long <- get("long")
-  lat <- get("lat")
-  group <- get("group")
-  dnls <- get("dnls")
-  
+  ISO_full <- get("ISO_full") # needed for R CMD check
   
   colcode <- numeric(length(ISO_full))
   names(colcode) <- ISO_full
@@ -426,11 +461,11 @@ pkgDNLs_worldmapcolor <- function(pkg_name, dataset, remove_dups=TRUE, ...){
   world.points$dnls <- colcode[world.points$id]
   
   world.map <-  ggplot(data=world.points) +
-    geom_polygon(aes(x = long, y = lat, group=group, fill=dnls), color="black") +
+    geom_polygon(aes_string(x = "long", y = "lat", group="group", fill="dnls"), color="black") +
     coord_equal() + #theme_minimal() +
     scale_fill_gradientn(colours=c("white", "yellow", "red"), name="Downloads", values=c(0,0.25,1)) +
     #scale_fill_gradientn(colours=c("white", "#9ECAE1", "#6BAED6", "#2171B5", "#034E7B"), name="Downloads", values=c(0, 0.15, 0.5, 0.75,  1)) 
-    labs(title=paste(pkg_name, " downloads from the '0-Cloud' CRAN mirror by country\nfrom ", min(dataset$date), " to ", max(dataset$date),"\n(Total downloads: ", sum(counts$count), ")", sep=""))
+    labs(title=paste(pkg_name, " downloads from the Rstudio '0-Cloud' CRAN mirror by country\nfrom ", min(dataset$date), " to ", max(dataset$date),"\n(Total downloads: ", sum(counts$count), ")", sep=""))
   
   return(world.map)
 }
