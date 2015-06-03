@@ -97,7 +97,7 @@ install.packages.zip <- function(zip_URL) {
 #' @param pkgs a character vector with the names of the packages to be removed.
 #' @param lib a character vector giving the library directories to remove the packages from. 
 #' If missing, defaults to the first element in \link{.libPaths}.
-#' @param warning boolean (TRUE), should a massage be printed in various cases.
+#' @param warning boolean (TRUE), should a message be printed in various cases.
 #' @param ... currently ignored.
 #' @return Invisible NULL
 #' @seealso \code{\link{install.packages}}, \code{\link{remove.packages}},
@@ -142,7 +142,7 @@ uninstall.packages <- function(pkgs,lib, warning = TRUE, ...) {
 #' @param keep_install_file If TRUE - the installer file will not be erased after it is downloaded and run.
 #' @param wait should the R interpreter wait for the command to finish? The default is to NOT wait.
 #' @param download_dir A character of the directory into which to download the file. (default is \link{tempdir}())
-#' @param massage boolean. Should a massage on the file be printed or not (default is TRUE)
+#' @param message boolean. Should a message on the file be printed or not (default is TRUE)
 #' @param installer_option A character of the command line arguments
 #' @param ... parameters passed to 'shell'
 #' @return invisible(TRUE/FALSE) - was the installation successful or not. (this is based on the output of shell of running the command being either 0 or 1/2.  0 means the file was succesfully installed, while 1 or 2 means there was a failure in running the installer.)
@@ -153,31 +153,31 @@ uninstall.packages <- function(pkgs,lib, warning = TRUE, ...) {
 #' \dontrun{
 #' install.URL("adfadf") # shows the error produced when the URL is not valid.
 #' }
-install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, download_dir = tempdir(), massage = TRUE, installer_option = NULL, ...) {
+install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, download_dir = tempdir(), message = TRUE, installer_option = NULL, ...) {
    # source: http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
    # input: a url of an .exe file to install
    # output: it runs the .exe file (for installing something)   
    exe_filename <- file.path(download_dir, file.name.from.url(exe_URL))   # the name of the zip file MUST be as it was downloaded...   
    tryCatch(download.file(exe_URL, destfile=exe_filename, mode = 'wb'), 
             error = function(e) {
-               cat("\nExplenation of the error: You didn't enter a valid .EXE URL. \nThis is likely to have happened because there was a change in the software download page, \nand the function you just ran no longer works. \n\n This is often caused by a change in the URL of the installer file in the download page of the software \n(making our function unable to know what to download). \n\n Please e-mail: tal.galili@gmail.com and let me know this function needs updating/fixing - thanks!\n")
+               cat("\nExplanation of the error: You didn't enter a valid .EXE URL. \nThis is likely to have happened because there was a change in the software download page, and the function you just ran no longer works. \n\n This is often caused by a change in the URL of the installer file in the download page of the software (making our function unable to know what to download). \n\n Please e-mail: tal.galili@gmail.com and let me know this function needs updating/fixing - thanks!\n")
                return(invisible(FALSE))
                })  
    
    # check if we downloaded the file.
    if(file.exists(exe_filename)) {
-      if(massage) cat("\nThe file was downloaded succesfully into:\n", exe_filename, "\n")
+      if(message) cat("\nThe file was downloaded succesfully into:\n", exe_filename, "\n")
    } else {
-      if(massage) cat("\nWe failed to download the file into:\n", exe_filename, "\n(i.e.: the installation failed)\n")
+      if(message) cat("\nWe failed to download the file into:\n", exe_filename, "\n(i.e.: the installation failed)\n")
       return(invisible(FALSE))      
    }
    
    if(!keep_install_file & !wait) {
       wait <- TRUE
-      if(massage) cat("wait was set to TRUE since you wanted to installation file removed. In order to be able to run the installer AND remove the file - we must first wait for the installer to finish running before removing the file.")
+      if(message) cat("wait was set to TRUE since you wanted to installation file removed. In order to be able to run the installer AND remove the file - we must first wait for the installer to finish running before removing the file.")
    }
 
-   if(massage) cat("\nRunning the installer now...\n")
+   if(message) cat("\nRunning the installer now...\n")
    
 
    if(!is.null(installer_option)){
@@ -192,7 +192,7 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, downloa
       shell_output <- system(install_cmd, wait = wait,...) # system(exe_filename) # I suspect shell works better than system
    }   
    if(!keep_install_file) {
-      if(massage) cat("\nInstallation status: ", shell_output == 0 ,". Removing the file:\n", exe_filename, "\n (In the future, you may keep the file by setting keep_install_file=TRUE) \n")
+      if(message) cat("\nInstallation status: ", shell_output == 0 ,". Removing the file:\n", exe_filename, "\n (In the future, you may keep the file by setting keep_install_file=TRUE) \n")
       unlink(exe_filename, force = TRUE) # on.exit(unlink(exe_filename)) # on.exit doesn't work in case of problems in the running of the file
    }
    # unlink can take some time until done, for some reason.
@@ -471,8 +471,8 @@ install.Rtools <- function(choose_version = FALSE,
    # latest_Frozen==T means we get the latest Rtools version which is Frozen (when writing this function it is Rtools215.exe)
    # latest_Frozen==F means we get the latest Rtools version which is not Frozen (when writing this function it is Rtools30.exe)
 
-   if(check & require(devtools)) { # if we have devtools we can check for the existance of rtools
-      found_rtools <- find_rtools()
+   if(check & requireNamespace("devtools")) { # if we have devtools we can check for the existance of rtools
+      found_rtools <- devtools::find_rtools()
       if(found_rtools) {
          cat("No need to install Rtools - You've got the relevant version of Rtools installed\n")
          return(invisible(FALSE))
@@ -500,12 +500,8 @@ install.Rtools <- function(choose_version = FALSE,
       version_to_install_no_dots <- gsub("\\.","", version_to_install)
       exe_filename <-   paste("Rtools" , version_to_install_no_dots , ".exe", sep = "")
    } else { # else - it means we have a version of R which is beyond our current knowledge of Rtools (or that the user asked to choose a version), so we'll have to let the user decide on what to do.
-      if(!require(XML)) {
-         cat("You need to install the {XML} package in order to use this function.")
-         install_XML <- ask.user.yn.question("Do you wish to install the {XML} package?", use_GUI = use_GUI)
-         if(install_XML) install.packages("XML")         
-      }
-      TABLE <- readHTMLTable(page_with_download_url, header=T,stringsAsFactors=F)[[1]]
+		require2("XML")
+      TABLE <- XML::readHTMLTable(page_with_download_url, header=T,stringsAsFactors=F)[[1]]
       # example: http://stackoverflow.com/questions/1395528/scraping-html-tables-into-r-data-frames-using-the-xml-package
       
       # choose a version:
@@ -558,7 +554,7 @@ install.git <- function(page_with_download_url="http://git-scm.com/download/win"
    m <- regexpr(pat, target_line); 
    URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
    URL      <- paste('https', URL, sep = ':')[1] # we might find the same file more than once - so we'll only take its first one
-   
+# https://github.com/msysgit/msysgit/releases/download/Git-1.9.4-preview20140611/Git-1.9.4-preview20140611.exe
    # install.
    install.URL(URL,...)   
 }
@@ -771,9 +767,9 @@ install.lyx <- function(...) install.LyX(...)
 #' @references
 #' \itemize{
 #' \item RStudio homepage: \url{http://www.rstudio.com/}
-#' \item devtools::source_url \url{http://rgm3.lab.nig.ac.jp/RGM/r_function?p=devtools&f=source_url}
 #' } 
 #' @examples
+#' ### devtools::source_url
 #' \dontrun{
 #' install.RStudio() # installs the latest version of RStudio
 #' }
@@ -820,7 +816,8 @@ install.ImageMagick  <- function(URL="http://www.imagemagick.org/script/binary-r
    page     <- readLines(page_with_download_url, warn = FALSE)
    # http://www.imagemagick.org/download/binaries/ImageMagick-6.8.3-8-Q16-x86-dll.exe
    # http://www.imagemagick.org/download/binaries/ImageMagick-6.8.3-9-Q16-x86-dll.exe
-   pat <- "//www.imagemagick.org/download/binaries/ImageMagick-[0-9.]+-[0-9]-Q16-x86-dll.exe"; 
+   # http://www.imagemagick.org/download/binaries/ImageMagick-6.9.0-10-Q16-x64-dll.exe
+   pat <- "//www.imagemagick.org/download/binaries/ImageMagick-[0-9.]+-[0-9]+-Q16-x64-dll.exe"; 
    target_line <- grep(pat, page, value = TRUE); 
    m <- regexpr(pat, target_line); 
    URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
@@ -978,7 +975,7 @@ install.Cygwin  <- function(bit = 32, ...) {
       install.URL("http://cygwin.com/setup-x86.exe", ...)
    }
 
-   if(bit == 32){
+   if(bit == 64){
       install.URL("http://cygwin.com/setup-x86_64.exe", ...)
    }
 
@@ -1159,6 +1156,31 @@ install.github <- function(...) install.GitHub(...)
 
 
 
+#' @title Downloads and installs Texmaker for windows
+#' @aliases install.texmaker
+#' @description Allows the user to downloads and install the latest version of Texmaker for Windows.
+#' @details
+#' Texmaker is a free, modern and cross-platform LaTeX editor for linux,
+#' macosx and windows systems that integrates many tools needed to develop
+#' documents with LaTeX, in just one application.
+#' @param URL the URL of the GitHub download page.
+#' @param ... extra parameters to pass to \link{install.URL}
+#' @return logical - was the installation successful or not.
+#' @export
+#' @references
+#' \itemize{
+#' \item Texmaker homepage: \url{http://www.xm1math.net/texmaker/}
+#' } 
+#' @examples
+#' \dontrun{
+#' install.Texmaker() # installs the latest version of Texmaker for windows
+#' }
+install.Texmaker <- function(URL = "http://www.xm1math.net/texmaker/texmakerwin32_install.exe",...) {
+   install.URL(URL,...)
+}
+
+#' @export
+install.texmaker <- function(...) install.Texmaker(...)
 
 
 
@@ -1176,8 +1198,8 @@ install.github <- function(...) install.GitHub(...)
 #' @references
 #' Other solutions to the source.https problem:
 #' \itemize{
-#' \item Using RCurl: \url{http://tonybreyal.wordpress.com/2011/11/24/source.https-sourcing-an-r-script-from-github/}
-#' \item devtools::source_url \url{http://rgm3.lab.nig.ac.jp/RGM/r_function?p=devtools&f=source_url}
+#' \item Using RCurl
+#' \item devtools::source_url 
 #' \item A erlevant (OLD) discussion: http://stackoverflow.com/questions/7715723/sourcing-r-script-over-https
 #' }
 #' @examples
@@ -1227,12 +1249,18 @@ source.https <- function(URL,..., remove_r_file = T) {
 require2 <- function(package, ask= TRUE, ...) {
    package <- as.character(substitute(package))
    if(!suppressWarnings(require(package=package, character.only = TRUE))) {
-      install_package <- ask.user.yn.question(paste("Package ",package, 
+	  if(ask) {
+		install_package <- ask.user.yn.question(paste("Package ",package, 
                                                     " is not installed. Do you want to install it now?"))
-      if(install_package) install.packages(pkgs=package)
+      } else { 
+		install_package <- TRUE 
+	}
+	  
+	  if(install_package) install.packages(pkgs=package)
    }
    require(package=package, character.only = TRUE)
 }
+
 
 
 
@@ -1374,7 +1402,7 @@ installr <- function(use_GUI = TRUE, ...) {
 #' 
 #' }
 fetch_tag_from_Rd <- function(package, tag = "\\author",...){
-	require(tools)
+	# require(tools)
 
 	# from "tools" but it is not exported
 	# RdTags <- function (Rd) 
@@ -1497,3 +1525,56 @@ package_authors <- function(package, to_strsplit = TRUE, split=c(",|and"), to_ta
    return(authors)
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+#' @title Downloads and installs CMake for windows
+#' @aliases install.cmake
+#' @description Allows the user to downloads and install the latest version of CMake for Windows.
+#' @details
+#' CMake is a family of tools designed to build, test and package software. 
+#' CMake is used to control the software compilation process using simple 
+#' platform and compiler independent configuration files. 
+#' CMake generates native makefiles and workspaces that can be used in the 
+#' compiler environment of your choice.
+#' @param URL the URL of the CMake download page.
+#' @param ... extra parameters to pass to \link{install.URL}
+#' @return TRUE/FALSE - was the installation successful or not.
+#' @export
+#' @references
+#' \itemize{
+#' \item CMake homepage: \url{http://www.cmake.org/cmake/resources/software.html}
+#' } 
+#' @examples
+#' \dontrun{
+#' install.CMake() # installs the latest version of ImageMagick
+#' }
+#'
+install.CMake   <- function(URL="http://www.cmake.org/cmake/resources/software.html",...) {    
+   page_with_download_url <- URL
+   # get download URL:
+   page     <- readLines(page_with_download_url, warn = FALSE)
+   # http://www.cmake.org/files/v3.0/cmake-3.0.1-win32-x86.exe
+   pat <- "//www.cmake.org/files/v[0-9.]+/cmake-[0-9.]+-win32-x86.exe"
+   target_line <- grep(pat, page, value = TRUE); 
+   m <- regexpr(pat, target_line); 
+   URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
+   URL      <- paste('http', URL, sep = ':')[1] # we might find the same file more than once - so we'll only take its first one
+   
+   # install.
+   install.URL(URL,...)   
+}
+
+
+#' @export
+install.cmake <- function(...) install.CMake(...)

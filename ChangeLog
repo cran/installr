@@ -1,0 +1,2187 @@
+* 2015-06-02(Tal Galili) Removed invalid URLs |c468bb5| 
+|  R/geo_functions.R      | 5 ++---
+|  R/install.R            | 6 +++---
+|  R/os.manage.R          | 2 +-
+|  man/cranometer.Rd      | 4 ----
+|  man/install.RStudio.Rd | 5 ++---
+|  man/os.shutdown.Rd     | 2 --
+|  man/source.https.Rd    | 7 ++-----
+|  7 files changed, 10 insertions(+), 21 deletions(-)
+
+* 2015-06-02(Tal Galili) Fix: The Title field should be in title case, current version then in title case: |eeab228| 
+|  DESCRIPTION | 4 ++--
+|  1 file changed, 2 insertions(+), 2 deletions(-)
+
+* 2015-06-02(Tal Galili) updateR - reminds the user to stop if running it from RStudio. |d418f37| 
+|  NEWS        | 1 +
+|  R/updateR.R | 6 ++++++
+|  2 files changed, 7 insertions(+)
+
+* 2015-06-02(Tal Galili) Fix:  "no visible global function definition for" |6767652| 
+|  DESCRIPTION           |  2 +-
+|  NEWS                  |  5 ++++-
+|  R/RStudio_CRAN_data.R | 35 ++++++++++++++++++++++++++++++++++-
+|  R/zzz.R               |  2 +-
+|  4 files changed, 40 insertions(+), 4 deletions(-)
+
+* 2015-06-02(Tal Galili) ignore travis |39a5a66| 
+|  .Rbuildignore | 1 +
+|  1 file changed, 1 insertion(+)
+
+* 2015-06-02(Tal Galili) Fix massage to message + roxygen 4.1.1 |56a039c| 
+|  NAMESPACE                                    |  2 +-
+|  R/RStudio_CRAN_data.R                        |  2 +-
+|  R/create.global.library.R                    | 18 +++++++++---------
+|  R/install.R                                  | 16 ++++++++--------
+|  R/rename_r_to_R.R                            | 16 ++++++++--------
+|  R/updateR.R                                  |  4 ++--
+|  man/R_version_in_a_folder.Rd                 |  3 ++-
+|  man/add.installr.GUI.Rd                      |  3 ++-
+|  man/add_load_installr_on_startup_menu.Rd     |  3 ++-
+|  man/add_remove_installr_from_startup_menu.Rd |  3 ++-
+|  man/add_to_.First_in_Rprofile.site.Rd        |  3 ++-
+|  man/ask.user.for.a.row.Rd                    |  3 ++-
+|  man/ask.user.yn.question.Rd                  |  3 ++-
+|  man/barplot_package_users_per_day.Rd         |  3 ++-
+|  man/browse.latest.R.NEWS.Rd                  |  3 ++-
+|  man/check.for.updates.R.Rd                   |  3 ++-
+|  man/check.integer.Rd                         |  3 ++-
+|  man/checkMD5sums2.Rd                         |  3 ++-
+|  man/copy.packages.between.libraries.Rd       |  3 ++-
+|  man/cranometer.Rd                            |  3 ++-
+|  man/create.global.library.Rd                 |  3 ++-
+|  man/download_RStudio_CRAN_data.Rd            |  9 +++++----
+|  man/fetch_tag_from_Rd.Rd                     |  3 ++-
+|  man/file.name.from.url.Rd                    |  3 ++-
+|  man/format_RStudio_CRAN_data.Rd              |  3 ++-
+|  man/freegeoip.Rd                             |  3 ++-
+|  man/get.installed.R.folders.Rd               |  3 ++-
+|  man/get_Rscript_PID.Rd                       |  3 ++-
+|  man/get_pid.Rd                               |  3 ++-
+|  man/get_tasklist.Rd                          |  3 ++-
+|  man/install.7zip.Rd                          |  3 ++-
+|  man/install.CMake.Rd                         |  3 ++-
+|  man/install.Cygwin.Rd                        |  3 ++-
+|  man/install.FFmpeg.Rd                        |  3 ++-
+|  man/install.GitHub.Rd                        |  3 ++-
+|  man/install.GraphicsMagick.Rd                |  3 ++-
+|  man/install.ImageMagick.Rd                   |  3 ++-
+|  man/install.LaTeX2RTF.Rd                     |  3 ++-
+|  man/install.LyX.Rd                           |  3 ++-
+|  man/install.MikTeX.Rd                        |  3 ++-
+|  man/install.R.Rd                             |  3 ++-
+|  man/install.RStudio.Rd                       |  3 ++-
+|  man/install.Rdevel.Rd                        |  3 ++-
+|  man/install.Rtools.Rd                        |  3 ++-
+|  man/install.SWFTools.Rd                      |  3 ++-
+|  man/install.Texmaker.Rd                      |  3 ++-
+|  man/install.URL.Rd                           |  7 ++++---
+|  man/install.git.Rd                           |  3 ++-
+|  man/install.notepadpp.Rd                     |  3 ++-
+|  man/install.npptor.Rd                        |  3 ++-
+|  man/install.packages.zip.Rd                  |  3 ++-
+|  man/install.pandoc.Rd                        |  3 ++-
+|  man/installr.Rd                              |  3 ++-
+|  man/is.RStudio.Rd                            |  3 ++-
+|  man/is.Rgui.Rd                               |  3 ++-
+|  man/is.empty.Rd                              |  3 ++-
+|  man/is.exe.installed.Rd                      |  3 ++-
+|  man/is.windows.Rd                            |  3 ++-
+|  man/is_in_.First_in_Rprofile.site.Rd         |  3 ++-
+|  man/kill_all_Rscript_s.Rd                    |  3 ++-
+|  man/kill_pid.Rd                              |  3 ++-
+|  man/kill_process.Rd                          |  3 ++-
+|  man/lineplot_package_downloads.Rd            |  3 ++-
+|  man/load_installr_on_startup.Rd              |  3 ++-
+|  man/most_downloaded_packages.Rd              |  3 ++-
+|  man/myip.Rd                                  |  3 ++-
+|  man/os.hibernate.Rd                          |  3 ++-
+|  man/os.lock.Rd                               |  3 ++-
+|  man/os.manage.Rd                             |  3 ++-
+|  man/os.restart.Rd                            |  3 ++-
+|  man/os.shutdown.Rd                           |  3 ++-
+|  man/os.sleep.Rd                              |  3 ++-
+|  man/package_authors.Rd                       |  3 ++-
+|  man/pkgDNLs_worldmapcolor.Rd                 |  3 ++-
+|  man/read_RStudio_CRAN_data.Rd                |  3 ++-
+|  man/remove.installr.GUI.Rd                   |  3 ++-
+|  man/remove_from_.First_in_Rprofile.site.Rd   |  3 ++-
+|  man/rename_r_to_R.Rd                         |  9 +++++----
+|  man/require2.Rd                              |  3 ++-
+|  man/restart_RGui.Rd                          |  3 ++-
+|  man/rm_installr_from_startup.Rd              |  3 ++-
+|  man/source.https.Rd                          |  3 ++-
+|  man/system.PATH.Rd                           |  3 ++-
+|  man/turn.number.version.Rd                   |  3 ++-
+|  man/turn.version.to.number.Rd                |  3 ++-
+|  man/turn.version.to.number1.Rd               |  3 ++-
+|  man/uninstall.R.Rd                           |  5 +++--
+|  man/uninstall.packages.Rd                    |  5 +++--
+|  man/up_folder.Rd                             |  3 ++-
+|  man/updateR.Rd                               |  3 ++-
+|  man/xlsx2csv.Rd                              |  3 ++-
+|  91 files changed, 209 insertions(+), 124 deletions(-)
+
+* 2015-06-02(Tal Galili) misc |7dbceaf| 
+|  R/updateR.R          | 2 ++
+|  man/checkMD5sums2.Rd | 2 ++
+|  2 files changed, 4 insertions(+)
+
+* 2015-05-22(Tal Galili) Added code of conduct |5f646cd| 
+|  .Rbuildignore |  3 ++-
+|  CONDUCT.md    | 25 +++++++++++++++++++++++++
+|  R/zzz.R       |  1 +
+|  README.md     |  6 ++++++
+|  4 files changed, 34 insertions(+), 1 deletion(-)
+
+* 2015-05-10(Tal Galili) Bump to 0.15.16 |b6fef3c| 
+|  ChangeLog   | 238 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++--
+|  DESCRIPTION |   9 ++-
+|  NEWS.md     |  51 +++++++++++++
+|  3 files changed, 287 insertions(+), 11 deletions(-)
+
+* 2015-05-10(Tal Galili) We don't need to run library again |eedcd04| 
+|  README.md | 3 +--
+|  1 file changed, 1 insertion(+), 2 deletions(-)
+
+* 2015-05-10(Tal Galili) .Rd fixes |f112e37| 
+|  man/download_RStudio_CRAN_data.Rd | 6 +++---
+|  man/updateR.Rd                    | 2 +-
+|  2 files changed, 4 insertions(+), 4 deletions(-)
+
+* 2015-05-10(Tal Galili) install.R - now omits the files  ‘bin/R.exe’, ‘bin/Rscript.exe’  from MD5 checksum (since they seem to fail for R 3.2.0 :\ ) |3029969| 
+|  NEWS        | 2 +-
+|  R/updateR.R | 6 +++++-
+|  2 files changed, 6 insertions(+), 2 deletions(-)
+
+* 2015-05-10(Tal Galili) checkMD5sums2 - now uses warning instead of cat (to help user understand this is a warning and not an error) |17cf53a| 
+|  NEWS        |  9 ++++++++-
+|  R/updateR.R | 12 ++++++------
+|  2 files changed, 14 insertions(+), 7 deletions(-)
+
+* 2015-03-13(Tal Galili) install.ImageMagick - fix |8795ab1| 
+|  DESCRIPTION | 4 ++--
+|  NEWS        | 7 +++++++
+|  R/install.R | 3 ++-
+|  3 files changed, 11 insertions(+), 3 deletions(-)
+
+* 2015-02-06(Tal Galili) type in error in install.URL |aba7394| 
+|  R/install.R | 2 +-
+|  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* 2015-02-04(Tal Galili) Added Berry Boessenkool as ctr. |9f11e7d| 
+|  DESCRIPTION | 7 ++++---
+|  NEWS        | 7 +++++++
+|  2 files changed, 11 insertions(+), 3 deletions(-)
+
+*   2015-02-04(Tal Galili) Merge branch 'master' of https://talgalili:e80b5154c23c9fcaf0d1ed5027@github.com/talgalili/installr/ |898da88
+|\  
+| *   2015-02-04(Tal Galili) Merge pull request #24 from BerryBoessenkool/patch-1 |710b819
+| |\  
+| | * 2015-02-04(Berry Boessenkool) Update RStudio_CRAN_data.R |c6911f3
+| |/  | |   
+| |    R/RStudio_CRAN_data.R | 10 +++++-----
+| |    1 file changed, 5 insertions(+), 5 deletions(-)
+
+* | 2015-02-04(Tal Galili) Update DESCRIPTION - case title |11b0b53
+|/  |   
+|    DESCRIPTION | 2 +-
+|    1 file changed, 1 insertion(+), 1 deletion(-)
+
+*   2015-01-17(Tal Galili) Merge pull request #22 from muschellij2/master |2f63496
+|\  
+| * 2015-01-16(muschellij2) fixed cygwin |b354b92
+|/  |   
+|    R/install.R | 2 +-
+|    1 file changed, 1 insertion(+), 1 deletion(-)
+
+*   2015-01-15(Tal Galili) Merge pull request #21 from benmarwick/patch-1 |54f543a
+|\  
+| * 2015-01-14(Ben Marwick) minor typo fix: quite -> quit |60ed48b
+|/  |   
+|    R/updateR.R | 2 +-
+|    1 file changed, 1 insertion(+), 1 deletion(-)
+
+* 2014-12-10(Tal Galili) add travis |90ae41c| 
+|  .travis.yml | 24 ++++++++++++++++++++++++
+|  README.md   |  2 ++
+|  2 files changed, 26 insertions(+)
+
+* 2014-12-10(Tal Galili) bump to 0.15.13 |bb9f619| 
+|  DESCRIPTION | 4 ++--
+|  R/zzz.R     | 2 +-
+|  2 files changed, 3 insertions(+), 3 deletions(-)
+
+* 2014-12-10(Tal Galili) roxygen2 (4.0.1) to (4.0.2) |c16a340| 
+|  man/R_version_in_a_folder.Rd                 |  2 +-
+|  man/add.installr.GUI.Rd                      |  2 +-
+|  man/add_load_installr_on_startup_menu.Rd     |  2 +-
+|  man/add_remove_installr_from_startup_menu.Rd |  2 +-
+|  man/add_to_.First_in_Rprofile.site.Rd        | 12 ++++++------
+|  man/ask.user.for.a.row.Rd                    |  2 +-
+|  man/ask.user.yn.question.Rd                  |  2 +-
+|  man/barplot_package_users_per_day.Rd         |  2 +-
+|  man/browse.latest.R.NEWS.Rd                  |  2 +-
+|  man/check.for.updates.R.Rd                   |  2 +-
+|  man/check.integer.Rd                         |  2 +-
+|  man/checkMD5sums2.Rd                         |  2 +-
+|  man/copy.packages.between.libraries.Rd       |  2 +-
+|  man/cranometer.Rd                            |  2 +-
+|  man/create.global.library.Rd                 |  2 +-
+|  man/download_RStudio_CRAN_data.Rd            |  2 +-
+|  man/fetch_tag_from_Rd.Rd                     |  2 +-
+|  man/file.name.from.url.Rd                    |  2 +-
+|  man/format_RStudio_CRAN_data.Rd              |  2 +-
+|  man/freegeoip.Rd                             |  2 +-
+|  man/get.installed.R.folders.Rd               |  2 +-
+|  man/get_Rscript_PID.Rd                       |  2 +-
+|  man/get_pid.Rd                               |  2 +-
+|  man/get_tasklist.Rd                          |  2 +-
+|  man/install.7zip.Rd                          |  2 +-
+|  man/install.CMake.Rd                         |  4 ++--
+|  man/install.Cygwin.Rd                        |  2 +-
+|  man/install.FFmpeg.Rd                        |  2 +-
+|  man/install.GitHub.Rd                        |  2 +-
+|  man/install.GraphicsMagick.Rd                |  2 +-
+|  man/install.ImageMagick.Rd                   |  2 +-
+|  man/install.LaTeX2RTF.Rd                     |  2 +-
+|  man/install.LyX.Rd                           |  2 +-
+|  man/install.MikTeX.Rd                        |  2 +-
+|  man/install.R.Rd                             |  2 +-
+|  man/install.RStudio.Rd                       |  2 +-
+|  man/install.Rdevel.Rd                        |  2 +-
+|  man/install.Rtools.Rd                        |  2 +-
+|  man/install.SWFTools.Rd                      |  2 +-
+|  man/install.Texmaker.Rd                      |  2 +-
+|  man/install.URL.Rd                           |  2 +-
+|  man/install.git.Rd                           |  2 +-
+|  man/install.notepadpp.Rd                     |  2 +-
+|  man/install.npptor.Rd                        |  2 +-
+|  man/install.packages.zip.Rd                  |  2 +-
+|  man/install.pandoc.Rd                        |  2 +-
+|  man/installr.Rd                              |  2 +-
+|  man/is.RStudio.Rd                            |  2 +-
+|  man/is.Rgui.Rd                               |  2 +-
+|  man/is.empty.Rd                              |  2 +-
+|  man/is.exe.installed.Rd                      |  2 +-
+|  man/is.windows.Rd                            |  2 +-
+|  man/is_in_.First_in_Rprofile.site.Rd         | 12 ++++++------
+|  man/kill_all_Rscript_s.Rd                    |  2 +-
+|  man/kill_pid.Rd                              |  2 +-
+|  man/kill_process.Rd                          |  2 +-
+|  man/lineplot_package_downloads.Rd            |  2 +-
+|  man/load_installr_on_startup.Rd              |  2 +-
+|  man/most_downloaded_packages.Rd              |  2 +-
+|  man/myip.Rd                                  |  2 +-
+|  man/os.hibernate.Rd                          |  2 +-
+|  man/os.lock.Rd                               |  2 +-
+|  man/os.manage.Rd                             |  2 +-
+|  man/os.restart.Rd                            |  2 +-
+|  man/os.shutdown.Rd                           |  2 +-
+|  man/os.sleep.Rd                              |  2 +-
+|  man/package_authors.Rd                       |  2 +-
+|  man/pkgDNLs_worldmapcolor.Rd                 |  2 +-
+|  man/read_RStudio_CRAN_data.Rd                |  2 +-
+|  man/remove.installr.GUI.Rd                   |  2 +-
+|  man/remove_from_.First_in_Rprofile.site.Rd   | 12 ++++++------
+|  man/rename_r_to_R.Rd                         |  2 +-
+|  man/require2.Rd                              |  2 +-
+|  man/restart_RGui.Rd                          |  2 +-
+|  man/rm_installr_from_startup.Rd              |  2 +-
+|  man/source.https.Rd                          |  2 +-
+|  man/system.PATH.Rd                           |  2 +-
+|  man/turn.number.version.Rd                   |  2 +-
+|  man/turn.version.to.number.Rd                |  2 +-
+|  man/turn.version.to.number1.Rd               |  2 +-
+|  man/uninstall.R.Rd                           |  2 +-
+|  man/uninstall.packages.Rd                    |  2 +-
+|  man/up_folder.Rd                             |  2 +-
+|  man/updateR.Rd                               | 14 +++++++-------
+|  84 files changed, 106 insertions(+), 106 deletions(-)
+
+* 2014-12-10(Tal Galili) xlsx2csv - a new function for turning xlsx to csv using VB. |35e9795| 
+|  NAMESPACE       |   3 +-
+|  NEWS            |   7 ++++
+|  R/xlsx2csv.R    | 106 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+|  man/xlsx2csv.Rd |  35 ++++++++++++++++++
+|  4 files changed, 150 insertions(+), 1 deletion(-)
+
+* 2014-11-21(Tal Galili) new TODO file |0428b6b| 
+|  TODO | 7 +++++++
+|  1 file changed, 7 insertions(+)
+
+* 2014-11-21(Tal Galili) bump 0.15.12 |99ad529| 
+|  DESCRIPTION |  4 ++--
+|  NEWS        |  8 ++++++++
+|  R/startup.R | 38 +++++++++++++++++++-------------------
+|  3 files changed, 29 insertions(+), 21 deletions(-)
+
+* 2014-11-21(Tal Galili) A new Troubleshooting section for setInternet2(TRUE) |09a710a| 
+|  README.md | 22 +++++++++++++++++++++-
+|  1 file changed, 21 insertions(+), 1 deletion(-)
+
+*   2014-09-12(Tal Galili) Merge branch 'master' of https://talgalili:e80b5154c23c9fcaf0d1ed5027@github.com/talgalili/installr/ |37b3d14
+|\  
+| *   2014-09-12(Tal Galili) Merge pull request #19 from stnava/patch-1 |c88cac5
+| |\  
+| | * 2014-09-12(stnava) DOC: minor typo |2701f1d
+| |/  | |   
+| |    man/install.CMake.Rd | 2 +-
+| |    1 file changed, 1 insertion(+), 1 deletion(-)
+
+* | 2014-09-12(Tal Galili) require to library |c18c59a| | 
+| |  README.md | 2 +-
+| |  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* | 2014-08-20(Tal Galili) updateR - now has updater as an alias. |deb9c04
+|/  |   
+|    NAMESPACE      | 1 +
+|    NEWS           | 7 +++++++
+|    R/updateR.R    | 6 ++++++
+|    man/updateR.Rd | 1 +
+|    4 files changed, 15 insertions(+)
+
+* 2014-08-12(Tal Galili) Added install.CMake |ac21c3c| 
+|  DESCRIPTION          |  2 +-
+|  NAMESPACE            |  2 ++
+|  NEWS                 |  3 ++-
+|  R/install.R          | 54 +++++++++++++++++++++++++++++++++++++++++++++++++-
+|  man/install.CMake.Rd | 39 ++++++++++++++++++++++++++++++++++++
+|  5 files changed, 97 insertions(+), 3 deletions(-)
+
+* 2014-07-27(talgalili) install.Texmaker function added. |3217bd4| 
+|  DESCRIPTION             |  2 +-
+|  NAMESPACE               |  2 ++
+|  NEWS                    |  7 +++++++
+|  R/install.R             | 25 +++++++++++++++++++++++++
+|  man/install.Texmaker.Rd | 39 +++++++++++++++++++++++++++++++++++++++
+|  5 files changed, 74 insertions(+), 1 deletion(-)
+
+* 2014-07-27(talgalili) updateR - added copy_Rprofile.site option. Requested by: rsuhada, leeper |c22de7e| 
+|  ChangeLog            |  18 +++-
+|  DESCRIPTION          |   4 +-
+|  NEWS                 |  14 +++
+|  NEWS.md              | 229 +++++++++++++++++++++++++++++++++++++++++++++++++
+|  R/updateR.R          |  21 ++++-
+|  R/zzz.R              |   2 +-
+|  man/rename_r_to_R.Rd |   2 +-
+|  man/updateR.Rd       |  15 +++-
+|  8 files changed, 292 insertions(+), 13 deletions(-)
+
+* 2014-07-24(talgalili) Fix the ask=FALSE option in require2 |1121d3f| 
+|  R/install.R | 10 ++++++++--
+|  1 file changed, 8 insertions(+), 2 deletions(-)
+
+* 2014-07-11(Tal Galili) R_version_in_a_folder - updated so it could handle "patched" versions of R. |3df8095| 
+|  ChangeLog         | 22 ++++++++++++++++++++++
+|  DESCRIPTION       |  4 ++--
+|  NEWS              |  6 ++++++
+|  R/rename_r_to_R.R |  2 +-
+|  R/updateR.R       |  1 +
+|  5 files changed, 32 insertions(+), 3 deletions(-)
+
+* 2014-07-10(Tal Galili) bump to 0.15.6 |4ce9edc| 
+|  DESCRIPTION | 4 ++--
+|  NEWS        | 9 ++++++---
+|  2 files changed, 8 insertions(+), 5 deletions(-)
+
+* 2014-07-10(Tal Galili) updated rename to go from .r to .b to .R |5a32541| 
+|  man/rename_r_to_R.Rd | 20 +++++++++++++++++++-
+|  1 file changed, 19 insertions(+), 1 deletion(-)
+
+* 2014-07-10(Tal Galili) Nicer ChangeLog |706600e| 
+|  ChangeLog | 3149 +++++++++++++++++++++++++++++++++--------------------------
+|  R/zzz.R   |    6 +-
+|  2 files changed, 1796 insertions(+), 1359 deletions(-)
+
+* 2014-07-10(Tal Galili) rename .b to .R |166823a| 
+|  R/RStudio_CRAN_data.R     |  472 ++++++++++++++
+|  R/RStudio_CRAN_data.b     |  472 --------------
+|  R/create.global.library.R |  545 ++++++++++++++++
+|  R/create.global.library.b |  545 ----------------
+|  R/geo_functions.R         |  233 +++++++
+|  R/geo_functions.b         |  233 -------
+|  R/install.R               | 1500 +++++++++++++++++++++++++++++++++++++++++++
+|  R/install.b               | 1500 -------------------------------------------
+|  R/is.x.R                  |  145 +++++
+|  R/is.x.b                  |  145 -----
+|  R/kill_pid.R              |  283 ++++++++
+|  R/kill_pid.b              |  283 --------
+|  R/os.manage.R             |  264 ++++++++
+|  R/os.manage.b             |  264 --------
+|  R/rename_r_to_R.R         |  111 ++++
+|  R/rename_r_to_R.b         |  111 ----
+|  R/startup.R               |  308 +++++++++
+|  R/startup.b               |  308 ---------
+|  R/updateR.R               |  821 +++++++++++++++++++++++
+|  R/updateR.b               |  821 -----------------------
+|  R/zzz.R                   |  209 ++++++
+|  R/zzz.b                   |  209 ------
+|  22 files changed, 4891 insertions(+), 4891 deletions(-)
+
+* 2014-07-10(Tal Galili) rename .r to .b |2050266| 
+|  .gitignore                |    2 +-
+|  R/RStudio_CRAN_data.b     |  472 ++++++++++++++
+|  R/RStudio_CRAN_data.r     |  472 --------------
+|  R/create.global.library.b |  545 ++++++++++++++++
+|  R/create.global.library.r |  545 ----------------
+|  R/geo_functions.b         |  233 +++++++
+|  R/geo_functions.r         |  233 -------
+|  R/install.b               | 1500 +++++++++++++++++++++++++++++++++++++++++++
+|  R/install.r               | 1500 -------------------------------------------
+|  R/is.x.b                  |  145 +++++
+|  R/is.x.r                  |  145 -----
+|  R/kill_pid.b              |  283 ++++++++
+|  R/kill_pid.r              |  283 --------
+|  R/os.manage.b             |  264 ++++++++
+|  R/os.manage.r             |  264 --------
+|  R/rename_r_to_R.R         |   95 ---
+|  R/rename_r_to_R.b         |  111 ++++
+|  R/startup.b               |  308 +++++++++
+|  R/startup.r               |  308 ---------
+|  R/updateR.b               |  821 +++++++++++++++++++++++
+|  R/updateR.r               |  821 -----------------------
+|  R/zzz.b                   |  209 ++++++
+|  R/zzz.r                   |  209 ------
+|  23 files changed, 4892 insertions(+), 4876 deletions(-)
+
+* 2014-07-08(Tal Galili) Start creating "ChangeLog" file, based on my git commits :) |8ddb2e2| 
+|  ChangeLog | 1358 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+|  R/zzz.r   |   29 ++
+|  2 files changed, 1387 insertions(+)
+
+* 2014-07-04(Tal Galili) Exported rename_r_to_R |9c6c957| 
+|  NAMESPACE         | 1 +
+|  R/rename_r_to_R.R | 1 +
+|  2 files changed, 2 insertions(+)
+
+* 2014-07-04(Tal Galili) Change defaults for subdir. Added parameters recursive and massage. Updated the docs |c3d6722| 
+|  R/rename_r_to_R.R    | 59 ++++++++++++++++++++++++++++++++++++++------------
+|  man/rename_r_to_R.Rd | 22 ++++++++++++++++---
+|  2 files changed, 64 insertions(+), 17 deletions(-)
+
+* 2014-07-04(Tal Galili) Version bump - 0.15.5 |2ce650a| 
+|  DESCRIPTION |  4 ++--
+|  NEWS        | 18 ++++++++++++++++++
+|  2 files changed, 20 insertions(+), 2 deletions(-)
+
+* 2014-07-04(Tal Galili) Changed all R script files from .r to .R! (added a space in each file, so that git will pick up on the change) |3818b60| 
+|  R/RStudio_CRAN_data.r     | 1 +
+|  R/create.global.library.r | 1 +
+|  R/geo_functions.r         | 1 +
+|  R/install.r               | 1 +
+|  R/is.x.r                  | 1 +
+|  R/kill_pid.r              | 1 +
+|  R/os.manage.r             | 1 +
+|  R/rename_r_to_R.R         | 1 +
+|  R/startup.r               | 1 +
+|  R/updateR.r               | 1 +
+|  R/zzz.r                   | 1 +
+|  11 files changed, 11 insertions(+)
+
+* 2014-07-04(Tal Galili) roxygen2 from 4.0.0 to  4.0.1 |3b23240| 
+|  man/R_version_in_a_folder.Rd                 | 2 +-
+|  man/add.installr.GUI.Rd                      | 2 +-
+|  man/add_load_installr_on_startup_menu.Rd     | 2 +-
+|  man/add_remove_installr_from_startup_menu.Rd | 2 +-
+|  man/add_to_.First_in_Rprofile.site.Rd        | 2 +-
+|  man/ask.user.for.a.row.Rd                    | 2 +-
+|  man/ask.user.yn.question.Rd                  | 2 +-
+|  man/barplot_package_users_per_day.Rd         | 2 +-
+|  man/browse.latest.R.NEWS.Rd                  | 2 +-
+|  man/check.for.updates.R.Rd                   | 2 +-
+|  man/check.integer.Rd                         | 2 +-
+|  man/checkMD5sums2.Rd                         | 2 +-
+|  man/copy.packages.between.libraries.Rd       | 2 +-
+|  man/cranometer.Rd                            | 2 +-
+|  man/create.global.library.Rd                 | 2 +-
+|  man/download_RStudio_CRAN_data.Rd            | 2 +-
+|  man/fetch_tag_from_Rd.Rd                     | 2 +-
+|  man/file.name.from.url.Rd                    | 2 +-
+|  man/format_RStudio_CRAN_data.Rd              | 2 +-
+|  man/freegeoip.Rd                             | 2 +-
+|  man/get.installed.R.folders.Rd               | 2 +-
+|  man/get_Rscript_PID.Rd                       | 2 +-
+|  man/get_pid.Rd                               | 2 +-
+|  man/get_tasklist.Rd                          | 2 +-
+|  man/install.7zip.Rd                          | 2 +-
+|  man/install.Cygwin.Rd                        | 2 +-
+|  man/install.FFmpeg.Rd                        | 2 +-
+|  man/install.GitHub.Rd                        | 2 +-
+|  man/install.GraphicsMagick.Rd                | 2 +-
+|  man/install.ImageMagick.Rd                   | 2 +-
+|  man/install.LaTeX2RTF.Rd                     | 2 +-
+|  man/install.LyX.Rd                           | 2 +-
+|  man/install.MikTeX.Rd                        | 2 +-
+|  man/install.R.Rd                             | 2 +-
+|  man/install.RStudio.Rd                       | 2 +-
+|  man/install.Rdevel.Rd                        | 2 +-
+|  man/install.Rtools.Rd                        | 2 +-
+|  man/install.SWFTools.Rd                      | 2 +-
+|  man/install.URL.Rd                           | 2 +-
+|  man/install.git.Rd                           | 2 +-
+|  man/install.notepadpp.Rd                     | 2 +-
+|  man/install.npptor.Rd                        | 2 +-
+|  man/install.packages.zip.Rd                  | 2 +-
+|  man/install.pandoc.Rd                        | 2 +-
+|  man/installr.Rd                              | 2 +-
+|  man/is.RStudio.Rd                            | 2 +-
+|  man/is.Rgui.Rd                               | 2 +-
+|  man/is.empty.Rd                              | 2 +-
+|  man/is.exe.installed.Rd                      | 2 +-
+|  man/is.windows.Rd                            | 2 +-
+|  man/is_in_.First_in_Rprofile.site.Rd         | 2 +-
+|  man/kill_all_Rscript_s.Rd                    | 2 +-
+|  man/kill_pid.Rd                              | 2 +-
+|  man/kill_process.Rd                          | 2 +-
+|  man/lineplot_package_downloads.Rd            | 2 +-
+|  man/load_installr_on_startup.Rd              | 2 +-
+|  man/most_downloaded_packages.Rd              | 2 +-
+|  man/myip.Rd                                  | 2 +-
+|  man/os.hibernate.Rd                          | 2 +-
+|  man/os.lock.Rd                               | 2 +-
+|  man/os.manage.Rd                             | 2 +-
+|  man/os.restart.Rd                            | 2 +-
+|  man/os.shutdown.Rd                           | 2 +-
+|  man/os.sleep.Rd                              | 2 +-
+|  man/package_authors.Rd                       | 2 +-
+|  man/pkgDNLs_worldmapcolor.Rd                 | 2 +-
+|  man/read_RStudio_CRAN_data.Rd                | 2 +-
+|  man/remove.installr.GUI.Rd                   | 2 +-
+|  man/remove_from_.First_in_Rprofile.site.Rd   | 2 +-
+|  man/require2.Rd                              | 2 +-
+|  man/restart_RGui.Rd                          | 2 +-
+|  man/rm_installr_from_startup.Rd              | 2 +-
+|  man/source.https.Rd                          | 2 +-
+|  man/system.PATH.Rd                           | 2 +-
+|  man/turn.number.version.Rd                   | 2 +-
+|  man/turn.version.to.number.Rd                | 2 +-
+|  man/turn.version.to.number1.Rd               | 2 +-
+|  man/uninstall.R.Rd                           | 2 +-
+|  man/uninstall.packages.Rd                    | 2 +-
+|  man/up_folder.Rd                             | 2 +-
+|  man/updateR.Rd                               | 2 +-
+|  81 files changed, 81 insertions(+), 81 deletions(-)
+
+* 2014-07-04(Tal Galili) rename_r_to_R -  A NEW FUNCTIONS for Renaming files' extensions in a folder from .r to .R. |6340e19| 
+|  R/rename_r_to_R.R    | 62 ++++++++++++++++++++++++++++++++++++++++++++++++++
+|  man/rename_r_to_R.Rd | 31 +++++++++++++++++++++++++
+|  2 files changed, 93 insertions(+)
+
+* 2014-07-04(Tal Galili) Changed the menu item to be "installr" instead of "Update" (in both zzz.r and startup.r) |f9afb6a| 
+|  NAMESPACE   |  2 +-
+|  R/startup.r | 16 ++++++++--------
+|  R/zzz.r     | 15 ++++++++-------
+|  3 files changed, 17 insertions(+), 16 deletions(-)
+
+* 2014-06-14(Tal Galili) Bump version to 0.15.3 |150c169| 
+|  DESCRIPTION |  2 +-
+|  NEWS        | 10 +++++++++-
+|  R/zzz.r     |  2 +-
+|  3 files changed, 11 insertions(+), 3 deletions(-)
+
+* 2014-06-14(Tal Galili) Fixes to doc in kill_all_Rscript_s and uninstall.packages. |77a7da8| 
+|  R/install.r               | 2 +-
+|  R/kill_pid.r              | 4 ++++
+|  man/kill_all_Rscript_s.Rd | 9 +++++++++
+|  man/uninstall.packages.Rd | 2 +-
+|  4 files changed, 15 insertions(+), 2 deletions(-)
+
+* 2014-06-14(Tal Galili) install.pandoc - fixed and now works again. |b3f9235| 
+|  DESCRIPTION |  2 +-
+|  NEWS        | 12 ++++++++----
+|  R/install.r | 10 ++++++----
+|  3 files changed, 15 insertions(+), 9 deletions(-)
+
+* 2014-06-14(Tal Galili) version bump to 0.15.1 |295a0e0| 
+|  DESCRIPTION |  4 ++--
+|  NEWS        | 38 +++++++++++++++++++++++++++++++++++++-
+|  2 files changed, 39 insertions(+), 3 deletions(-)
+
+* 2014-06-14(Tal Galili) Added the file kill_pid.r |101a01b| 
+|  NAMESPACE                 |   6 +
+|  R/kill_pid.r              | 278 ++++++++++++++++++++++++++++++++++++++++++++
+|  man/get_Rscript_PID.Rd    |  41 +++++++
+|  man/get_pid.Rd            |  42 +++++++
+|  man/get_tasklist.Rd       |  41 +++++++
+|  man/kill_all_Rscript_s.Rd |  43 +++++++
+|  man/kill_pid.Rd           |  54 +++++++++
+|  man/kill_process.Rd       |  57 +++++++++
+|  8 files changed, 562 insertions(+)
+
+* 2014-06-14(Tal Galili) install.git - works again. The guys there moved git from googlecode to github. |ba8f917| 
+|  R/install.r | 5 ++++-
+|  1 file changed, 4 insertions(+), 1 deletion(-)
+
+* 2014-06-08(Tal Galili) install.URL - made sure to exit the function if it could not download the file |fde6f1b| 
+|  R/install.r | 3 ++-
+|  1 file changed, 2 insertions(+), 1 deletion(-)
+
+* 2014-06-08(Tal Galili) Added copyrights to all .r files. |8d219e3| 
+|  R/RStudio_CRAN_data.r     | 22 ++++++++++++++++++++++
+|  R/create.global.library.r | 22 ++++++++++++++++++++++
+|  R/geo_functions.r         | 25 +++++++++++++++++++++++++
+|  R/install.r               | 18 ++++++++++++++++++
+|  R/is.x.r                  | 21 +++++++++++++++++++++
+|  R/os.manage.r             | 26 ++++++++++++++++++++++++++
+|  R/startup.r               | 21 +++++++++++++++++++++
+|  R/updateR.r               | 27 +++++++++++++++++++++++++++
+|  R/zzz.r                   | 18 ++++++++++++++++++
+|  9 files changed, 200 insertions(+)
+
+* 2014-05-27(Tal Galili) Bump version to 0.14.5 |419e0e5| 
+|  DESCRIPTION | 36 ++++++++++++++++++------------------
+|  NEWS        | 11 +++++++++++
+|  2 files changed, 29 insertions(+), 18 deletions(-)
+
+*   2014-05-19(Tal Galili) Merge pull request #15 from borishejblum/master |a2ee551
+|\  
+| * 2014-05-19(borishejblum) Update pkgDNLs_worldmapcolor |84f9c0f
+|/  |   
+|    R/RStudio_CRAN_data.r | 29 ++++++++---------------------
+|    1 file changed, 8 insertions(+), 21 deletions(-)
+
+* 2014-05-08(Tal Galili) install.pandoc - the project has moved from http://code.google.com/p/pandoc/downloads/list to https://github.com/jgm/pandoc/releases - so the function had to be updated... (props to  Patrick Kelley for the bug report) |8ce0ef3| 
+|  DESCRIPTION           |  8 +++++---
+|  NEWS                  |  8 +++++++-
+|  R/install.r           | 32 ++++++++++++++++++--------------
+|  man/install.R.Rd      |  6 ++++--
+|  man/install.URL.Rd    |  3 ++-
+|  man/install.pandoc.Rd |  4 ++--
+|  man/updateR.Rd        |  5 +++--
+|  7 files changed, 41 insertions(+), 25 deletions(-)
+
+*   2014-05-06(Tal Galili) Merge branch 'master' of https://talgalili:e80b5154c23c9fcaf0d1ed5027@github.com/talgalili/installr/ |43e98a2
+|\  
+| *   2014-05-06(Tal Galili) Merge pull request #14 from hiratake55/master |5ea7887
+| |\  
+| | * 2014-05-06(Takekatsu Hiramura) added silent installation mode |8cf149b
+| |/  | |   
+| |    R/geo_functions.r  |  2 +-
+| |    R/install.r        | 14 +++++++++++---
+| |    R/updateR.r        | 16 +++++++++++++---
+| |    man/install.R.Rd   |  4 +++-
+| |    man/install.URL.Rd |  4 +++-
+| |    man/updateR.Rd     |  4 +++-
+| |    6 files changed, 34 insertions(+), 10 deletions(-)
+
+* | 2014-05-06(Tal Galili) UPDATED DESCRIPTION: * Bump version to 0.14.3 * added Takekatsu Hiramura as a contributor. |a6a21c3
+|/  |   
+|    DESCRIPTION |  6 +++---
+|    NEWS        | 10 ++++++++++
+|    2 files changed, 13 insertions(+), 3 deletions(-)
+
+* 2014-04-18(Tal Galili) New function:  uninstall.packages - removes packages from R. |10006ba| 
+|  DESCRIPTION               |  4 ++--
+|  NAMESPACE                 |  1 +
+|  NEWS                      |  5 +++++
+|  R/install.r               | 45 +++++++++++++++++++++++++++++++++++++++++++++
+|  man/uninstall.packages.Rd | 42 ++++++++++++++++++++++++++++++++++++++++++
+|  5 files changed, 95 insertions(+), 2 deletions(-)
+
+* 2014-04-12(Tal Galili) download_RStudio_CRAN_data - added the override and massage parameters (makes sure we do not have to download files already downloaded) |57d1422| 
+|  DESCRIPTION                       |  4 ++--
+|  NEWS                              |  7 +++++++
+|  R/RStudio_CRAN_data.r             | 40 ++++++++++++++++++++++++++++++-------
+|  man/download_RStudio_CRAN_data.Rd |  9 ++++++++-
+|  4 files changed, 50 insertions(+), 10 deletions(-)
+
+* 2014-04-02(Tal Galili) Version: 0.14.0 |5324f41| 
+|  DESCRIPTION | 8 ++++----
+|  NEWS        | 8 ++++++++
+|  2 files changed, 12 insertions(+), 4 deletions(-)
+
+* 2014-03-19(Tal Galili) person("Tyler", "Hunt"... |7d3a323| 
+|  DESCRIPTION | 2 +-
+|  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* 2014-03-19(Tal Galili) Version 0.13.8 bump |b96bbc6| 
+|  DESCRIPTION | 7 ++++---
+|  NEWS        | 6 ++++++
+|  2 files changed, 10 insertions(+), 3 deletions(-)
+
+* 2014-03-19(Tal Galili) Fix Roxygen2 after previos commit. |249f2f1| 
+|  NAMESPACE                                    | 36 +++++++--------
+|  man/R_version_in_a_folder.Rd                 | 22 ++++-----
+|  man/add.installr.GUI.Rd                      | 18 ++++----
+|  man/add_load_installr_on_startup_menu.Rd     |  4 +-
+|  man/add_remove_installr_from_startup_menu.Rd |  4 +-
+|  man/add_to_.First_in_Rprofile.site.Rd        | 17 +++----
+|  man/ask.user.for.a.row.Rd                    | 31 ++++++-------
+|  man/ask.user.yn.question.Rd                  | 19 ++++----
+|  man/barplot_package_users_per_day.Rd         | 23 +++++----
+|  man/browse.latest.R.NEWS.Rd                  | 11 ++---
+|  man/check.for.updates.R.Rd                   | 18 ++++----
+|  man/check.integer.Rd                         | 16 +++----
+|  man/checkMD5sums2.Rd                         | 14 +++---
+|  man/copy.packages.between.libraries.Rd       | 35 +++++++-------
+|  man/cranometer.Rd                            | 64 ++++++++++++--------------
+|  man/create.global.library.Rd                 |  8 ++--
+|  man/download_RStudio_CRAN_data.Rd            | 22 ++++-----
+|  man/fetch_tag_from_Rd.Rd                     | 20 ++++----
+|  man/file.name.from.url.Rd                    | 20 ++++----
+|  man/format_RStudio_CRAN_data.Rd              | 24 +++++-----
+|  man/freegeoip.Rd                             | 27 ++++++-----
+|  man/get.installed.R.folders.Rd               | 25 +++++-----
+|  man/install.7zip.Rd                          | 51 ++++++++++----------
+|  man/install.Cygwin.Rd                        | 17 ++++---
+|  man/install.FFmpeg.Rd                        | 37 +++++++--------
+|  man/install.GitHub.Rd                        | 21 +++++----
+|  man/install.GraphicsMagick.Rd                | 34 +++++++-------
+|  man/install.ImageMagick.Rd                   | 33 ++++++-------
+|  man/install.LaTeX2RTF.Rd                     | 29 ++++++------
+|  man/install.LyX.Rd                           | 38 +++++++--------
+|  man/install.MikTeX.Rd                        | 33 +++++++------
+|  man/install.R.Rd                             | 30 ++++++------
+|  man/install.RStudio.Rd                       | 25 +++++-----
+|  man/install.Rdevel.Rd                        | 21 +++++----
+|  man/install.Rtools.Rd                        | 43 +++++++++--------
+|  man/install.SWFTools.Rd                      | 31 +++++++------
+|  man/install.URL.Rd                           | 31 ++++++-------
+|  man/install.git.Rd                           | 17 ++++---
+|  man/install.notepadpp.Rd                     | 39 ++++++++--------
+|  man/install.npptor.Rd                        | 39 ++++++++--------
+|  man/install.packages.zip.Rd                  | 36 +++++++--------
+|  man/install.pandoc.Rd                        | 28 +++++------
+|  man/installr.Rd                              | 22 ++++-----
+|  man/is.RStudio.Rd                            | 14 +++---
+|  man/is.Rgui.Rd                               | 16 +++----
+|  man/is.empty.Rd                              | 20 ++++----
+|  man/is.exe.installed.Rd                      | 10 ++--
+|  man/is.windows.Rd                            | 20 ++++----
+|  man/is_in_.First_in_Rprofile.site.Rd         | 14 +++---
+|  man/lineplot_package_downloads.Rd            | 24 +++++-----
+|  man/load_installr_on_startup.Rd              | 14 +++---
+|  man/most_downloaded_packages.Rd              | 18 ++++----
+|  man/myip.Rd                                  | 14 +++---
+|  man/os.hibernate.Rd                          | 25 +++++-----
+|  man/os.lock.Rd                               | 24 +++++-----
+|  man/os.manage.Rd                             | 28 +++++------
+|  man/os.restart.Rd                            | 24 +++++-----
+|  man/os.shutdown.Rd                           | 36 +++++++--------
+|  man/os.sleep.Rd                              | 27 ++++++-----
+|  man/package_authors.Rd                       | 24 +++++-----
+|  man/pkgDNLs_worldmapcolor.Rd                 | 25 +++++-----
+|  man/read_RStudio_CRAN_data.Rd                | 26 +++++------
+|  man/remove.installr.GUI.Rd                   | 10 ++--
+|  man/remove_from_.First_in_Rprofile.site.Rd   | 19 ++++----
+|  man/require2.Rd                              | 16 +++----
+|  man/restart_RGui.Rd                          |  8 ++--
+|  man/rm_installr_from_startup.Rd              | 14 +++---
+|  man/source.https.Rd                          | 35 +++++++-------
+|  man/system.PATH.Rd                           | 12 ++---
+|  man/turn.number.version.Rd                   | 11 ++---
+|  man/turn.version.to.number.Rd                | 10 ++--
+|  man/turn.version.to.number1.Rd               | 10 ++--
+|  man/uninstall.R.Rd                           | 18 ++++----
+|  man/up_folder.Rd                             |  8 ++--
+|  man/updateR.Rd                               | 62 ++++++++++++-------------
+|  75 files changed, 872 insertions(+), 897 deletions(-)
+
+*   2014-03-19(Tal Galili) Merge branch 'master' of https://talgalili:kukBsbmiFPf5FOqWKiuP@github.com/talgalili/installr/ |72fe469
+|\  
+| *   2014-03-19(Tal Galili) Merge pull request #12 from JackStat/master |e308776
+| |\  
+| | * 2014-03-18(JackStat) Fixed URL and added in 32 and 64 bit options.  roxygenized |392868a| | | 
+| | |  DESCRIPTION                                  | 10 ++++
+| | |  NAMESPACE                                    | 36 ++++++------
+| | |  R/install.r                                  |  4 +-
+| | |  man/R_version_in_a_folder.Rd                 | 20 ++++---
+| | |  man/add.installr.GUI.Rd                      | 18 +++---
+| | |  man/add_load_installr_on_startup_menu.Rd     |  4 +-
+| | |  man/add_remove_installr_from_startup_menu.Rd |  4 +-
+| | |  man/add_to_.First_in_Rprofile.site.Rd        | 17 +++---
+| | |  man/ask.user.for.a.row.Rd                    | 31 ++++++-----
+| | |  man/ask.user.yn.question.Rd                  | 19 ++++---
+| | |  man/barplot_package_users_per_day.Rd         | 23 ++++----
+| | |  man/browse.latest.R.NEWS.Rd                  | 11 ++--
+| | |  man/check.for.updates.R.Rd                   | 18 +++---
+| | |  man/check.integer.Rd                         | 16 +++---
+| | |  man/checkMD5sums2.Rd                         | 14 ++---
+| | |  man/copy.packages.between.libraries.Rd       | 35 ++++++------
+| | |  man/cranometer.Rd                            | 64 ++++++++++++----------
+| | |  man/create.global.library.Rd                 |  8 +--
+| | |  man/download_RStudio_CRAN_data.Rd            | 22 ++++----
+| | |  man/fetch_tag_from_Rd.Rd                     | 20 +++----
+| | |  man/file.name.from.url.Rd                    | 20 +++----
+| | |  man/format_RStudio_CRAN_data.Rd              | 24 ++++----
+| | |  man/freegeoip.Rd                             | 27 ++++-----
+| | |  man/get.installed.R.folders.Rd               | 25 +++++----
+| | |  man/install.7zip.Rd                          | 51 ++++++++---------
+| | |  man/install.Cygwin.Rd                        | 20 ++++---
+| | |  man/install.FFmpeg.Rd                        | 37 +++++++------
+| | |  man/install.GitHub.Rd                        | 21 ++++---
+| | |  man/install.GraphicsMagick.Rd                | 34 ++++++------
+| | |  man/install.ImageMagick.Rd                   | 33 ++++++-----
+| | |  man/install.LaTeX2RTF.Rd                     | 29 +++++-----
+| | |  man/install.LyX.Rd                           | 38 ++++++-------
+| | |  man/install.MikTeX.Rd                        | 33 +++++------
+| | |  man/install.R.Rd                             | 30 +++++-----
+| | |  man/install.RStudio.Rd                       | 25 ++++-----
+| | |  man/install.Rdevel.Rd                        | 21 ++++---
+| | |  man/install.Rtools.Rd                        | 43 ++++++++-------
+| | |  man/install.SWFTools.Rd                      | 31 +++++------
+| | |  man/install.URL.Rd                           | 31 ++++++-----
+| | |  man/install.git.Rd                           | 17 +++---
+| | |  man/install.notepadpp.Rd                     | 39 +++++++------
+| | |  man/install.npptor.Rd                        | 39 +++++++------
+| | |  man/install.packages.zip.Rd                  | 36 ++++++------
+| | |  man/install.pandoc.Rd                        | 28 +++++-----
+| | |  man/installr.Rd                              | 22 ++++----
+| | |  man/is.RStudio.Rd                            | 14 ++---
+| | |  man/is.Rgui.Rd                               | 16 +++---
+| | |  man/is.empty.Rd                              | 20 +++----
+| | |  man/is.exe.installed.Rd                      | 10 ++--
+| | |  man/is.windows.Rd                            | 20 +++----
+| | |  man/is_in_.First_in_Rprofile.site.Rd         | 14 ++---
+| | |  man/lineplot_package_downloads.Rd            | 24 ++++----
+| | |  man/load_installr_on_startup.Rd              | 14 ++---
+| | |  man/most_downloaded_packages.Rd              | 18 +++---
+| | |  man/myip.Rd                                  | 14 ++---
+| | |  man/os.hibernate.Rd                          | 25 +++++----
+| | |  man/os.lock.Rd                               | 24 ++++----
+| | |  man/os.manage.Rd                             | 28 +++++-----
+| | |  man/os.restart.Rd                            | 24 ++++----
+| | |  man/os.shutdown.Rd                           | 36 ++++++------
+| | |  man/os.sleep.Rd                              | 27 ++++-----
+| | |  man/package_authors.Rd                       | 24 ++++----
+| | |  man/pkgDNLs_worldmapcolor.Rd                 | 25 +++++----
+| | |  man/read_RStudio_CRAN_data.Rd                | 26 ++++-----
+| | |  man/remove.installr.GUI.Rd                   | 10 ++--
+| | |  man/remove_from_.First_in_Rprofile.site.Rd   | 19 ++++---
+| | |  man/require2.Rd                              | 16 +++---
+| | |  man/restart_RGui.Rd                          |  8 +--
+| | |  man/rm_installr_from_startup.Rd              | 14 ++---
+| | |  man/source.https.Rd                          | 35 ++++++------
+| | |  man/system.PATH.Rd                           | 12 ++--
+| | |  man/turn.number.version.Rd                   | 11 ++--
+| | |  man/turn.version.to.number.Rd                | 10 ++--
+| | |  man/turn.version.to.number1.Rd               | 10 ++--
+| | |  man/uninstall.R.Rd                           | 18 +++---
+| | |  man/up_folder.Rd                             |  8 +--
+| | |  man/updateR.Rd                               | 62 +++++++++++----------
+| | |  77 files changed, 911 insertions(+), 873 deletions(-)
+
+| | * 2014-03-18(JackStat) Fixed URL and added 32 and 64 bit option |717ce14
+| |/  | |   
+| |    R/install.r | 13 ++++++++++---
+| |    1 file changed, 10 insertions(+), 3 deletions(-)
+
+* | 2014-03-18(Tal Galili) Moved to roxygene (4.0.0) |3126d4e
+|/  |   
+|    DESCRIPTION                                  | 1 +
+|    NAMESPACE                                    | 2 ++
+|    man/R_version_in_a_folder.Rd                 | 5 ++++-
+|    man/add.installr.GUI.Rd                      | 1 +
+|    man/add_load_installr_on_startup_menu.Rd     | 1 +
+|    man/add_remove_installr_from_startup_menu.Rd | 1 +
+|    man/add_to_.First_in_Rprofile.site.Rd        | 1 +
+|    man/ask.user.for.a.row.Rd                    | 1 +
+|    man/ask.user.yn.question.Rd                  | 1 +
+|    man/barplot_package_users_per_day.Rd         | 1 +
+|    man/browse.latest.R.NEWS.Rd                  | 1 +
+|    man/check.for.updates.R.Rd                   | 1 +
+|    man/check.integer.Rd                         | 1 +
+|    man/checkMD5sums2.Rd                         | 1 +
+|    man/copy.packages.between.libraries.Rd       | 1 +
+|    man/cranometer.Rd                            | 1 +
+|    man/create.global.library.Rd                 | 1 +
+|    man/download_RStudio_CRAN_data.Rd            | 1 +
+|    man/fetch_tag_from_Rd.Rd                     | 1 +
+|    man/file.name.from.url.Rd                    | 1 +
+|    man/format_RStudio_CRAN_data.Rd              | 1 +
+|    man/freegeoip.Rd                             | 1 +
+|    man/get.installed.R.folders.Rd               | 1 +
+|    man/install.7zip.Rd                          | 1 +
+|    man/install.Cygwin.Rd                        | 1 +
+|    man/install.FFmpeg.Rd                        | 1 +
+|    man/install.GitHub.Rd                        | 1 +
+|    man/install.GraphicsMagick.Rd                | 1 +
+|    man/install.ImageMagick.Rd                   | 1 +
+|    man/install.LaTeX2RTF.Rd                     | 1 +
+|    man/install.LyX.Rd                           | 1 +
+|    man/install.MikTeX.Rd                        | 1 +
+|    man/install.R.Rd                             | 1 +
+|    man/install.RStudio.Rd                       | 1 +
+|    man/install.Rdevel.Rd                        | 1 +
+|    man/install.Rtools.Rd                        | 1 +
+|    man/install.SWFTools.Rd                      | 1 +
+|    man/install.URL.Rd                           | 1 +
+|    man/install.git.Rd                           | 1 +
+|    man/install.notepadpp.Rd                     | 1 +
+|    man/install.npptor.Rd                        | 1 +
+|    man/install.packages.zip.Rd                  | 1 +
+|    man/install.pandoc.Rd                        | 1 +
+|    man/installr.Rd                              | 1 +
+|    man/is.RStudio.Rd                            | 1 +
+|    man/is.Rgui.Rd                               | 1 +
+|    man/is.empty.Rd                              | 1 +
+|    man/is.exe.installed.Rd                      | 1 +
+|    man/is.windows.Rd                            | 1 +
+|    man/is_in_.First_in_Rprofile.site.Rd         | 1 +
+|    man/lineplot_package_downloads.Rd            | 1 +
+|    man/load_installr_on_startup.Rd              | 1 +
+|    man/most_downloaded_packages.Rd              | 1 +
+|    man/myip.Rd                                  | 1 +
+|    man/os.hibernate.Rd                          | 1 +
+|    man/os.lock.Rd                               | 1 +
+|    man/os.manage.Rd                             | 1 +
+|    man/os.restart.Rd                            | 1 +
+|    man/os.shutdown.Rd                           | 1 +
+|    man/os.sleep.Rd                              | 1 +
+|    man/package_authors.Rd                       | 1 +
+|    man/pkgDNLs_worldmapcolor.Rd                 | 1 +
+|    man/read_RStudio_CRAN_data.Rd                | 3 ++-
+|    man/remove.installr.GUI.Rd                   | 1 +
+|    man/remove_from_.First_in_Rprofile.site.Rd   | 1 +
+|    man/require2.Rd                              | 1 +
+|    man/restart_RGui.Rd                          | 1 +
+|    man/rm_installr_from_startup.Rd              | 1 +
+|    man/source.https.Rd                          | 1 +
+|    man/system.PATH.Rd                           | 1 +
+|    man/turn.number.version.Rd                   | 1 +
+|    man/turn.version.to.number.Rd                | 1 +
+|    man/turn.version.to.number1.Rd               | 1 +
+|    man/uninstall.R.Rd                           | 1 +
+|    man/up_folder.Rd                             | 1 +
+|    man/updateR.Rd                               | 1 +
+|    76 files changed, 81 insertions(+), 2 deletions(-)
+
+* 2014-03-13(Tal Galili) Version bump 0.13.7 |375b36e| 
+|  DESCRIPTION | 3 ++-
+|  NEWS        | 7 +++++++
+|  2 files changed, 9 insertions(+), 1 deletion(-)
+
+*   2014-03-13(Tal Galili) Merge pull request #10 from dmenne/master |fa70abd
+|\  
+| * 2014-03-12(Dieter Menne) Handled the case of using one directory for subsequent overwriting R installations by selecting the last one. |f6208cd| | 
+| |  R/updateR.r | 9 ++++++---
+| |  1 file changed, 6 insertions(+), 3 deletions(-)
+
+| * 2014-03-10(Dieter Menne) Corrected wrong unlist position |24c2bd5| | 
+| |  R/updateR.r | 4 ++--
+| |  1 file changed, 2 insertions(+), 2 deletions(-)
+
+| * 2014-03-10(Dieter Menne) Handle case of multiple R_folders |4eb6785| | 
+| |  R/updateR.r | 4 ++--
+| |  1 file changed, 2 insertions(+), 2 deletions(-)
+
+* | 2014-03-12(Tal Galili) possible fix thanks to Dieter Menne. Still needs to be checked. |1af7c5e| | 
+| |  R/updateR.r | 9 ++++++++-
+| |  1 file changed, 8 insertions(+), 1 deletion(-)
+
+* | 2014-03-12(Tal Galili) Version bump: 0.13.6 |a944a65| | 
+| |  DESCRIPTION | 4 ++--
+| |  README.md   | 2 +-
+| |  2 files changed, 3 insertions(+), 3 deletions(-)
+
+* | 2014-03-12(Tal Galili) install.URL - added more massages |977aa09| | 
+| |  NEWS        | 2 +-
+| |  R/install.r | 7 +++++--
+| |  2 files changed, 6 insertions(+), 3 deletions(-)
+
+* | 2014-03-12(Tal Galili) install.R, updateR - new parameters added:          * download_dir (tempdir) character. Allowing the user to choose into which directory the file should be downloaded. |a0c3dfe| | 
+| |  NEWS             | 4 +++-
+| |  R/updateR.r      | 9 ++++++---
+| |  man/install.R.Rd | 6 +++++-
+| |  man/updateR.Rd   | 7 ++++++-
+| |  4 files changed, 20 insertions(+), 6 deletions(-)
+
+* | 2014-03-12(Tal Galili) updateR, install.R - added the keep_install_file parameter (default is FALSE). Based on the request by Boral here: http://www.r-statistics.com/2014/03/r-3-0-3-is-released/ |e7bd256| | 
+| |  NEWS             |  1 +
+| |  R/updateR.r      | 15 ++++++++++-----
+| |  man/install.R.Rd |  6 +++++-
+| |  man/updateR.Rd   |  5 ++++-
+| |  4 files changed, 20 insertions(+), 7 deletions(-)
+
+* | 2014-03-12(Tal Galili) install.URL - new parameters added:          * massage (TRUE) parameter. The function now prints (cat) if the file was downloaded succesfully or not, combined with the location of the file. It also informs the user if the file is later removed or not.          * download_dir (tempdir) character. Allowing the user to choose into which directory the file should be downloaded. |09ab8ab
+|/  |   
+|    NEWS               |  8 ++++++++
+|    R/install.r        | 24 ++++++++++++++++++++----
+|    man/install.URL.Rd | 10 +++++++++-
+|    3 files changed, 37 insertions(+), 5 deletions(-)
+
+* 2014-03-01(Tal Galili) Updated NEWS and DESCRIPTION about the fix to os.manage by Kornelius Rohmeyer |d92938b| 
+|  DESCRIPTION           | 4 +++-
+|  NEWS                  | 7 +++++++
+|  man/install.pandoc.Rd | 5 ++---
+|  3 files changed, 12 insertions(+), 4 deletions(-)
+
+*   2014-03-01(Tal Galili) Merge pull request #9 from kornl/master |0897524
+|\  
+| * 2014-03-01(Kornelius Rohmeyer) Don't ask for minutes if 'Cancel' is selected or window was closed without selecting any option. |89b8562
+|/  |   
+|    R/os.manage.r | 2 ++
+|    1 file changed, 2 insertions(+)
+
+* 2014-02-07(Tal Galili) install.pandoc - retiring "use_regex" from service. (props to Scott Milligan for the bug report.) Also, if the installation failed, no need to ask about restarting the computer! |b038840| 
+|  DESCRIPTION |  4 ++--
+|  NEWS        |  9 +++++++++
+|  R/install.r | 24 ++++++++++++++----------
+|  3 files changed, 25 insertions(+), 12 deletions(-)
+
+* 2014-02-02(Tal Galili) Fix a typo (thanks to Uwe) |3edbb38| 
+|  DESCRIPTION | 2 +-
+|  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* 2014-02-01(Tal Galili) Fixed the usage of person() (thanks to the patient guidance of Uwe Ligges!) with also some minor tweaks to Title and Description |09656a5| 
+|  DESCRIPTION | 50 +++++++++++++++++++++++---------------------------
+|  NEWS        |  9 +++++++++
+|  R/zzz.r     |  2 +-
+|  3 files changed, 33 insertions(+), 28 deletions(-)
+
+* 2014-01-31(Tal Galili) 0.13.2 version bump |b30a156| 
+|  DESCRIPTION | 10 +++++-----
+|  NEWS        | 12 ++++++++++++
+|  R/updateR.r |  4 ++--
+|  3 files changed, 19 insertions(+), 7 deletions(-)
+
+* 2014-01-31(Tal Galili) Fixed a single "@" in a roxygen2 doc (which caused erros) |e1b959a| 
+|  R/install.r              | 16 ++++++++++++----
+|  man/fetch_tag_from_Rd.Rd |  2 +-
+|  2 files changed, 13 insertions(+), 5 deletions(-)
+
+* 2014-01-31(Tal Galili) CRAN fixes - |0a21058| 
+|  DESCRIPTION           | 10 +++++-----
+|  NEWS                  |  4 ++++
+|  R/RStudio_CRAN_data.r |  3 ++-
+|  R/install.r           | 14 +++++++++++++-
+|  R/updateR.r           | 10 +++++++---
+|  5 files changed, 31 insertions(+), 10 deletions(-)
+
+* 2014-01-31(Tal Galili) Added "Michael Friendly" as a contributor, and bumped to 0.13.1 after merging his changes. |b491386| 
+|  DESCRIPTION | 7 ++++---
+|  1 file changed, 4 insertions(+), 3 deletions(-)
+
+* 2014-01-31(Tal Galili) Updated NEWS and manual for adding a packages= option to read_RStudio_CRAN_data. |33f90bf| 
+|  NEWS                          | 7 +++++++
+|  man/read_RStudio_CRAN_data.Rd | 8 +++++++-
+|  2 files changed, 14 insertions(+), 1 deletion(-)
+
+*   2014-01-31(Tal Galili) Merge branch 'master' of https://talgalili:kukBsbmiFPf5FOqWKiuP@github.com/talgalili/installr/ |4ab4848
+|\  
+| *   2013-10-31(Tal Galili) Merge pull request #7 from friendly/patch-1 |5c8a05c
+| |\  
+| | * 2013-10-27(Michael Friendly) Added a packages= option to read_RStudio_CRAN_data |6ad830b
+| |/  | |   
+| |    R/RStudio_CRAN_data.r | 11 ++++++++---
+| |    1 file changed, 8 insertions(+), 3 deletions(-)
+
+* | 2014-01-30(Tal Galili) Better use of "data" inside a function in a package. |94198ac| | 
+| |  R/RStudio_CRAN_data.r | 2 +-
+| |  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* | 2014-01-30(Tal Galili) Updated some functions and documents in order to pass CRAN checks: RStudio_CRAN_data_folder, pkgDNLs_worldmapcolor, fetch_tag_from_Rd, add_to_.First_in_Rprofile.site, remove_from_.First_in_Rprofile.site, add_load_installr_on_startup_menu,README.md |8f58a40| | 
+| |  DESCRIPTION                                  | 10 ---
+| |  NEWS                                         |  5 ++
+| |  R/RStudio_CRAN_data.r                        | 26 +++++--
+| |  R/install.r                                  |  2 +-
+| |  R/os.manage.r                                |  1 -
+| |  R/startup.r                                  | 12 ++-
+| |  R/zzz.r                                      |  2 +-
+| |  README.md                                    | 97 ++++++++++++------------
+| |  man/R_version_in_a_folder.Rd                 | 18 ++---
+| |  man/add.installr.GUI.Rd                      | 18 ++---
+| |  man/add_load_installr_on_startup_menu.Rd     |  8 +-
+| |  man/add_remove_installr_from_startup_menu.Rd |  8 +-
+| |  man/add_to_.First_in_Rprofile.site.Rd        | 17 ++---
+| |  man/ask.user.for.a.row.Rd                    | 31 ++++----
+| |  man/ask.user.yn.question.Rd                  | 19 +++--
+| |  man/barplot_package_users_per_day.Rd         | 23 +++---
+| |  man/browse.latest.R.NEWS.Rd                  | 11 ++-
+| |  man/check.for.updates.R.Rd                   | 18 ++---
+| |  man/check.integer.Rd                         | 16 ++--
+| |  man/checkMD5sums2.Rd                         | 14 ++--
+| |  man/copy.packages.between.libraries.Rd       | 35 +++++----
+| |  man/cranometer.Rd                            | 64 ++++++++--------
+| |  man/create.global.library.Rd                 |  8 +-
+| |  man/download_RStudio_CRAN_data.Rd            | 22 +++---
+| |  man/fetch_tag_from_Rd.Rd                     | 20 ++---
+| |  man/file.name.from.url.Rd                    | 20 ++---
+| |  man/format_RStudio_CRAN_data.Rd              | 24 +++---
+| |  man/freegeoip.Rd                             | 27 ++++---
+| |  man/get.installed.R.folders.Rd               | 25 +++---
+| |  man/install.7zip.Rd                          | 51 ++++++-------
+| |  man/install.Cygwin.Rd                        | 15 ++--
+| |  man/install.FFmpeg.Rd                        | 35 ++++-----
+| |  man/install.GitHub.Rd                        | 19 ++---
+| |  man/install.GraphicsMagick.Rd                | 32 ++++----
+| |  man/install.ImageMagick.Rd                   | 31 ++++----
+| |  man/install.LaTeX2RTF.Rd                     | 27 +++----
+| |  man/install.LyX.Rd                           | 36 ++++-----
+| |  man/install.MikTeX.Rd                        | 31 ++++----
+| |  man/install.R.Rd                             | 27 +++----
+| |  man/install.RStudio.Rd                       | 23 +++---
+| |  man/install.Rdevel.Rd                        | 21 ++---
+| |  man/install.Rtools.Rd                        | 41 +++++-----
+| |  man/install.SWFTools.Rd                      | 29 +++----
+| |  man/install.URL.Rd                           | 29 ++++---
+| |  man/install.git.Rd                           | 17 ++---
+| |  man/install.notepadpp.Rd                     | 39 +++++-----
+| |  man/install.npptor.Rd                        | 39 +++++-----
+| |  man/install.packages.zip.Rd                  | 36 ++++-----
+| |  man/install.pandoc.Rd                        | 28 +++----
+| |  man/installr.Rd                              | 22 +++---
+| |  man/is.RStudio.Rd                            | 14 ++--
+| |  man/is.Rgui.Rd                               | 16 ++--
+| |  man/is.empty.Rd                              | 20 ++---
+| |  man/is.exe.installed.Rd                      | 10 +--
+| |  man/is.windows.Rd                            | 20 ++---
+| |  man/is_in_.First_in_Rprofile.site.Rd         | 17 ++---
+| |  man/lineplot_package_downloads.Rd            | 24 +++---
+| |  man/load_installr_on_startup.Rd              | 17 +++--
+| |  man/most_downloaded_packages.Rd              | 18 ++---
+| |  man/myip.Rd                                  | 14 ++--
+| |  man/os.hibernate.Rd                          | 25 +++---
+| |  man/os.lock.Rd                               | 24 +++---
+| |  man/os.manage.Rd                             | 28 +++----
+| |  man/os.restart.Rd                            | 24 +++---
+| |  man/os.shutdown.Rd                           | 36 ++++-----
+| |  man/os.sleep.Rd                              | 27 ++++---
+| |  man/package_authors.Rd                       | 26 +++----
+| |  man/pkgDNLs_worldmapcolor.Rd                 | 24 +++---
+| |  man/read_RStudio_CRAN_data.Rd                | 25 +++---
+| |  man/remove.installr.GUI.Rd                   | 10 +--
+| |  man/remove_from_.First_in_Rprofile.site.Rd   | 24 +++---
+| |  man/require2.Rd                              | 16 ++--
+| |  man/restart_RGui.Rd                          |  8 +-
+| |  man/rm_installr_from_startup.Rd              | 17 +++--
+| |  man/source.https.Rd                          | 35 +++++----
+| |  man/system.PATH.Rd                           | 12 +--
+| |  man/turn.number.version.Rd                   | 11 ++-
+| |  man/turn.version.to.number.Rd                | 10 +--
+| |  man/turn.version.to.number1.Rd               | 10 +--
+| |  man/uninstall.R.Rd                           | 16 ++--
+| |  man/up_folder.Rd                             |  8 +-
+| |  man/updateR.Rd                               | 60 +++++++--------
+| |  82 files changed, 931 insertions(+), 944 deletions(-)
+
+* | 2014-01-30(Tal Galili) Bump to 0.13.0 |d307866| | 
+| |  DESCRIPTION                 |  4 ++--
+| |  NEWS                        | 16 ++++++++++++++++
+| |  R/updateR.r                 |  4 ++--
+| |  R/zzz.r                     |  2 +-
+| |  man/install.7zip.Rd         |  2 +-
+| |  man/install.Cygwin.Rd       |  2 +-
+| |  man/install.GitHub.Rd       |  2 +-
+| |  man/install.ImageMagick.Rd  |  2 +-
+| |  man/install.LyX.Rd          |  2 +-
+| |  man/install.MikTeX.Rd       |  2 +-
+| |  man/install.RStudio.Rd      |  2 +-
+| |  man/install.notepadpp.Rd    |  2 +-
+| |  man/install.npptor.Rd       |  2 +-
+| |  man/install.packages.zip.Rd |  3 ++-
+| |  14 files changed, 32 insertions(+), 15 deletions(-)
+
+* | 2014-01-30(Tal Galili) install.pandoc - added "to_restart" parameter. With a massage to remind the user they should restart their computer after pandoc is installed. |267373e
+|/  |   
+|    R/install.r           | 20 +++++++++++++++++++-
+|    man/install.pandoc.Rd |  6 +++++-
+|    2 files changed, 24 insertions(+), 2 deletions(-)
+
+*   2013-09-14(Tal Galili) Merge pull request #6 from tjmahr/patch-1 |2fd389d
+|\  
+| * 2013-09-14(tj mahr) Update install.r |1b8f100
+|/  |   
+|    R/install.r | 19 +++++++++----------
+|    1 file changed, 9 insertions(+), 10 deletions(-)
+
+* 2013-09-01(Tal Galili) Added NEWS.md |8f95ce9| 
+|  .Rbuildignore |   3 +-
+|  NEWS          |   2 +
+|  NEWS.md       | 365 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+|  R/zzz.r       |   1 +
+|  README.md     |   9 ++
+|  5 files changed, 379 insertions(+), 1 deletion(-)
+
+* 2013-08-27(Tal Galili) added reference to R.utils::installPackages(url) |46ebba5| 
+|  R/install.r | 2 +-
+|  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* 2013-08-24(Tal Galili) minor |6ef5688| 
+|  man/install.Cygwin.Rd         | 2 +-
+|  man/install.FFmpeg.Rd         | 2 +-
+|  man/install.GitHub.Rd         | 2 +-
+|  man/install.GraphicsMagick.Rd | 2 +-
+|  man/install.ImageMagick.Rd    | 2 +-
+|  man/install.LaTeX2RTF.Rd      | 2 +-
+|  man/install.LyX.Rd            | 2 +-
+|  man/install.MikTeX.Rd         | 2 +-
+|  man/install.RStudio.Rd        | 2 +-
+|  man/install.Rtools.Rd         | 2 +-
+|  man/install.SWFTools.Rd       | 2 +-
+|  man/uninstall.R.Rd            | 2 +-
+|  12 files changed, 12 insertions(+), 12 deletions(-)
+
+* 2013-08-23(Tal Galili) BUG FIX: install.URL didn't work on Windows. It was because "system" did not run .exe, and "shell" was the correct choice to use here. It is now fixed. |a408160| 
+|  DESCRIPTION |  4 ++--
+|  NAMESPACE   | 36 ++++++++++++++++++------------------
+|  NEWS        |  6 ++++++
+|  R/install.r | 12 ++++++++++--
+|  4 files changed, 36 insertions(+), 22 deletions(-)
+
+* 2013-08-21(Tal Galili) Fix question in require2 |abd12ab| 
+|  R/install.r | 3 ++-
+|  1 file changed, 2 insertions(+), 1 deletion(-)
+
+* 2013-08-21(Tal Galili) Version bump to 0.12.0 |5b75f32| 
+|  DESCRIPTION | 41 ++++++++++++++++++++++++++---------------
+|  NEWS        | 11 +++++++++++
+|  2 files changed, 37 insertions(+), 15 deletions(-)
+
+* 2013-08-21(Tal Galili) NEW FUNCTIONS ADDED:    * fetch_tag_from_Rd - A function to extract elements from R's help file.    * package_authors - finding all the authors for this (and other) packages. |ded58d4| 
+|  NAMESPACE                |   2 +
+|  R/install.r              | 141 +++++++++++++++++++++++++++++++++++++++++++++
+|  man/fetch_tag_from_Rd.Rd |  52 +++++++++++++++++
+|  man/package_authors.Rd   |  72 +++++++++++++++++++++++
+|  4 files changed, 267 insertions(+)
+
+* 2013-08-21(Tal Galili) minor edits to pkgDNLs_worldmapcolor doc. |a1775dc| 
+|  R/RStudio_CRAN_data.r        | 5 +++--
+|  man/pkgDNLs_worldmapcolor.Rd | 4 ++--
+|  2 files changed, 5 insertions(+), 4 deletions(-)
+
+*   2013-08-21(Tal Galili) Merge pull request #4 from borishejblum/worldmap-plot |0b675d8
+|\  
+| * 2013-08-21(Boris Hejblum) Worldmap of one's package downloads function added |2c74168
+|/  |   
+|    NAMESPACE                     |   1 +
+|    R/RStudio_CRAN_data.r         |  76 +++++++++++++++++++++++++++++++++++++-
+|    data/WorldBordersData.RData   | Bin 0 -> 183482 bytes
+|    man/pkgDNLs_worldmapcolor.Rd  |  57 ++++++++++++++++++++++++++++
+|    man/read_RStudio_CRAN_data.Rd |   2 +-
+|    5 files changed, 134 insertions(+), 2 deletions(-)
+
+* 2013-08-18(Tal Galili) mute error massage when starting in Rstudio. |6650d3f| 
+|  R/zzz.r | 2 +-
+|  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* 2013-08-17(Tal Galili) *Removed a double call to a function. *Call "utils" to make sure menus can be added on startup *supress the startup massage of the installr package (it is not needed for someone who have added it) |e143e85| 
+|  NAMESPACE                                  |  4 +++
+|  R/startup.r                                | 42 ++++++++++++++------------
+|  R/zzz.r                                    | 45 ++--------------------------
+|  man/add.installr.GUI.Rd                    | 18 -----------
+|  man/add_to_.First_in_Rprofile.site.Rd      | 10 +++----
+|  man/is_in_.First_in_Rprofile.site.Rd       | 10 +++----
+|  man/remove_from_.First_in_Rprofile.site.Rd | 10 +++----
+|  7 files changed, 45 insertions(+), 94 deletions(-)
+
+* 2013-08-17(Tal Galili) Version 0.11.0 - Adds a menu-item on startup to allow the automatic loading of installr whenever starting R. |a156f70| 
+|  DESCRIPTION                                  |   5 +-
+|  NEWS                                         |  18 +-
+|  R/startup.r                                  | 284 +++++++++++++++++++++++++
+|  R/zzz.r                                      |  56 +++++
+|  man/add.installr.GUI.Rd                      |  18 ++
+|  man/add_load_installr_on_startup_menu.Rd     |  10 +
+|  man/add_remove_installr_from_startup_menu.Rd |  10 +
+|  man/add_to_.First_in_Rprofile.site.Rd        |  39 ++++
+|  man/is_in_.First_in_Rprofile.site.Rd         |  40 ++++
+|  man/load_installr_on_startup.Rd              |  27 +++
+|  man/remove_from_.First_in_Rprofile.site.Rd   |  43 ++++
+|  man/rm_installr_from_startup.Rd              |  28 +++
+|  12 files changed, 575 insertions(+), 3 deletions(-)
+
+* 2013-08-17(Tal Galili) misc. |65b406a| 
+|  man/install.Cygwin.Rd         | 2 +-
+|  man/install.FFmpeg.Rd         | 2 +-
+|  man/install.GitHub.Rd         | 2 +-
+|  man/install.GraphicsMagick.Rd | 2 +-
+|  man/install.ImageMagick.Rd    | 2 +-
+|  man/install.LaTeX2RTF.Rd      | 2 +-
+|  man/install.LyX.Rd            | 2 +-
+|  man/install.MikTeX.Rd         | 2 +-
+|  man/install.RStudio.Rd        | 2 +-
+|  man/install.Rtools.Rd         | 2 +-
+|  man/install.SWFTools.Rd       | 2 +-
+|  11 files changed, 11 insertions(+), 11 deletions(-)
+
+* 2013-07-14(Tal Galili) bug fix: install.Rtools - now returns FALSE gracefully if the user chooses to abort. |9191055| 
+|  NEWS               | 4 ++++
+|  R/install.r        | 2 ++
+|  man/uninstall.R.Rd | 6 +++---
+|  3 files changed, 9 insertions(+), 3 deletions(-)
+
+* 2013-07-13(Tal Galili) Prepering to support MAC: |a1fd700| 
+|  DESCRIPTION                |  4 ++--
+|  NAMESPACE                  | 37 +++++++++++++++++++------------------
+|  NEWS                       | 22 +++++++++++++++++++++-
+|  R/install.r                | 21 ++++++++++++++++++++-
+|  R/is.x.r                   |  2 +-
+|  R/updateR.r                | 31 ++++++++++++++++++++-----------
+|  man/check.for.updates.R.Rd |  6 +++++-
+|  man/checkMD5sums2.Rd       |  5 ++++-
+|  man/install.R.Rd           |  2 +-
+|  man/up_folder.Rd           | 24 ++++++++++++++++++++++++
+|  10 files changed, 117 insertions(+), 37 deletions(-)
+
+* 2013-07-06(Tal Galili) updateR - added a test to be sure the new R version was installed in the same relative directory as the old R version (otherwise, the copy-packages function should not work) |720f4bb| 
+|  DESCRIPTION | 31 +++++++++++++++----------------
+|  NEWS        | 10 ++++++++++
+|  R/updateR.r | 17 ++++++++++++++---
+|  3 files changed, 39 insertions(+), 19 deletions(-)
+
+* 2013-07-04(Tal Galili) Bump to version 0.10.1 - in order to note the fixes made for CRAN upload. |34229f9| 
+|  DESCRIPTION |  4 ++--
+|  NAMESPACE   | 36 ++++++++++++++++++------------------
+|  NEWS        |  9 ++++++++-
+|  R/zzz.r     |  3 +++
+|  4 files changed, 31 insertions(+), 21 deletions(-)
+
+* 2013-07-04(Tal Galili) Updates to the .Rd docs: fixing text width. |f3d1506| 
+|  R/RStudio_CRAN_data.r                | 39 ++++++++++++++++++++++++++--------
+|  man/barplot_package_users_per_day.Rd |  8 +++++--
+|  man/download_RStudio_CRAN_data.Rd    |  5 ++++-
+|  man/format_RStudio_CRAN_data.Rd      |  8 +++++--
+|  man/install.R.Rd                     | 23 ++++++++++++++------
+|  man/install.Rdevel.Rd                | 39 ++++++++++++++++++++++++++++++++++
+|  man/lineplot_package_downloads.Rd    |  8 +++++--
+|  man/most_downloaded_packages.Rd      |  5 ++++-
+|  man/read_RStudio_CRAN_data.Rd        |  5 ++++-
+|  9 files changed, 115 insertions(+), 25 deletions(-)
+
+* 2013-07-04(Tal Galili) install.Rdevel function added |7b68e98| 
+|  NAMESPACE   | 35 ++++++++++++++++++-----------------
+|  NEWS        |  4 +++-
+|  R/updateR.r | 42 ++++++++++++++++++++++++++++++++++++++----
+|  README.md   |  4 ++++
+|  4 files changed, 63 insertions(+), 22 deletions(-)
+
+* 2013-07-03(Tal Galili) check.for.updates.R function updated - added a date for the latest R version in the window prompt. |08d85f9| 
+|  NEWS        |  3 +++
+|  R/updateR.r | 16 ++++++++++++----
+|  R/zzz.r     | 17 +++++++++--------
+|  3 files changed, 24 insertions(+), 12 deletions(-)
+
+* 2013-07-02(Tal Galili) Fixes for CRAN upload |744e709| 
+|  DESCRIPTION                   |  2 ++
+|  NAMESPACE                     | 34 +++++++++++++++++-----------------
+|  NEWS                          |  2 +-
+|  R/RStudio_CRAN_data.r         | 12 +++++++++---
+|  R/updateR.r                   |  8 +++++---
+|  R/zzz.r                       |  2 +-
+|  man/install.Cygwin.Rd         |  2 +-
+|  man/install.FFmpeg.Rd         |  2 +-
+|  man/install.GitHub.Rd         |  2 +-
+|  man/install.GraphicsMagick.Rd |  2 +-
+|  man/install.ImageMagick.Rd    |  2 +-
+|  man/install.LaTeX2RTF.Rd      |  2 +-
+|  man/install.LyX.Rd            |  2 +-
+|  man/install.MikTeX.Rd         |  2 +-
+|  man/install.R.Rd              |  3 +++
+|  man/install.RStudio.Rd        |  2 +-
+|  man/install.Rtools.Rd         |  2 +-
+|  man/install.SWFTools.Rd       |  2 +-
+|  man/uninstall.R.Rd            |  4 ++--
+|  man/updateR.Rd                |  1 +
+|  20 files changed, 52 insertions(+), 38 deletions(-)
+
+* 2013-07-02(Tal Galili) Updating DESCRIPTION, NEWS, README |a7b3f61| 
+|  DESCRIPTION |  5 ++--
+|  NAMESPACE   |  3 +++
+|  NEWS        | 20 +++++++++++++---
+|  README.md   | 73 +++++++++++++++++++++++++++++++++++++++++------------------
+|  4 files changed, 74 insertions(+), 27 deletions(-)
+
+* 2013-07-02(Tal Galili) Added a welcome massage when loading the package |c0db17b| 
+|  R/zzz.r | 28 ++++++++++++++++++++++++++++
+|  1 file changed, 28 insertions(+)
+
+* 2013-07-02(Tal Galili) uninstall.R function added |f5e5466| 
+|  R/updateR.r        | 44 +++++++++++++++++++++++++++++++++++++++++++-
+|  man/uninstall.R.Rd | 38 ++++++++++++++++++++++++++++++++++++++
+|  2 files changed, 81 insertions(+), 1 deletion(-)
+
+* 2013-07-02(Tal Galili) is.empty - function added for checking if an object is empty (e.g: of zero length) |83d3507| 
+|  R/is.x.r          | 60 +++++++++++++++++++++++++++++++++++++++++++++++++++--
+|  man/is.RStudio.Rd |  5 ++++-
+|  man/is.Rgui.Rd    |  5 ++++-
+|  man/is.empty.Rd   | 51 +++++++++++++++++++++++++++++++++++++++++++++
+|  4 files changed, 117 insertions(+), 4 deletions(-)
+
+* 2013-07-02(Tal Galili) is.x.r file created - moving various "is.*" functions to this file. |a77acd7| 
+|  R/install.r | 14 +------------
+|  R/is.x.r    | 67 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+|  R/zzz.r     | 49 -------------------------------------------
+|  3 files changed, 68 insertions(+), 62 deletions(-)
+
+* 2013-06-14(Tal Galili) Removing the comment that "installr" is for Windows only, since it now includes some general purpose functions :) |5a2f52a| 
+|  R/zzz.r | 2 +-
+|  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* 2013-06-12(Tal Galili) data.table doing troubles... |bc46178| 
+|  R/RStudio_CRAN_data.r | 7 ++++---
+|  1 file changed, 4 insertions(+), 3 deletions(-)
+
+* 2013-06-12(Tal Galili) most_downloaded_packages function added |d39796d| 
+|  NAMESPACE                       |  1 +
+|  NEWS                            |  1 +
+|  R/RStudio_CRAN_data.r           | 60 +++++++++++++++++++++++++++++++--------
+|  man/most_downloaded_packages.Rd | 48 +++++++++++++++++++++++++++++++
+|  4 files changed, 98 insertions(+), 12 deletions(-)
+
+* 2013-06-12(Tal Galili) Added lineplot_package_downloads  and format_RStudio_CRAN_data |f9b1761| 
+|  DESCRIPTION                          |   7 +-
+|  NAMESPACE                            |   2 +
+|  NEWS                                 |   7 +-
+|  R/RStudio_CRAN_data.r                | 137 +++++++++++++++++++++++++++++++--
+|  man/barplot_package_users_per_day.Rd |   4 +
+|  man/format_RStudio_CRAN_data.Rd      |  50 ++++++++++++
+|  man/lineplot_package_downloads.Rd    |  58 ++++++++++++++
+|  man/read_RStudio_CRAN_data.Rd        |  15 +++-
+|  8 files changed, 271 insertions(+), 9 deletions(-)
+
+* 2013-06-12(Tal Galili) require2 - allows it to get package names without quotes (just like "require" does) |c5bee80| 
+|  R/install.r     | 5 +++--
+|  man/require2.Rd | 5 +++--
+|  2 files changed, 6 insertions(+), 4 deletions(-)
+
+* 2013-06-12(Tal Galili) download_RStudio_CRAN_data no longer breaks if a wrong time range is provided. |8c3df7d| 
+|  R/RStudio_CRAN_data.r             | 21 +++++++++++++++++----
+|  man/download_RStudio_CRAN_data.Rd | 21 +++++++++++++++------
+|  2 files changed, 32 insertions(+), 10 deletions(-)
+
+* 2013-06-11(Tal Galili) RStudio_CRAN_data: |726b834| 
+|  DESCRIPTION                          |   5 +-
+|  NAMESPACE                            |   3 +
+|  NEWS                                 |  13 ++++
+|  R/RStudio_CRAN_data.r                | 135 +++++++++++++++++++++++++++++++++
+|  man/barplot_package_users_per_day.Rd |  51 +++++++++++++
+|  man/download_RStudio_CRAN_data.Rd    |  48 ++++++++++++
+|  man/read_RStudio_CRAN_data.Rd        |  42 ++++++++++
+|  7 files changed, 295 insertions(+), 2 deletions(-)
+
+* 2013-06-10(Tal Galili) restart_RGui function added |0c7d247| 
+|  DESCRIPTION         |  1 +
+|  NAMESPACE           |  1 +
+|  NEWS                |  3 ++-
+|  R/install.r         | 29 ++++++++++++++++++++++++++++-
+|  README.md           |  5 ++++-
+|  man/freegeoip.Rd    |  1 +
+|  man/restart_RGui.Rd | 23 +++++++++++++++++++++++
+|  7 files changed, 60 insertions(+), 3 deletions(-)
+
+* 2013-05-23(Tal Galili) freegeoip - extended example (with world map :) ) |e5abeb6| 
+|  R/geo_functions.r | 13 +++++++++++++
+|  man/freegeoip.Rd  | 12 ++++++++++++
+|  2 files changed, 25 insertions(+)
+
+* 2013-05-21(Tal Galili) corss-linking the geo_functions. |09de25c| 
+|  R/geo_functions.r | 17 ++++++++++-------
+|  man/cranometer.Rd |  3 +++
+|  man/freegeoip.Rd  |  9 ++++++---
+|  man/myip.Rd       |  9 ++++++---
+|  4 files changed, 25 insertions(+), 13 deletions(-)
+
+* 2013-05-21(Tal Galili) geo_functions.r file created - |55c4281| 
+|  DESCRIPTION                   |   3 +-
+|  NAMESPACE                     |   2 +
+|  NEWS                          |  20 ++++-
+|  R/geo_functions.r             | 191 ++++++++++++++++++++++++++++++++++++++++
+|  R/install.r                   | 130 ++-------------------------
+|  man/freegeoip.Rd              |  42 +++++++++
+|  man/install.Cygwin.Rd         |   2 +-
+|  man/install.FFmpeg.Rd         |   2 +-
+|  man/install.GitHub.Rd         |   2 +-
+|  man/install.GraphicsMagick.Rd |   2 +-
+|  man/install.ImageMagick.Rd    |   2 +-
+|  man/install.LaTeX2RTF.Rd      |   2 +-
+|  man/install.LyX.Rd            |   2 +-
+|  man/install.MikTeX.Rd         |   2 +-
+|  man/install.RStudio.Rd        |   2 +-
+|  man/install.Rtools.Rd         |   2 +-
+|  man/install.SWFTools.Rd       |   2 +-
+|  man/myip.Rd                   |  26 ++++++
+|  man/require2.Rd               |   6 +-
+|  19 files changed, 303 insertions(+), 139 deletions(-)
+
+* 2013-05-18(Tal Galili) get.installed.R.folders - making the function more robust, by having it rely on the README files instead of the folder names. (based on a bug report by GilesCrane - thanks.) |bf841fa| 
+|  NAMESPACE                      | 29 ++++++++++----------
+|  NEWS                           |  3 ++-
+|  R/updateR.r                    | 58 +++++++++++++++++++++++++++++++++-------
+|  man/R_version_in_a_folder.Rd   | 31 +++++++++++++++++++++
+|  man/get.installed.R.folders.Rd |  4 +--
+|  5 files changed, 99 insertions(+), 26 deletions(-)
+
+* 2013-05-18(Tal Galili) checkMD5sums2 - added the omit_files parameter (allowing the removal of the files ‘etc/Rconsole’ and ‘etc/Rprofile.site’ from the checksums of an R installation) |cf62e58| 
+|  DESCRIPTION                    |  2 +-
+|  NEWS                           |  6 +++---
+|  R/updateR.r                    | 41 ++++++++++++++++++++++++++++------------
+|  man/checkMD5sums2.Rd           | 11 ++++++++++-
+|  man/install.R.Rd               |  2 +-
+|  man/turn.version.to.number1.Rd |  1 +
+|  man/updateR.Rd                 |  8 +++++++-
+|  7 files changed, 52 insertions(+), 19 deletions(-)
+
+* 2013-05-17(Tal Galili) bump to 0.9.3 - changed to_checkMD5sums to default as FALSE |0fc49fd| 
+|  DESCRIPTION      | 4 ++--
+|  NEWS             | 9 +++++++++
+|  R/updateR.r      | 4 ++--
+|  man/install.R.Rd | 2 +-
+|  man/updateR.Rd   | 2 +-
+|  5 files changed, 15 insertions(+), 6 deletions(-)
+
+* 2013-05-16(Tal Galili) Fix width - for reference PDF and CRAN compliance |3e4e99a| 
+|  NEWS                                   |  3 +-
+|  R/install.r                            | 54 +++++++++++++++++++++-----------
+|  R/os.manage.r                          | 24 +++++++++++---
+|  R/updateR.r                            | 51 +++++++++++++++++++++++-------
+|  man/ask.user.for.a.row.Rd              |  7 +++--
+|  man/ask.user.yn.question.Rd            | 12 +++++--
+|  man/browse.latest.R.NEWS.Rd            |  6 ++--
+|  man/copy.packages.between.libraries.Rd | 11 +++++--
+|  man/file.name.from.url.Rd              |  3 +-
+|  man/get.installed.R.folders.Rd         | 12 +++++--
+|  man/install.GraphicsMagick.Rd          |  7 ++---
+|  man/install.ImageMagick.Rd             |  5 ++-
+|  man/install.Rtools.Rd                  |  8 +++--
+|  man/install.npptor.Rd                  |  7 ++---
+|  man/install.pandoc.Rd                  |  6 ++--
+|  man/os.hibernate.Rd                    |  4 ++-
+|  man/os.lock.Rd                         |  4 ++-
+|  man/os.manage.Rd                       |  7 ++++-
+|  man/os.shutdown.Rd                     |  5 ++-
+|  man/os.sleep.Rd                        |  4 ++-
+|  man/updateR.Rd                         |  8 ++++-
+|  21 files changed, 178 insertions(+), 70 deletions(-)
+
+* 2013-05-14(Tal Galili) spellchecking NEWS |8fada48| 
+|  DESCRIPTION                   |  3 ++-
+|  NAMESPACE                     | 28 ++++++++++++++--------------
+|  NEWS                          | 19 +++++++++++--------
+|  R/zzz.r                       |  2 +-
+|  man/install.Cygwin.Rd         |  2 +-
+|  man/install.FFmpeg.Rd         |  2 +-
+|  man/install.GitHub.Rd         |  2 +-
+|  man/install.GraphicsMagick.Rd |  2 +-
+|  man/install.ImageMagick.Rd    |  2 +-
+|  man/install.LaTeX2RTF.Rd      |  2 +-
+|  man/install.LyX.Rd            |  2 +-
+|  man/install.MikTeX.Rd         |  2 +-
+|  man/install.RStudio.Rd        |  2 +-
+|  man/install.Rtools.Rd         |  2 +-
+|  man/install.SWFTools.Rd       |  2 +-
+|  15 files changed, 39 insertions(+), 35 deletions(-)
+
+* 2013-05-14(Tal Galili) require2 function added |c9990cc| 
+|  DESCRIPTION       |  6 ++--
+|  NAMESPACE         |  1 +
+|  NEWS              |  9 +++---
+|  R/install.r       | 84 +++++++++++++++++++++++++++++++++++++++++++++++++++--
+|  README.md         |  2 ++
+|  man/cranometer.Rd | 32 ++++++++++++++++++--
+|  man/require2.Rd   | 31 ++++++++++++++++++++
+|  7 files changed, 154 insertions(+), 11 deletions(-)
+
+* 2013-05-11(Tal Galili) Minor charset fixes to checkMD5sums2 to have the package compile. |f021bb5| 
+|  R/updateR.r          |  4 ++--
+|  man/checkMD5sums2.Rd | 10 +++++-----
+|  2 files changed, 7 insertions(+), 7 deletions(-)
+
+* 2013-05-11(Tal Galili) cranometer function added |6d9bccc| 
+|  NAMESPACE         |  1 +
+|  NEWS              |  7 ++++++
+|  R/install.r       | 72 +++++++++++++++++++++++++++++++++++++++++++++++++++++
+|  man/cranometer.Rd | 71 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+|  4 files changed, 151 insertions(+)
+
+* 2013-05-11(Tal Galili) fixed a typo in the word typo :P |02dab12| 
+|  NEWS | 2 +-
+|  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* 2013-04-06(Tal Galili) fix README |192fcf9| 
+|  README.md                     | 4 ++--
+|  man/install.Cygwin.Rd         | 2 +-
+|  man/install.FFmpeg.Rd         | 2 +-
+|  man/install.GitHub.Rd         | 2 +-
+|  man/install.GraphicsMagick.Rd | 2 +-
+|  man/install.ImageMagick.Rd    | 2 +-
+|  man/install.LaTeX2RTF.Rd      | 2 +-
+|  man/install.LyX.Rd            | 2 +-
+|  man/install.MikTeX.Rd         | 2 +-
+|  man/install.RStudio.Rd        | 2 +-
+|  man/install.Rtools.Rd         | 2 +-
+|  man/install.SWFTools.Rd       | 2 +-
+|  12 files changed, 13 insertions(+), 13 deletions(-)
+
+* 2013-04-04(Tal Galili) browse.latest.R.NEWS() function added (and is now used in updateR() ) |a481e83| 
+|  DESCRIPTION                 |  2 +-
+|  NAMESPACE                   |  1 +
+|  NEWS                        |  5 ++++-
+|  R/updateR.r                 | 29 ++++++++++++++++++++++++++++-
+|  man/browse.latest.R.NEWS.Rd | 27 +++++++++++++++++++++++++++
+|  5 files changed, 61 insertions(+), 3 deletions(-)
+
+* 2013-04-04(Tal Galili) Updated the warning massage on install.R in case checkMD5sum fails. |8c18834| 
+|  NEWS           | 2 ++
+|  R/updateR.r    | 7 ++++---
+|  man/updateR.Rd | 9 ++++++++-
+|  3 files changed, 14 insertions(+), 4 deletions(-)
+
+* 2013-04-04(Tal Galili) checkMD5sums2 function added |c0b24b0| 
+|  NAMESPACE             | 29 +++++++++++-----------
+|  NEWS                  |  8 +++++--
+|  R/updateR.r           | 64 +++++++++++++++++++++++++++++++++++++++++++++++++
+|  man/checkMD5sums2.Rd  | 28 ++++++++++++++++++++++
+|  man/install.URL.Rd    |  4 +++-
+|  man/install.pandoc.Rd |  2 +-
+|  6 files changed, 117 insertions(+), 18 deletions(-)
+
+* 2013-04-02(Tal Galili) Fixed a type in updateR |744aac4| 
+|  NEWS        |  6 +++++-
+|  R/updateR.r |  2 +-
+|  R/zzz.r     | 18 ++++++++++++------
+|  3 files changed, 18 insertions(+), 8 deletions(-)
+
+* 2013-04-01(Tal Galili) fix the install.URL error massage to only show up when the function fails |119d366| 
+|  NEWS        | 5 ++++-
+|  R/install.r | 2 +-
+|  2 files changed, 5 insertions(+), 2 deletions(-)
+
+* 2013-03-30(Tal Galili) updated README to both install and load the latest {installr} version. |1661c9d| 
+|  README.md | 2 +-
+|  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* 2013-03-30(Tal Galili) Fixed install.pandoc to deal with the new dowload file (MSI instead of EXE). |c12a2d7| 
+|  NEWS        | 11 +++++++++++
+|  R/install.r | 14 +++++++++-----
+|  2 files changed, 20 insertions(+), 5 deletions(-)
+
+* 2013-03-30(Tal Galili) Fixing minot capital letters in NEWS and description |928bd72| 
+|  DESCRIPTION |  6 +++---
+|  NEWS        | 22 +++++++++++-----------
+|  2 files changed, 14 insertions(+), 14 deletions(-)
+
+* 2013-03-29(Tal Galili) Fixes to the .Rd files in order to pass the checks for CRAN submission. |f23c3b6| 
+|  .Rbuildignore                 |   4 +-
+|  DESCRIPTION                   |  24 ++--
+|  NAMESPACE                     |  28 ++---
+|  NEWS                          |   6 +-
+|  R/install.r                   |  31 ++---
+|  R/os.manage.r                 |   2 +-
+|  README.html                   | 263 ----------------------------------------
+|  man/install.Cygwin.Rd         |   2 +-
+|  man/install.FFmpeg.Rd         |  23 +---
+|  man/install.GitHub.Rd         |   2 +-
+|  man/install.GraphicsMagick.Rd |   2 +-
+|  man/install.ImageMagick.Rd    |  20 +--
+|  man/install.LaTeX2RTF.Rd      |   2 +-
+|  man/install.LyX.Rd            |   2 +-
+|  man/install.MikTeX.Rd         |   2 +-
+|  man/install.RStudio.Rd        |   2 +-
+|  man/install.Rtools.Rd         |   2 +-
+|  man/install.SWFTools.Rd       |   2 +-
+|  man/is.exe.installed.Rd       |  10 +-
+|  man/os.hibernate.Rd           |   4 +-
+|  man/system.PATH.Rd            |   5 +-
+|  21 files changed, 86 insertions(+), 352 deletions(-)
+
+* 2013-03-29(Tal Galili) Bump to 0.9 |d5e38c9| 
+|  DESCRIPTION |  15 ++--
+|  NEWS        |  16 +++-
+|  README.html | 263 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+|  README.md   |  46 ++++++++--
+|  4 files changed, 325 insertions(+), 15 deletions(-)
+
+* 2013-03-29(Tal Galili) Added aliases to all install.X functions so that they would accept a lower-case function name. |b79a188| 
+|  NAMESPACE                     | 11 ++++++++
+|  R/install.r                   | 59 +++++++++++++++++++++++++++++------------
+|  man/install.Cygwin.Rd         |  1 +
+|  man/install.FFmpeg.Rd         |  1 +
+|  man/install.GitHub.Rd         |  1 +
+|  man/install.GraphicsMagick.Rd |  1 +
+|  man/install.ImageMagick.Rd    |  1 +
+|  man/install.LaTeX2RTF.Rd      |  1 +
+|  man/install.LyX.Rd            |  1 +
+|  man/install.MikTeX.Rd         |  1 +
+|  man/install.RStudio.Rd        |  1 +
+|  man/install.Rtools.Rd         |  1 +
+|  man/install.SWFTools.Rd       |  1 +
+|  13 files changed, 64 insertions(+), 17 deletions(-)
+
+* 2013-03-26(Tal Galili) Added install.LaTeX2RTF |f607e5f| 
+|  NAMESPACE                |  1 +
+|  NEWS                     |  3 ++-
+|  R/install.r              | 33 +++++++++++++++++++++++++++++++++
+|  man/install.LaTeX2RTF.Rd | 40 ++++++++++++++++++++++++++++++++++++++++
+|  4 files changed, 76 insertions(+), 1 deletion(-)
+
+* 2013-03-25(Tal Galili) Added install.Cygwin |3eb711c| 
+|  NAMESPACE             |  1 +
+|  NEWS                  |  2 +-
+|  R/install.r           | 42 ++++++++++++++++++++++++++++++++++++++++++
+|  man/install.Cygwin.Rd | 33 +++++++++++++++++++++++++++++++++
+|  4 files changed, 77 insertions(+), 1 deletion(-)
+
+* 2013-03-22(Tal Galili) Added: install.notepadpp and install.npptor |a1e4773| 
+|  DESCRIPTION              |  4 +--
+|  NAMESPACE                |  2 ++
+|  NEWS                     | 19 +++++++----
+|  R/install.r              | 78 ++++++++++++++++++++++++++++++++++++++++++++++
+|  man/install.notepadpp.Rd | 46 +++++++++++++++++++++++++++
+|  man/install.npptor.Rd    | 47 ++++++++++++++++++++++++++++
+|  6 files changed, 188 insertions(+), 8 deletions(-)
+
+* 2013-03-17(Tal Galili) os.manage - now asks the user in how many minutes to perform the operation. |94a3476| 
+|  NEWS             |  6 +++++-
+|  R/os.manage.r    | 22 ++++++++++++++++------
+|  man/os.manage.Rd |  6 +++++-
+|  3 files changed, 26 insertions(+), 8 deletions(-)
+
+* 2013-03-17(Tal Galili) Fixing a bug in install.LyX documentation (thanks Richard Cotton) - that caused it to fail when using install_github |42e6fd0| 
+|  NEWS               |  2 ++
+|  R/install.r        |  6 +++++-
+|  man/install.LyX.Rd | 16 ++++++++--------
+|  3 files changed, 15 insertions(+), 9 deletions(-)
+
+* 2013-03-16(Tal Galili) Updated installr with more software for animation |e5aa0f3| 
+|  R/install.r | 6 ++++++
+|  1 file changed, 6 insertions(+)
+
+* 2013-03-16(Tal Galili) Added: install.SWFTools, install.7zip, install.FFmpeg, system.PATH |4f03726| 
+|  DESCRIPTION             |   4 +-
+|  NAMESPACE               |   4 ++
+|  NEWS                    |   9 +++
+|  R/install.r             | 178 ++++++++++++++++++++++++++++++++++++++++++++++
+|  man/install.7zip.Rd     |  52 ++++++++++++++
+|  man/install.FFmpeg.Rd   |  57 +++++++++++++++
+|  man/install.SWFTools.Rd |  41 +++++++++++
+|  man/is.exe.installed.Rd |  20 ++++++
+|  man/system.PATH.Rd      |  26 +++++++
+|  9 files changed, 389 insertions(+), 2 deletions(-)
+
+* 2013-03-15(Tal Galili) os.shutdown - made to force shutdown |968ea94| 
+|  NEWS                           | 5 +++--
+|  R/os.manage.r                  | 6 +++++-
+|  R/updateR.r                    | 5 ++++-
+|  man/install.Rtools.Rd          | 3 ++-
+|  man/install.URL.Rd             | 6 +++---
+|  man/turn.version.to.number.Rd  | 2 +-
+|  man/turn.version.to.number1.Rd | 3 +++
+|  7 files changed, 21 insertions(+), 9 deletions(-)
+
+* 2013-03-13(Tal Galili) Changing the output of installing stuff to become invisible. |c82a69d| 
+|  R/install.r | 10 +++++-----
+|  1 file changed, 5 insertions(+), 5 deletions(-)
+
+* 2013-03-13(Tal Galili) Added os.manage to the main menu bar |45cecc4| 
+|  NEWS          | 3 ++-
+|  R/os.manage.r | 2 +-
+|  R/zzz.r       | 1 +
+|  3 files changed, 4 insertions(+), 2 deletions(-)
+
+* 2013-03-13(Tal Galili) Remove installR.Proj |88ab31e| 
+|  installR.Rproj | 17 -----------------
+|  1 file changed, 17 deletions(-)
+
+* 2013-03-13(Tal Galili) Removed main .Rproj file from git |8db0541| 
+|  .Rbuildignore | 3 ++-
+|  .gitignore    | 1 +
+|  2 files changed, 3 insertions(+), 1 deletion(-)
+
+* 2013-03-13(Tal Galili) Added os.manage, os.shutdown, os.restart, os.hibernate, os.sleep, os.lock |3c41ca1| 
+|  DESCRIPTION         |   3 +-
+|  NAMESPACE           |   7 +-
+|  NEWS                |  21 +++--
+|  R/install.r         |  36 ---------
+|  R/os.manage.r       | 208 ++++++++++++++++++++++++++++++++++++++++++++++++++
+|  man/os.hibernate.Rd |  50 ++++++++++++
+|  man/os.lock.Rd      |  47 ++++++++++++
+|  man/os.manage.Rd    |  43 +++++++++++
+|  man/os.restart.Rd   |  46 +++++++++++
+|  man/os.shutdown.Rd  |  56 ++++++++++++++
+|  man/os.sleep.Rd     |  55 +++++++++++++
+|  man/shutdown.Rd     |  53 -------------
+|  12 files changed, 529 insertions(+), 96 deletions(-)
+
+* 2013-03-12(Tal Galili) Upgraded install.Rtools - removed "latest_Frozen", added "check".  Made the function know which Rtools to install based on your R version (and if it is not known - it asks the user to choose a version) |775b201| 
+|  DESCRIPTION           |   6 +-
+|  NEWS                  |   4 +-
+|  R/install.r           | 143 ++++++++++++++++++++++++++++++++++++++----------
+|  man/install.LyX.Rd    |   5 ++
+|  man/install.Rtools.Rd |  31 +++++++----
+|  5 files changed, 145 insertions(+), 44 deletions(-)
+
+* 2013-03-11(Tal Galili) Added install.LyX |b843c33| 
+|  NAMESPACE          |  1 +
+|  NEWS               |  1 +
+|  R/install.r        | 60 ++++++++++++++++++++++++++++++++++++++++++++++++++++
+|  man/install.LyX.Rd | 44 ++++++++++++++++++++++++++++++++++++++
+|  4 files changed, 106 insertions(+)
+
+* 2013-03-11(Tal Galili) Added "..." to all install.x functions to be passed to install.URL |353a475| 
+|  R/install.r                            | 40 +++++++++++++++++++-------------
+|  R/updateR.r                            |  5 ++--
+|  man/copy.packages.between.libraries.Rd |  5 ++--
+|  man/install.GitHub.Rd                  |  6 ++++-
+|  man/install.GraphicsMagick.Rd          |  6 ++++-
+|  man/install.ImageMagick.Rd             |  6 ++++-
+|  man/install.MikTeX.Rd                  |  6 ++++-
+|  man/install.R.Rd                       |  5 +++-
+|  man/install.RStudio.Rd                 |  6 ++++-
+|  man/install.Rtools.Rd                  |  6 ++++-
+|  man/install.git.Rd                     |  6 ++++-
+|  man/install.pandoc.Rd                  |  5 +++-
+|  man/updateR.Rd                         |  2 +-
+|  13 files changed, 74 insertions(+), 30 deletions(-)
+
+* 2013-03-10(Tal Galili) Fix imagemagick to follow updates. |4bfa9b0| 
+|  R/install.r | 9 +++++----
+|  R/updateR.r | 8 ++++----
+|  2 files changed, 9 insertions(+), 8 deletions(-)
+
+* 2013-03-10(Tal Galili) Added doc to installr function |27b2b97| 
+|  R/install.r     | 8 +++++---
+|  installR.Rproj  | 2 +-
+|  man/installr.Rd | 9 +++++----
+|  3 files changed, 11 insertions(+), 8 deletions(-)
+
+* 2013-03-09(Tal Galili) Added install.GraphicsMagick |5383172| 
+|  NAMESPACE                     |  1 +
+|  NEWS                          |  3 ++-
+|  R/install.r                   | 38 ++++++++++++++++++++++++++++++++++++++
+|  man/install.GraphicsMagick.Rd | 39 +++++++++++++++++++++++++++++++++++++++
+|  4 files changed, 80 insertions(+), 1 deletion(-)
+
+* 2013-03-09(Tal Galili) Added install.ImageMagick |36b7da3| 
+|  NAMESPACE                  |  1 +
+|  NEWS                       |  3 ++-
+|  R/install.r                | 39 +++++++++++++++++++++++++++++++++++++--
+|  README.md                  | 31 +++++++++++++++++++++++++------
+|  man/install.ImageMagick.Rd | 38 ++++++++++++++++++++++++++++++++++++++
+|  man/install.RStudio.Rd     |  2 +-
+|  6 files changed, 104 insertions(+), 10 deletions(-)
+
+* 2013-03-09(Tal Galili) NEWS update |06da019| 
+|  NEWS | 6 ++++--
+|  1 file changed, 4 insertions(+), 2 deletions(-)
+
+* 2013-03-09(Tal Galili) Changes install.Rtools defaults |2eb4fd6| 
+|  NEWS                  | 1 +
+|  R/install.r           | 4 ++--
+|  man/install.Rtools.Rd | 3 ++-
+|  3 files changed, 5 insertions(+), 3 deletions(-)
+
+* 2013-03-09(Tal Galili) Added installr function |fa0806e| 
+|  NAMESPACE       |  1 +
+|  NEWS            |  1 +
+|  R/install.r     | 41 +++++++++++++++++++++++++++++++++++++++++
+|  R/updateR.r     |  1 -
+|  R/zzz.r         |  1 +
+|  man/installr.Rd | 35 +++++++++++++++++++++++++++++++++++
+|  6 files changed, 79 insertions(+), 1 deletion(-)
+
+* 2013-03-09(Tal Galili) Ask the user if to install R or not - When using the menu system. |b9d1ceb| 
+|  R/zzz.r | 2 +-
+|  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* 2013-03-09(Tal Galili) Added menu GUI! |ed06f99| 
+|  DESCRIPTION                 |  4 +--
+|  NAMESPACE                   |  1 +
+|  NEWS                        |  6 ++--
+|  R/install.r                 | 44 ++++++++++++-------------
+|  R/updateR.r                 | 76 +++++++++++++++++++++++++++++--------------
+|  man/ask.user.yn.question.Rd | 22 +++++++++++--
+|  man/check.for.updates.R.Rd  |  7 +++-
+|  man/shutdown.Rd             |  3 +-
+|  man/updateR.Rd              |  7 +++-
+|  9 files changed, 112 insertions(+), 58 deletions(-)
+
+* 2013-03-08(Tal Galili) Made sure to having the menus removed once the package is detach(ed). |831c5de| 
+|  DESCRIPTION |  2 +-
+|  NEWS        |  3 +--
+|  R/zzz.r     | 15 ++++++++++++---
+|  3 files changed, 14 insertions(+), 6 deletions(-)
+
+* 2013-03-08(Tal Galili) A new GUI for Rgui - added the "Update" to the menu, with two submenu items |bf17487| 
+|  NAMESPACE                  |  1 +
+|  NEWS                       |  6 ++-
+|  R/updateR.r                | 12 ------
+|  R/zzz.r                    | 99 ++++++++++++++++++++++++++++++++++++++++++++
+|  man/add.installr.GUI.Rd    | 30 ++++++++++++++
+|  man/is.Rgui.Rd             | 27 ++++++++++++
+|  man/remove.installr.GUI.Rd | 23 ++++++++++
+|  7 files changed, 185 insertions(+), 13 deletions(-)
+
+* 2013-03-08(Tal Galili) Added MD5 checksum for the installation of R. |abdbafb| 
+|  NEWS             |  3 ++-
+|  R/updateR.r      | 29 ++++++++++++++++++++++-------
+|  man/install.R.Rd |  8 +++++++-
+|  3 files changed, 31 insertions(+), 9 deletions(-)
+
+* 2013-03-08(Tal Galili) Bump to version 0.8.3 |f9b1524| 
+|  DESCRIPTION | 4 ++--
+|  NEWS        | 2 +-
+|  2 files changed, 3 insertions(+), 3 deletions(-)
+
+* 2013-03-08(Tal Galili) updateR - now checks if R was installed or not (Based on the output of install.R), and removed the need to ask the user that. |5cb2d12| 
+|  NEWS        | 10 +++++++++-
+|  R/updateR.r | 13 +++++++------
+|  2 files changed, 16 insertions(+), 7 deletions(-)
+
+* 2013-03-08(Tal Galili) install.URL Return TRUE/FLASE on whether the installation worked or not. |71e890c| 
+|  R/install.r            | 39 +++++++++++++++++++++++++++------------
+|  man/install.GitHub.Rd  |  2 +-
+|  man/install.MikTeX.Rd  |  2 +-
+|  man/install.R.Rd       |  2 +-
+|  man/install.RStudio.Rd |  2 +-
+|  man/install.Rtools.Rd  |  2 +-
+|  man/install.URL.Rd     | 14 ++++++++++----
+|  man/install.git.Rd     |  2 +-
+|  man/install.pandoc.Rd  |  2 +-
+|  9 files changed, 44 insertions(+), 23 deletions(-)
+
+* 2013-03-06(Tal Galili) Using getRversion() instead of R.version |23173cc| 
+|  R/updateR.r | 2 +-
+|  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* 2013-03-06(Tal Galili) Adding is.RStudio |9038111| 
+|  NAMESPACE         |  1 +
+|  NEWS              |  1 +
+|  R/updateR.r       | 28 ++++++++++++++++++++++++++++
+|  man/is.RStudio.Rd | 24 ++++++++++++++++++++++++
+|  4 files changed, 54 insertions(+)
+
+* 2013-03-06(Tal Galili) Moved TODOs to the end of the NEWS file |063baa0| 
+|  NEWS | 18 ++++++++----------
+|  1 file changed, 8 insertions(+), 10 deletions(-)
+
+* 2013-03-06(Tal Galili) "Error in !install_R : 'install_R' is missing" (install_R was called in too early) - Fixed a bug in updateR, |3baaf50| 
+|  NEWS        | 1 +
+|  R/updateR.r | 2 +-
+|  2 files changed, 2 insertions(+), 1 deletion(-)
+
+* 2013-03-05(Tal Galili) Added the shutdown function |fa057fb| 
+|  NAMESPACE       |  7 ++++---
+|  NEWS            |  5 ++++-
+|  R/install.r     | 38 ++++++++++++++++++++++++++++++++++++++
+|  man/shutdown.Rd | 54 ++++++++++++++++++++++++++++++++++++++++++++++++++++++
+|  4 files changed, 100 insertions(+), 4 deletions(-)
+
+* 2013-03-05(Tal Galili) Made shell not wait in updateR - this makes sure that one can turn the new Rgui on, while closing the old R. |fa4aab6| 
+|  DESCRIPTION |  2 +-
+|  NAMESPACE   |  6 +++---
+|  NEWS        | 12 +++++++++++-
+|  R/updateR.r |  8 +++++---
+|  4 files changed, 20 insertions(+), 8 deletions(-)
+
+* 2013-03-05(Tal Galili) updated install.URL so it will not wait for the command to finish running before it releases R. |4f43e92| 
+|  NAMESPACE          |  6 +++---
+|  R/install.r        | 10 ++++++----
+|  man/install.URL.Rd | 11 +++++++++--
+|  3 files changed, 18 insertions(+), 9 deletions(-)
+
+* 2013-03-05(Tal Galili) update.R -> updateR (in README) |ae9bdc3| 
+|  README.md | 2 +-
+|  1 file changed, 1 insertion(+), 1 deletion(-)
+
+* 2013-03-05(Tal Galili) v0.8 for CRAN |30fd8ea| 
+|  DESCRIPTION                 |  15 +-
+|  NAMESPACE                   |   8 +-
+|  NEWS                        |  12 ++
+|  R/install.r                 |   8 +-
+|  R/update.R.r                | 413 -----------------------------------------
+|  R/updateR.r                 | 414 ++++++++++++++++++++++++++++++++++++++++++
+|  R/zzz.r                     |   4 +-
+|  Read-and-delete-me          |   6 -
+|  man/ask.user.yn.question.Rd |   3 +-
+|  man/install.R.Rd            |   2 +-
+|  man/install.Rtools.Rd       |   2 +-
+|  man/install.pandoc.Rd       |   2 +-
+|  man/update.R.Rd             |  87 ---------
+|  man/updateR.Rd              |  90 +++++++++
+|  14 files changed, 539 insertions(+), 527 deletions(-)
+
+* 2013-03-05(Tal Galili) minor doc update |e91c9fb| 
+|  R/update.R.r | 2 +-
+|  README.md    | 2 +-
+|  2 files changed, 2 insertions(+), 2 deletions(-)
+
+* 2013-03-05(Tal Galili) Fixed doc in update.R |80fb32a| 
+|  R/update.R.r    | 1 +
+|  man/update.R.Rd | 3 ++-
+|  2 files changed, 3 insertions(+), 1 deletion(-)
+
+* 2013-03-05(Tal Galili) Minor NAMESPACE fixes |c98ef0a| 
+|  R/zzz.r | 1 +
+|  1 file changed, 1 insertion(+)
+
+* 2013-03-05(Tal Galili) Created the ask.user.yn.question made update.R easier to read |486ff65| 
+|  .Rbuildignore               |  3 +-
+|  DESCRIPTION                 | 28 +++++++++------
+|  NEWS                        | 21 +++++++++++
+|  R/create.global.library.r   |  3 +-
+|  R/install.r                 | 30 +++++++++-------
+|  R/update.R.r                | 81 ++++++++++++++++++++++++-------------------
+|  R/zzz.r                     | 12 +++++++
+|  README.md                   |  2 +-
+|  man/ask.user.for.a.row.Rd   |  2 +-
+|  man/ask.user.yn.question.Rd | 30 ++++++++++++++++
+|  man/check.integer.Rd        |  2 +-
+|  man/install.MikTeX.Rd       |  8 +++--
+|  man/install.RStudio.Rd      |  2 +-
+|  man/install.Rtools.Rd       |  2 +-
+|  man/install.git.Rd          |  4 +--
+|  man/install.pandoc.Rd       | 10 +++++-
+|  man/source.https.Rd         |  2 +-
+|  man/update.R.Rd             | 12 +++++--
+|  18 files changed, 180 insertions(+), 74 deletions(-)
+
+* 2013-03-04(Tal Galili) New functions: * get.installed.R.folders - Returns folder names with R installations * copy.packages.between.libraries - Copies all packages from one library folder to another |2c42f6f| 
+|  DESCRIPTION                            |  19 +-
+|  NAMESPACE                              |   4 +
+|  NEWS                                   |  24 ++-
+|  R/create.global.library.r              | 238 ++++++++++++++++++++-
+|  R/install.r                            |  39 +++-
+|  R/update.R.r                           | 353 +++++++++++++++++++++++++++----
+|  R/zzz.r                                |   2 +
+|  man/ask.user.for.a.row.Rd              |  15 +-
+|  man/check.for.updates.R.Rd             |  36 ++++
+|  man/copy.packages.between.libraries.Rd |  59 ++++++
+|  man/create.global.library.Rd           |  25 +++
+|  man/file.name.from.url.Rd              |   2 +
+|  man/get.installed.R.folders.Rd         |  43 ++++
+|  man/install.GitHub.Rd                  |   2 +
+|  man/install.MikTeX.Rd                  |   2 +
+|  man/install.R.Rd                       |   2 +
+|  man/install.RStudio.Rd                 |   2 +
+|  man/install.Rtools.Rd                  |   2 +
+|  man/install.git.Rd                     |   2 +
+|  man/install.packages.zip.Rd            |   2 +
+|  man/install.pandoc.Rd                  |   2 +
+|  man/is.windows.Rd                      |   2 +
+|  man/source.https.Rd                    |   2 +
+|  man/turn.number.version.Rd             |  26 +++
+|  man/turn.version.to.number.Rd          |  24 +++
+|  man/turn.version.to.number1.Rd         |  23 ++
+|  man/update.R.Rd                        |  76 +++++--
+|  27 files changed, 954 insertions(+), 74 deletions(-)
+
+* 2013-03-04(Tal Galili) Version 0.5 |e65a2c4| 
+|  .Rbuildignore       |  2 +-
+|  DESCRIPTION         | 10 +++-------
+|  NAMESPACE           |  3 ++-
+|  NEWS                | 40 ++++++++++++++++++++++++++++++----------
+|  R/install.r         | 16 ++++++++--------
+|  R/zzz.r             |  6 ++++++
+|  man/source.https.Rd | 46 ++++++++++++++++++++++++++++++++++++++++++++++
+|  man/source_https.Rd | 46 ----------------------------------------------
+|  8 files changed, 96 insertions(+), 73 deletions(-)
+
+* 2013-03-04(Tal Galili) Added dcoumentation to all the functions in install.r |8e1a41c| 
+|  NAMESPACE                   |  12 ++-
+|  R/install.r                 | 225 +++++++++++++++++++++++++++++++++++-------
+|  R/update.R.r                |  15 ++-
+|  R/zzz.r                     |  22 +++++
+|  man/ask.user.for.a.row.Rd   |  40 ++++++++
+|  man/check.integer.Rd        |  39 ++++++++
+|  man/file.name.from.url.Rd   |  30 ++++++
+|  man/install.GitHub.Rd       |  29 ++++++
+|  man/install.MikTeX.Rd       |  37 +++++++
+|  man/install.R.Rd            |  27 +++++
+|  man/install.RStudio.Rd      |  32 ++++++
+|  man/install.Rtools.Rd       |  47 +++++++++
+|  man/install.URL.Rd          |  33 +++++++
+|  man/install.git.Rd          |  29 ++++++
+|  man/install.packages.zip.Rd |  37 +++++++
+|  man/install.pandoc.Rd       |  34 +++++++
+|  man/is.windows.Rd           |   6 +-
+|  man/source_https.Rd         |  46 +++++++++
+|  18 files changed, 697 insertions(+), 43 deletions(-)
+
+* 2013-03-03(Tal Galili) Added .onLoad with the is.windows function checking if the package is currently used on a Windows OS. |88ed37b| 
+|  NAMESPACE         |  1 +
+|  R/install.r       | 94 ++++++++++++++++++++++++++++++-----------------------
+|  installR.Rproj    |  2 +-
+|  man/is.windows.Rd | 12 ++++---
+|  4 files changed, 63 insertions(+), 46 deletions(-)
+
+* 2013-03-03(Tal Galili) minor: Fixed the name in NEWS |7fd13ea| 
+|  NAMESPACE                 |  2 +-
+|  NEWS                      |  2 +-
+|  R/create.global.library.r | 40 ++++++++++++++++++++++++++++------------
+|  man/is.windows.Rd         | 26 ++++++++++++++++++++++++++
+|  man/update.R.Rd           | 32 ++++++++++++++++++++++++++++++++
+|  5 files changed, 88 insertions(+), 14 deletions(-)
+
+* 2013-03-02(Tal Galili) * Added a README.md * updated update.R to allow the user to review the NEWS of the newer version of R. * Added function is.windows() with proper roxygen2 documentation. :) |99f3b02| 
+|  R/install.r  | 36 +++++++++++-------------------------
+|  R/update.R.r | 15 ++++++++++++---
+|  README.md    | 25 +++++++++++++++++++++++++
+|  3 files changed, 48 insertions(+), 28 deletions(-)
+
+* 2013-03-02(Tal Galili) Added the function: * source_https |026c508| 
+|  DESCRIPTION    |  3 ++-
+|  R/install.r    | 13 +++++++++++++
+|  R/update.R.r   | 14 +++++++++++++-
+|  installR.Rproj |  1 +
+|  4 files changed, 29 insertions(+), 2 deletions(-)
+
+* 2013-03-02(Tal Galili) Changing the package name from installR to installr |fd92ca9| 
+|  DESCRIPTION | 28 ++++++++++++++++++----------
+|  1 file changed, 18 insertions(+), 10 deletions(-)
+
+* 2013-03-01(Tal Galili) Added the functions: * install.MikTeX * install.git * install.RStudio * install.GitHub |0e39547| 
+|  R/install.r | 86 ++++++++++++++++++++++++++++++++++++++++++++++-------------
+|  1 file changed, 68 insertions(+), 18 deletions(-)
+
+* 2013-02-28(Tal Galili) Merged the two functions in create.global.library into one. |fd1a96c| 
+|  R/create.global.library.r | 291 +++++++++++++++++++++++++-------------------
+|  R/install.r               |   4 +-
+|  2 files changed, 166 insertions(+), 129 deletions(-)
+
+* 2013-02-28(Tal Galili) Added the "create.global.library" functions (for the global library strategy in R) |c70a505| 
+|  NEWS                      |  28 ++++--
+|  R/create.global.library.r | 232 ++++++++++++++++++++++++++++++++++++++++++++
+|  2 files changed, 251 insertions(+), 9 deletions(-)
+
+* 2013-02-28(Tal Galili) Bump version number to 0.2 |8cf805c| 
+|  DESCRIPTION |  2 +-
+|  NEWS        | 18 ++++++++++++++++++
+|  2 files changed, 19 insertions(+), 1 deletion(-)
+
+* 2013-02-28(Tal Galili) Added the update.R function. |6fa71e2| 
+|  R/install.r  |  24 +++++++-------
+|  R/update.R.r | 100 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+|  2 files changed, 112 insertions(+), 12 deletions(-)
+
+* 2013-02-28(Tal Galili) Added install.packages.zip to enable people to install this package before it gets to CRAN. |7745231| 
+|  R/install.r | 37 +++++++++++++++++++++++++++++--------
+|  1 file changed, 29 insertions(+), 8 deletions(-)
+
+* 2013-02-28(Tal Galili) Added the install.Rtools function |0cd2bdc| 
+|  R/install.r             | 118 +++++++++++++++++++++++++++++++++++++---------
+|  man/RegGetHomeDir.Rd    |  58 -----------------------
+|  man/RegIsEmailBln.Rd    |  59 -----------------------
+|  man/RegIsLinuxBln.Rd    |  55 ---------------------
+|  man/RegIsWindowsBln.Rd  |  55 ---------------------
+|  man/install.R.Rd        |  52 --------------------
+|  man/install.RStudio.Rd  |  52 --------------------
+|  man/install.Rtools.Rd   |  52 --------------------
+|  man/install.URL.Rd      |  61 ------------------------
+|  man/install.git.Rd      |  52 --------------------
+|  man/install.pandoc.Rd   |  70 ---------------------------
+|  man/installR-package.Rd |  40 ----------------
+|  man/installR.Rd         |  57 ----------------------
+|  13 files changed, 96 insertions(+), 685 deletions(-)
+
+* 2013-02-28(Tal Galili) First skeleton for the package (with a few minor edits) |11eef40  
+   .Rbuildignore           |   2 +
+   .gitignore              |   3 ++
+   DESCRIPTION             |  16 +++++++
+   NAMESPACE               |   1 +
+   R/install.r             | 104 ++++++++++++++++++++++++++++++++++++++++++++++
+   Read-and-delete-me      |   6 +++
+   installR.Rproj          |  16 +++++++
+   man/RegGetHomeDir.Rd    |  58 ++++++++++++++++++++++++++
+   man/RegIsEmailBln.Rd    |  59 ++++++++++++++++++++++++++
+   man/RegIsLinuxBln.Rd    |  55 ++++++++++++++++++++++++
+   man/RegIsWindowsBln.Rd  |  55 ++++++++++++++++++++++++
+   man/install.R.Rd        |  52 +++++++++++++++++++++++
+   man/install.RStudio.Rd  |  52 +++++++++++++++++++++++
+   man/install.Rtools.Rd   |  52 +++++++++++++++++++++++
+   man/install.URL.Rd      |  61 +++++++++++++++++++++++++++
+   man/install.git.Rd      |  52 +++++++++++++++++++++++
+   man/install.pandoc.Rd   |  70 +++++++++++++++++++++++++++++++
+   man/installR-package.Rd |  40 ++++++++++++++++++
+   man/installR.Rd         |  57 +++++++++++++++++++++++++
+   19 files changed, 811 insertions(+)

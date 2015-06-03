@@ -33,16 +33,18 @@
 #' add.installr.GUI() 
 #' }
 add.installr.GUI <- function() {
-   require(utils) # needed for winMenuNames etc.
+   # library(utils) # needed for winMenuNames etc.
+   # utils is imported...
    
    if(is.windows() & is.Rgui() & !is.RStudio()){
-      Update_in_winMenuNames <- "Update" %in% winMenuNames() # I'm making sure this function wasn't used before.  If it was, then running it again might cause bugs...   
+      main_menu_name <- "installr" # "Update"
+      Update_in_winMenuNames <- main_menu_name %in% winMenuNames() # I'm making sure this function wasn't used before.  If it was, then running it again might cause bugs...   
       if(!Update_in_winMenuNames) {
-         winMenuAdd("Update")
-         winMenuAddItem("Update", "Update R", "updateR()")
-         winMenuAddItem("Update", "Update R packages", "update.packages(ask = F)")      
-         winMenuAddItem("Update", "Install software", "installr()")
-         winMenuAddItem("Update", "Manage Windows", "os.manage()")      
+         winMenuAdd(main_menu_name)
+         winMenuAddItem(main_menu_name, "Update R", "updateR()")
+         winMenuAddItem(main_menu_name, "Update R packages", "update.packages(ask = F)")      
+         winMenuAddItem(main_menu_name, "Install software", "installr()")
+         winMenuAddItem(main_menu_name, "Manage Windows", "os.manage()")      
          
          
          # add a menu for adding/removing the installr package to startup
@@ -84,7 +86,7 @@ remove.installr.GUI <- function() {
    # Thanks to Dason: http://stackoverflow.com/questions/15250487/how-to-add-a-menu-item-to-rgui/15250992?iemail=1#15250992
    # Add GUI (only in Windows's Rgui)
    if(is.windows() & is.Rgui() & !is.RStudio()){
-      if("Update" %in% winMenuNames()) winMenuDel("Update")
+      if("installr" %in% winMenuNames()) winMenuDel("installr")
    }
    return(invisible(NULL))
 }
@@ -167,12 +169,47 @@ installrWelcomeMessage <- function(){
 # +    'updateR.r'
 # +    'zzz.r'
 
+
+
+
+
+
+
+
+
+# # Creating a changelog using git
+# First make sure git is in the path. Run the 
+# following using cmd.exe, as admin:
+# setx PATH "C:\\Program Files (x86)\\Git\\bin"
+# 
+# Then - run the script to create the ChangeLog before shipping the package.
+# # http://stackoverflow.com/questions/10330425/how-do-i-export-a-git-log-to-a-text-file
+# # http://stackoverflow.com/questions/3523534/good-ways-to-manage-a-changelog-using-git
+# # http://www.commandlinefu.com/commands/view/12420/generate-a-change-log-with-git
+# shell("git log --decorate > ChangeLog", intern = T)
+#
+
+# use this:
+# shell('git log --graph --stat --date=short --pretty=format:"%ad(%an) %s |%h" > ChangeLog', intern = TRUE)
+#
+# system.PATH()
+# shell("path")
+
+
+
+
+
 # when a function is renamed, its document in man must be removed - otherwise it may cause problems with the built check (it will try to run the code in the example, and will fail.)
 # When all is done, run:
 # require(devtools)
 # check()
 # check(args="--as-cran")
 #                 Thanks to: http://stackoverflow.com/questions/10017702/r-cmd-check-options-for-more-rigorous-testing-2-15-0
-# file.copy("NEWS", "NEWS.md")
-# build_win(version = "R-devel")
+# file.copy("NEWS", "NEWS.md", overwrite = TRUE)
+# devtools::build_win(version = "R-devel")
 # release(check = TRUE)
+
+
+# devtools::use_code_of_conduct()
+
+

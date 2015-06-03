@@ -16,6 +16,21 @@
 #  http://www.r-project.org/Licenses/
 #
 
+# if(F) 1 else 0
+
+# # Fix:  no visible global function definition for
+# data.table <- function(...) if(requireNamespace("data.table")) data.table::data.table(...) else stop("data.table is not loaded")
+# as.data.table <- function(...) if(requireNamespace("data.table")) data.table::as.data.table(...) else stop("data.table is not loaded")
+# setkey <- function(...) if(requireNamespace("data.table")) data.table::setkey(...) else stop("data.table is not loaded")
+# rbindlist <- function(...) if(requireNamespace("data.table")) data.table::rbindlist(...) else stop("data.table is not loaded")
+# 
+# find_rtools <- devtools::find_rtools
+# 
+# fromJSON <- rjson::fromJSON
+# 
+# readHTMLTable <- XML::readHTMLTable
+# 
+# ddply <- plyr::ddply
 
 
 
@@ -40,7 +55,7 @@
 #'  (since otherwise, we will only get many 404 errors)
 #' @param override boolean (default is FALSE) - should the function download files that
 #' are already available in the temp folder
-#' @param massage boolean (default is TRUE) - should a massage be printed in interesting cases.
+#' @param message boolean (default is TRUE) - should a message be printed in interesting cases.
 #' @param ... not in use.
 #' @return Returns the value of log_folder.
 #' @seealso \link{download_RStudio_CRAN_data}, \link{read_RStudio_CRAN_data},\link{barplot_package_users_per_day}
@@ -63,7 +78,7 @@ download_RStudio_CRAN_data <- function(START = as.Date(Sys.time())-5,
                                        log_folder = tempdir(), 
                                        trunc_END_date_to_today = TRUE,
                                        override = FALSE,
-                                       massage = TRUE,
+                                       message = TRUE,
                                        ...) {
    # Here's an easy way to get all the URLs in R
    START <- as.Date(START)
@@ -91,14 +106,14 @@ download_RStudio_CRAN_data <- function(START = as.Date(Sys.time())-5,
       
       # if the file is here, and I should NOT override - then skip
       if(zip_filename %in% avilable_files & !override) {
-         if(massage) cat("The file: ", zip_filename, " is already available in the folder - skipping it\n")
+         if(message) message("The file: ", zip_filename, " is already available in the folder - skipping it")
          # do nothing - skip
       } else { # download
          tryCatch(download.file(urls[i], destfile=zip_filename_path, mode = 'wb'), error = function(e) e)
       }      
    }
    
-   if(massage) cat("Files where downloaded to: ", log_folder, "\n")
+   if(message) message("Files were downloaded to: ", log_folder)
    
    return(invisible(log_folder))
 }
@@ -156,7 +171,7 @@ read_RStudio_CRAN_data <- function(log_folder = tempdir(), use_data_table = TRUE
    # read files
    logs <- list()
    for (file in file_list) {
-      cat(paste("Reading", file, "...\n"))
+      cat(paste("Reading", file, "...\n")); flush.console()
       logfile <- read.table(file, header = TRUE, sep = ",", quote = "\"",
                                  dec = ".", fill = TRUE, stringsAsFactors = FALSE,
                                  comment.char = "", as.is=TRUE)
@@ -169,7 +184,7 @@ read_RStudio_CRAN_data <- function(log_folder = tempdir(), use_data_table = TRUE
    # rbind the files.
    if(use_data_table) is_data_table_loaded <- require2("data.table")
    if(use_data_table & is_data_table_loaded) {
-      dataset <- rbindlist(logs) # MUCH faster...
+      dataset <- data.table::rbindlist(logs) # MUCH faster...
    } else {
       dataset <- do.call("rbind",logs)
    }
@@ -217,7 +232,7 @@ read_RStudio_CRAN_data <- function(log_folder = tempdir(), use_data_table = TRUE
 #' barplot_package_users_per_day("plyr", my_RStudio_CRAN_data)
 #' }
 format_RStudio_CRAN_data <- function(dataset, ...) {
-   is_data_table_loaded <- require2(data.table)
+   is_data_table_loaded <- require2("data.table")
    if(!is_data_table_loaded) stop("The 'data.table' package MUST be installed/loaded in order for this function to work.")
    
    if(("data.table" %in% class(dataset))) {
@@ -238,8 +253,8 @@ format_RStudio_CRAN_data <- function(dataset, ...) {
 #    dataset[, weekday:=weekdays(dataset$date)]
 #    dataset[, week:=strftime(as.POSIXlt(dataset$date),format="%Y-%W")]
    
-   dataset <- as.data.table(dataset)
-   setkey(dataset, package, date, week, country)  
+   dataset <- data.table::as.data.table(dataset)
+   data.table::setkey(dataset, package, date, week, country)  
    
    return(dataset)
 }
@@ -338,6 +353,23 @@ lineplot_package_downloads <- function(pkg_names, dataset, by_time = c("date", "
    require2("ggplot2")
    require2("plyr")
    
+   
+	geom_line <- ggplot2::geom_line
+	ylab <- ggplot2::ylab
+	theme_bw <- ggplot2::theme_bw
+	theme <- ggplot2::theme
+	element_text <- ggplot2::element_text
+	aes_string <- ggplot2::aes_string
+
+	fortify <- ggplot2::fortify
+	ggplot <- ggplot2::ggplot
+	geom_polygon <- ggplot2::geom_polygon
+	coord_equal <- ggplot2::coord_equal
+	scale_fill_gradientn <- ggplot2::scale_fill_gradientn
+	labs <- ggplot2::labs
+
+   
+   
    by_time <- by_time[1]
    
    # plot 1: Compare downloads of selected packages on a weekly basis
@@ -349,10 +381,14 @@ lineplot_package_downloads <- function(pkg_names, dataset, by_time = c("date", "
    package <- NA
    #-----
    
-   agg1 <- ddply(dataset[dataset$"package" %in% pkg_names,], .(time= get(by_time), package), function(xx) {c(V1 = length(unique(xx$ip_id)))})
+   . <- TRUE
+   
+   agg1 <- plyr::ddply(dataset[dataset$"package" %in% pkg_names,], .(time= get(by_time), package), function(xx) {c(V1 = length(unique(xx$ip_id)))})
    
 #    suppressWarnings(colnames(agg1)[1] <- "time")   
-   o <- ggplot(agg1, aes(x=time, y=V1, color=package, group=package)) + geom_line() + ylab("Downloads") + theme_bw() + theme(axis.text.x  = element_text(angle=90, size=8, vjust=0.5))   
+   
+   
+   o <- ggplot(agg1, aes_string(x="time", y="V1", color="package", group="package")) + geom_line() + ylab("Downloads") + theme_bw() + theme(axis.text.x  = element_text(angle=90, size=8, vjust=0.5))   
    print(o)
    
    return(invisible(agg1))
@@ -427,6 +463,24 @@ pkgDNLs_worldmapcolor <- function(pkg_name, dataset, remove_dups=TRUE, ...){
   require2("data.table")
   require2("sp")
   
+  
+ 	geom_line <- ggplot2::geom_line
+	ylab <- ggplot2::ylab
+	theme_bw <- ggplot2::theme_bw
+	theme <- ggplot2::theme
+	element_text <- ggplot2::element_text
+	aes_string <- ggplot2::aes_string
+
+	fortify <- ggplot2::fortify
+	ggplot <- ggplot2::ggplot
+	geom_polygon <- ggplot2::geom_polygon
+	coord_equal <- ggplot2::coord_equal
+	scale_fill_gradientn <- ggplot2::scale_fill_gradientn
+	labs <- ggplot2::labs
+ 
+  
+  
+  
   data <- dataset[which(dataset$package == pkg_name),]
   if(remove_dups){
     data <- data[!duplicated(data$ip_id),]
@@ -461,7 +515,7 @@ pkgDNLs_worldmapcolor <- function(pkg_name, dataset, remove_dups=TRUE, ...){
   world.points$dnls <- colcode[world.points$id]
   
   world.map <-  ggplot(data=world.points) +
-    geom_polygon(aes_string(x = "long", y = "lat", group="group", fill="dnls"), color="black") +
+    geom_polygon(aes_string(x = "long", y = "lat", group="group", fill="dnls"), color="blackcat") +
     coord_equal() + #theme_minimal() +
     scale_fill_gradientn(colours=c("white", "yellow", "red"), name="Downloads", values=c(0,0.25,1)) +
     #scale_fill_gradientn(colours=c("white", "#9ECAE1", "#6BAED6", "#2171B5", "#034E7B"), name="Downloads", values=c(0, 0.15, 0.5, 0.75,  1)) 
@@ -469,3 +523,4 @@ pkgDNLs_worldmapcolor <- function(pkg_name, dataset, remove_dups=TRUE, ...){
   
   return(world.map)
 }
+

@@ -39,10 +39,12 @@
 #' \dontrun{
 #' checkMD5sums2(dir=R.home()) # doesn't work for R 3.0.0 or R 3.0.1
 #' checkMD5sums2(dir=R.home(), omit_files = c("etc/Rconsole", "etc/Rprofile.site")) # will work!
+#' # tools::md5sum(file.path(R.home(), "MD5"))
+#' 
 #' }
 checkMD5sums2 <- function (package, dir, md5file, omit_files,...)
 {
-   require(tools) # making sure this is used.
+   # library(tools) # making sure this is used.
    # R code in the package should call library or require only exceptionally. Such calls are never needed for packages listed in ?Depends? as they will already be on the search path. It used to be common practice to use require calls for packages listed in ?suggests? in functions which used their functionality, but nowadays it is better to access such functionality via :: calls.
    # from: http://cran.r-project.org/doc/manuals/R-exts.html
 
@@ -81,7 +83,7 @@ checkMD5sums2 <- function (package, dir, md5file, omit_files,...)
    if (any(not.here)) {
       res <- FALSE
       if (sum(not.here) > 1L) 
-         cat("files", paste(sQuote(nmxx[not.here]), collapse = ", "), 
+         cat("Warning: files", paste(sQuote(nmxx[not.here]), collapse = ", "), 
              "are missing\n", sep = " ")
       else cat("file", sQuote(nmxx[not.here]), "is missing\n", 
                sep = " ")
@@ -92,9 +94,9 @@ checkMD5sums2 <- function (package, dir, md5file, omit_files,...)
       res <- FALSE
       files <- nmxx[diff]
       if (length(files) > 1L) 
-         cat("files", paste(sQuote(files), collapse = ", "), 
-             "have the wrong MD5 checksums\n", sep = " ")
-      else cat("file", sQuote(files), "has the wrong MD5 checksum\n")
+         warning(paste("files", paste(sQuote(files), collapse = ", "), 
+             "have the wrong MD5 checksums\n", sep = " "))
+      else warning(paste("file", sQuote(files), "has the wrong MD5 checksum\n"))
    }
    res
 }
@@ -296,8 +298,12 @@ install.R <- function(page_with_download_url = "http://cran.rstudio.com/bin/wind
    # checks the MD5sums from the new R installation:
    if(to_checkMD5sums)    {
       new_R_path <- get.installed.R.folders()[1]
-      require(tools)
-      pass_checkMD5sums <- checkMD5sums2(dir=new_R_path, omit_files = c("etc/Rconsole", "etc/Rprofile.site")) # will work!         
+      # library(tools)
+      files_to_omit_from_MD5 <- 
+         c("etc/Rconsole", "etc/Rprofile.site",  "bin/R.exe", "bin/Rscript.exe" )
+      pass_checkMD5sums <- checkMD5sums2(dir=new_R_path, 
+                                         omit_files =files_to_omit_from_MD5
+                                            ) # will work!         
       if(!pass_checkMD5sums) {
          warning("There was some problem with installing R.  Some files are not what they should be (e.g: check MD5 sums did not pass all the tests). \n  You can try installing R again (either manually or through install.R()), \n  and if the problem persists you can file a bug report by running:  bug.report(package = 'installr') ")
          # return(FALSE)
@@ -432,6 +438,7 @@ turn.number.version <- function(number_to_dots) {
 R_version_in_a_folder <- function(folder) { 
 #    folder = R.home()
    files <- list.files(folder)
+   files <- gsub("patched", "", files)
    ss <- grep("README.R-[0-9]+.[0-9]+.[0-9]+$", files)
    if(length(ss)==0) return(NA) # this means that the current folder is NOT an R installation folder with the file README.R-numbers
    README_x <- files[ss] # for example: "README.R-3.0.1"   
@@ -603,7 +610,7 @@ copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE
    cat("-----------------------","\n")
    cat("I am now copying ", length(packages_to_YES_move_from) ," packages from:", from_library, " ; into: ", to_library) 
    cat("-----------------------","\n")
-   flush.console()  # refresh the console so that the user will see the massage
+   flush.console()  # refresh the console so that the user will see the message
    packages_to_YES_move_from
    folders.copied <- file.copy(from = paths_of_packages_to_copy_from,    # copy folders
                                to = to_library,
@@ -627,6 +634,8 @@ copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE
 
 #' @title Checks for the latest R version, and if there is a newer version of R - downloads and installs it.
 #' @export
+#' @aliases 
+#' updater
 #' @description This function performs the following steps:
 #' \itemize{
 #' \item Check what is the latest R version.  If the current installed R version is up-to-date, the function ends (and returns FALSE)
@@ -644,6 +653,7 @@ copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE
 #' @param browse_news if TRUE (and if there is a newer version of R) - it opens the browser to the NEWS of the latest version of R, for the user to read through
 #' @param install_R TRUE/FALSE - if to install a new version of R (if one is available).  If missing (this is the default)  - the user be asked if to download R or not.Of course the installation part itself (the running of the .exe file) is dependent on the user.
 #' @param copy_packages TRUE/FALSE - if to copy your packages from the old version of R to the new version of R. If missing (this is the default)  - the user will be asked for his preference (he should say yes, unless he is using a global library folder).
+#' @param copy_Rprofile.site logical - if to copy your Rprofile.site from the old version of R to the new version of R. If missing (this is the default)  - the user will be asked for his preference (he should say yes, unless he is using a global library folder).
 #' @param update_packages TRUE/FALSE - if to update your packages in the new version of R (all packages will be updated without asking confirmation per package) If missing (this is the default)  - the user will be asked for his preference (he should say yes, unless he is using a global library folder).  This is done by calling the Rscript in the new R.
 #' @param keep_old_packages - if the keep the packages in the library of the old R installation. If missing (this is the default)  - the user will be asked for his preference (he should say yes, unless he is using a global library folder).
 #' @param start_new_R TRUE/FALSE - if to start the new R (Rgui) after we will quit the old R. Default is TRUE. It will try to start the 64 bit R version, if it does not exist, the 32 bit will be started. This may be less useful for people using RStudio or the likes.
@@ -664,12 +674,13 @@ copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE
 #' # # the safest upgrade option: See the NEWS, 
 #' # install R, copy packages, keep old packages, 
 #' # update packages in the new installation, 
-#' # start the Rgui of the new R, and quite current session 
+#' # start the Rgui of the new R, and quit current session 
 #' # of R
 #' 
 #' updateR() # will ask you what you want at every decision.
 #' }
-updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  update_packages, start_new_R, quit_R,  print_R_versions=TRUE, use_GUI = TRUE, 
+updateR <- function(browse_news, install_R, copy_packages, copy_Rprofile.site,
+                    keep_old_packages,  update_packages, start_new_R, quit_R,  print_R_versions=TRUE, use_GUI = TRUE, 
                     to_checkMD5sums = TRUE, keep_install_file = FALSE, download_dir = tempdir(), silent = FALSE, ...) {
    # this function checks if we have the latest version of R
    # IF not - it notifies the user - and leaves.
@@ -693,12 +704,18 @@ updateR <- function(browse_news, install_R, copy_packages, keep_old_packages,  u
    if(missing(install_R)) install_R <- ask.user.yn.question("Do you wish to install the latest version of R?", use_GUI = use_GUI)
    if(!install_R) return(FALSE) # if not - return F
    
+   
+   if(identical(options()$device, "RStudioGD")) {
+      stop_because_of_RStudio <- ask.user.yn.question("It is best to run 'updateR()' from Rgui and not from RStudio. Would you like to abort the installation and run it again from RGui?", use_GUI = use_GUI)
+      if(stop_because_of_RStudio) return(FALSE)
+   }
+   
    # if we got this far, the user wants to install the latest version of R (and his current version is old)
    cat("Installing the newest version of R,\n please wait for the installer file to be download and executed.\n Be sure to click 'next' as needed...\n")
    did_R_install <- install.R(to_checkMD5sums = to_checkMD5sums, keep_install_file = keep_install_file, download_dir = download_dir, silent = silent) 
    if(!did_R_install) return(FALSE) 
    new_R_path <- get.installed.R.folders()[1]
-
+   
    # I could have also used:
    #    if(unname(up_folder(new_R_path))!=unname(up_folder(old_R_path))) {
    # but if the new R is installed somehwere else, then when fetching
@@ -721,6 +738,21 @@ your packages to the new R installation.\n")
       # Next, copy (or MOVE):
       copy.packages.between.libraries(keep_old=keep_old_packages)   
    }
+
+   
+   if(missing(copy_Rprofile.site)) copy_Rprofile.site <- ask.user.yn.question("Do you wish to copy your 'Rprofile.site' from the older version of R to the newer version of R?")
+   
+   if(copy_Rprofile.site) {
+      old_R_path_etc <- file.path(old_R_path, "etc")
+      new_R_path_etc <- file.path(new_R_path, "etc")
+      if("Rprofile.site" %in% list.files(old_R_path_etc)) {
+         file.copy(from = file.path(old_R_path_etc, "Rprofile.site"),
+                   to = file.path(new_R_path_etc, "Rprofile.site"))         
+      } else {
+         warning('"Rprofile.site" does not exist in your old R-etc folder')
+      }      
+   }
+   
    
    # should we update_packages?
    if(missing(update_packages)) update_packages <- ask.user.yn.question("Do you wish to update your packages in the newely installed R? ", use_GUI = use_GUI)
@@ -754,6 +786,10 @@ your packages to the new R installation.\n")
 
 
 
+#' @export
+updater <- function(...) updateR(...)
+
+
 
 
 
@@ -766,7 +802,7 @@ your packages to the new R installation.\n")
 #' Also, the function can be called with using "r_version", where multiple R versions can be supplied
 #' and all will be uninstalled.
 #' @param r_version a character vector for R versions to uninstall (the format is of the style: "2.15.3"). 
-#' default is empty - resulting in a prompt massage asking the user what to do.
+#' default is empty - resulting in a prompt message asking the user what to do.
 #' @param use_GUI If asking the user which R version to uninstall, should the GUI be used? (default is TRUE) 
 #' @return the output of \link{system} running the uninstaller
 #' @seealso \link{install.R}, \link{updateR}, \link{system}
@@ -814,6 +850,7 @@ uninstall.r <- function(...) uninstall.R(...)
 
 # probably I should add updateR_console, updateR_GUI, and have updateR direct to each of them based on a parameter.
 # the function should 
+
 
 
 

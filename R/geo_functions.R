@@ -23,7 +23,7 @@
 
 
 
-# Escaping “@” in Roxygen2 Style Documentation
+# Escaping "@" in Roxygen2 Style Documentation
 # http://stackoverflow.com/questions/8809004/escaping-in-roxygen2-style-documentation
 
 
@@ -57,11 +57,10 @@
 #' 
 #' There may also be a difference in reliability, which would not so easily be measured by an individual user.
 #' 
-#' Later that year, Barry also wrote Cranography. See: \url{https://stat.ethz.ch/pipermail/r-help/2009-July/206489.html}, \url{http://www.maths.lancs.ac.uk/~rowlings/R/Cranography/}.
+#' Later that year, Barry also wrote Cranography. See: \url{http://www.maths.lancs.ac.uk/~rowlings/R/Cranography/}.
 #' 
 #' @return a data.frame with details on mirror sites and the time it took to download their NEWS file.
 #' 
-#' @source \url{https://stat.ethz.ch/pipermail/r-help/2009-July/206430.html}
 #' 
 #' @seealso \link{freegeoip}, \link{myip}, \link{cranometer}
 #' 
@@ -194,7 +193,7 @@ freegeoip <- function(ip = myip(), format = ifelse(length(ip)==1,'list','datafra
       # a single IP address
       require2("rjson")
       url <- paste(c("http://freegeoip.net/json/", ip), collapse='')
-      ret <- fromJSON(readLines(url, warn=FALSE))
+      ret <- rjson::fromJSON(readLines(url, warn=FALSE))
       if (format == 'dataframe')
          ret <- data.frame(t(unlist(ret)))
       return(ret)
@@ -227,6 +226,7 @@ freegeoip <- function(ip = myip(), format = ifelse(length(ip)==1,'list','datafra
 myip <- function(...) {
    readLines("http://api.exip.org/?call=ip", warn = FALSE)
 }
+
 
 
 

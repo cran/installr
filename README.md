@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/talgalili/installr.png?branch=master)](https://travis-ci.org/talgalili/installr)
+
 # installr
 
 ## Introduction
@@ -23,10 +25,9 @@ install.packages('installr')
 To install the latest installr version from GitHub use:
 
 ```r
-if (!require('devtools')) install.packages('devtools'); require('devtools')
-# make sure you have Rtools installed first! if not, then run:
+if (!require('devtools')) install.packages('devtools'); # make sure you have Rtools installed first! if not, then run:
 #install.packages('installr')
-#install_Rtools()
+#install.Rtools()
 devtools::install_github('talgalili/installr')
 ```
 
@@ -47,6 +48,26 @@ Or **install a new software** simply by running:
 require(installr)
 installr() #  user can easily select (via a GUI interface) a software to install.
 ```
+
+
+## Troubleshooting
+
+If you get from some commands:
+
+```r
+Error in download.file(URL, destfile = ...) : 
+  unsupported URL scheme
+```
+
+Try running:
+
+```r
+setInternet2(TRUE)
+```
+
+Sources: 
+* http://stackoverflow.com/questions/21857264/error-in-download-file-unsupported-url-scheme
+* http://stackoverflow.com/questions/19890633/r-produces-unsupported-url-scheme-error-when-getting-data-from-https-sites
 
 
 ## Contact
@@ -121,4 +142,10 @@ https://github.com/talgalili/installr/blob/master/NEWS.md
       * is.empty - function added for checking if an object is empty (e.g: of zero length)
 
 * There are a few more functions that you could see in the help files...
+
+
+
+# Code of conduct
+
+Please note that this project is released with a [Contributor Code of Conduct](CONDUCT.md). By participating in this project you agree to abide by its terms.
 
