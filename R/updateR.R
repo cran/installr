@@ -152,7 +152,9 @@ ask.user.yn.question <- function(question, use_GUI = TRUE, add_lines_before = TR
 
 #' @title Checks if there is a newer version of R
 #' @export
-#' @description Fetches the latest (not development!) R version and compares it with your currently installed R version (the version of the R session from which you are running this function).
+#' @description 
+#' Fetches the latest (not development!) R version and compares it with your currently installed R version (the version of the R session from which you are running this function).
+#' 
 #' @param notify_user if to print to you (the user) what is the latest version and what version you are currently using.
 #' @param use_GUI a logical indicating whether a graphics menu should be used if available.  If TRUE, and on Windows, it will use \link{winDialog}, otherwise it will use \link{cat}.
 #' @param page_with_download_url the URL of the page from which R can be downloaded.
@@ -432,7 +434,7 @@ turn.number.version <- function(number_to_dots) {
 #' @seealso \link{get.installed.R.folders}
 #' @examples
 #' \dontrun{
-#' R_version_in_a_folder(R.home()) 
+#' R_version_in_a_folder(folder = R.home()) 
 #' # returns the version of the current R installation
 #' }
 R_version_in_a_folder <- function(folder) { 
@@ -485,7 +487,10 @@ get.installed.R.folders <- function(sort_by_version = TRUE, add_version_to_name 
    R_folders <- file.path(R_parent_folder, items_in_R_parent_folder) # some of these may NOT be R folders
    R_folders_versions <- sapply(R_folders, R_version_in_a_folder)
    #    R_folders = "C:/R-3.0.2"     
-   if(all(is.na(R_folders_versions))) warning("Could not find any R installation on your system.")
+   if(all(is.na(R_folders_versions))) {
+      warning("Could not find any R installation on your system. (You might have installed your R version on 'c:\\R' without sub folders...")
+      return(NULL)
+   }
    
    # remove NON R installation folders (for example "library")
    ss_R_folders <- !is.na(R_folders_versions)
@@ -687,8 +692,7 @@ updateR <- function(browse_news, install_R, copy_packages, copy_Rprofile.site,
    # If there is a new version - it offers the user to download and install it.   
 
    old_R_path <- get.installed.R.folders()[1]
-   
-   
+
    there_is_a_newer_version_of_R <- check.for.updates.R(print_R_versions)
    
    if(!there_is_a_newer_version_of_R) return(FALSE) # if we have the latest version - we might as well stop now...
@@ -715,6 +719,12 @@ updateR <- function(browse_news, install_R, copy_packages, copy_Rprofile.site,
    did_R_install <- install.R(to_checkMD5sums = to_checkMD5sums, keep_install_file = keep_install_file, download_dir = download_dir, silent = silent) 
    if(!did_R_install) return(FALSE) 
    new_R_path <- get.installed.R.folders()[1]
+   
+   if(is.null(new_R_path)) {
+      warning("You seem to have installed R in an unusual folder structure. It seem to have installed correctly - but you will need to run update.packages(checkBuilt=TRUE, ask=FALSE) manually on your new installation.")
+      return(TRUE)
+   }
+   
    
    # I could have also used:
    #    if(unname(up_folder(new_R_path))!=unname(up_folder(old_R_path))) {
@@ -759,7 +769,7 @@ your packages to the new R installation.\n")
    
    if(update_packages & copy_packages) { # we should not update packages if we didn't copy them first...
       new_Rscript_path <- file.path(new_R_path, "bin/Rscript.exe") # make sure to run the newer R to update the packages.
-      update_packages_expression <- paste(new_Rscript_path, ' -e " setInternet2(TRUE); options(repos=structure(c(CRAN=\'http://cran.rstudio.com/\'))); update.packages(checkBuilt=TRUE, ask=F) "')
+      update_packages_expression <- paste(new_Rscript_path, ' -e " setInternet2(TRUE); options(repos=structure(c(CRAN=\'http://cran.rstudio.com/\'))); update.packages(checkBuilt=TRUE, ask=FALSE) "')
       #    update_packages_expression <- paste(new_Rscript_path, ' -e "date()"')
       #    update_packages_expression <- paste(new_Rscript_path, ' -e "print(R.version)"')
       system(update_packages_expression, wait = TRUE, intern = TRUE)  
