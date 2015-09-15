@@ -1,4 +1,6 @@
 [![Build Status](https://travis-ci.org/talgalili/installr.png?branch=master)](https://travis-ci.org/talgalili/installr)
+[![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/installr)](http://cran.r-project.org/package=installr)
+
 
 # installr
 
@@ -40,6 +42,8 @@ For command line use you can **update R** by running:
 ```r
 library("installr"")
 updateR() # this will open dialog boxes to take you through the steps.
+# OR use:
+# updateR(TRUE) # this will use common defaults and will be the safest/fastest option
 ```
 
 Or **install a new software** simply by running:
@@ -52,12 +56,22 @@ installr() #  user can easily select (via a GUI interface) a software to install
 
 ## Troubleshooting
 
-If you get from some commands:
+If you one of the followiong errors from some commands:
 
 ```r
 Error in download.file(URL, destfile = ...) : 
   unsupported URL scheme
 ```
+
+Or:
+
+```r
+install.RStudio()
+Error in file(con, "r") : cannot open the connection
+updateR()
+Error in file(con, "r") : cannot open the connection
+```
+
 
 Try running:
 
