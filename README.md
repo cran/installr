@@ -1,5 +1,7 @@
 [![Build Status](https://travis-ci.org/talgalili/installr.png?branch=master)](https://travis-ci.org/talgalili/installr)
 [![CRAN_Status_Badge](http://www.r-pkg.org/badges/version/installr)](http://cran.r-project.org/package=installr)
+![](http://cranlogs.r-pkg.org/badges/installr?color=yellow)
+![](http://cranlogs.r-pkg.org/badges/grand-total/installr?color=yellowgreen)
 
 
 # installr
@@ -40,7 +42,8 @@ If you are using the Rgui, you will see a new menu added on your top right (just
 For command line use you can **update R** by running:
 
 ```r
-library("installr"")
+if(!require("installr")) install.packages('installr')
+library("installr")
 updateR() # this will open dialog boxes to take you through the steps.
 # OR use:
 # updateR(TRUE) # this will use common defaults and will be the safest/fastest option
@@ -49,7 +52,7 @@ updateR() # this will open dialog boxes to take you through the steps.
 Or **install a new software** simply by running:
 
 ```r
-library("installr"")
+library("installr")
 installr() #  user can easily select (via a GUI interface) a software to install.
 ```
 

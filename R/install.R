@@ -158,7 +158,7 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, downloa
    # input: a url of an .exe file to install
    # output: it runs the .exe file (for installing something)   
    exe_filename <- file.path(download_dir, file.name.from.url(exe_URL))   # the name of the zip file MUST be as it was downloaded...   
-   tryCatch(download.file(exe_URL, destfile=exe_filename, mode = 'wb'), 
+   tryCatch(curl::curl_download(exe_URL, destfile=exe_filename, mode = 'wb'), 
             error = function(e) {
                cat("\nExplanation of the error: You didn't enter a valid .EXE URL. \nThis is likely to have happened because there was a change in the software download page, and the function you just ran no longer works. \n\n This is often caused by a change in the URL of the installer file in the download page of the software (making our function unable to know what to download). \n\n Please e-mail: tal.galili@gmail.com and let me know this function needs updating/fixing - thanks!\n")
                return(invisible(FALSE))
@@ -531,7 +531,8 @@ install.rtools <- function(...) install.Rtools(...)
 #' @description Allows the user to downloads and install the latest version of git for Windows.
 #' @details
 #' Git is a distributed revision control and source code management system with an emphasis on speed.
-#' @param page_with_download_url the URL of the git download page.
+#' @param URL the URL of the git download page.
+#' @param version numeric - either 32 or 64 (default)
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @return TRUE/FALSE - was the installation successful or not.
 #' @export
@@ -542,21 +543,22 @@ install.rtools <- function(...) install.Rtools(...)
 #' \dontrun{
 #' install.git() # installs the latest version of git
 #' }
-install.git <- function(page_with_download_url="http://git-scm.com/download/win",...) {
+install.git <- function(URL="http://git-scm.com/download/win", version = 64, ...) {
    # "http://git-scm.com/download/win"
    # get download URL:
-   page     <- readLines(page_with_download_url, warn = FALSE)
+   page     <- readLines(URL, warn = FALSE)
    # https://msysgit.googlecode.com/files/Git-1.8.1.2-preview20130201.exe
 #    pat <- "//msysgit.googlecode.com/files/Git-[0-9.]+-preview[0-9.]+.exe"; 
 # https://github.com/msysgit/msysgit/releases/download/Git-1.9.4-preview20140611/Git-1.9.4-preview20140611.exe
-   pat <- "//github.com/msysgit/msysgit/releases/download/Git-[0-9.]+-preview[0-9.]+/Git-[0-9.]+-preview[0-9.]+.exe"; 
+   # https://github.com/git-for-windows/git/releases/download/v2.6.2.windows.1/Git-2.6.2-64-bit.exe
+   pat <- paste0("//github.com/git-for-windows/git/releases/download/v[0-9.]+.windows[0-9.]+/Git-[0-9.]+-",version,"-bit.exe"); 
    target_line <- grep(pat, page, value = TRUE); 
    m <- regexpr(pat, target_line); 
    URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
    URL      <- paste('https', URL, sep = ':')[1] # we might find the same file more than once - so we'll only take its first one
 # https://github.com/msysgit/msysgit/releases/download/Git-1.9.4-preview20140611/Git-1.9.4-preview20140611.exe
    # install.
-   install.URL(URL,...)   
+   install.URL(URL[1],...)   
 }
 
 
@@ -629,13 +631,21 @@ install.npptor <- function(URL="http://sourceforge.net/projects/npptor/files/npp
    # /npptor installer/NppToR-2.6.2.exe
    # http://sourceforge.net/projects/npptor/files/npptor%20installer/NppToR-2.6.2.exe/
    # http://sourceforge.net/projects/npptor/files/npptor%20installer/NppToR-[0-9.]+.exe
-   pat <- "http://sourceforge.net/projects/npptor/files/npptor%20installer/NppToR-[0-9.]+.exe"
-   target_line <- grep(pat, page, value = TRUE); 
-   m <- regexpr(pat, target_line); 
-   URL      <- regmatches(target_line, m)[1] # (The http still needs to be prepended.
+   # pat <- "http://sourceforge.net/projects/npptor/files/npptor%20installer/NppToR-[0-9.]+.exe"
    
-   # install.
-   install.URL(URL,...)   
+   # http://downloads.sourceforge.net/project/npptor/npptor%20installer/NppToR-2.6.4.exe
+   
+   pat <- "NppToR-[0-9.]+.exe" # I assume the first option on the page is the most up-to-date
+   filename <- na.omit(stringr::str_extract(page, pat))[1]
+   URL      <- paste0("http://downloads.sourceforge.net/project/npptor/npptor%20installer/",
+                      filename)
+   
+   # seems to fail...
+   install.URL(URL,...)
+   
+   # download.file("http://downloads.sourceforge.net/project/npptor/npptor%20installer/NppToR-2.7.0.exe",
+   #             destfile="c:\\temp.exe", mode = 'wb')
+   
 }
 
 
@@ -1101,7 +1111,7 @@ install.ffmpeg <- function(...) install.FFmpeg(...)
 #' @description Returns the search path for executable files based on %PATH%
 #' @return A character vector with the search path for executable files
 #' @references
-#' \url{http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/ntcmds_shelloverview.mspx?mfr=true}
+#'  http://www.microsoft.com/resources/documentation/windows/xp/all/proddocs/en-us/ntcmds_shelloverview.mspx?mfr=true
 #' @examples
 #' \dontrun{
 #' system.PATH() # 
@@ -1448,6 +1458,8 @@ fetch_tag_from_Rd <- function(package, tag = "\\author",...){
 
 #' @title Access (and clean) author elements from R's Rd file
 #' @export
+#' @description 
+#' Find authors.
 #' @details
 #' List authors for a package from its "author" tag elements from its Rd files.
 #' The function also seperate lists of authors, and cleans the output a bit 

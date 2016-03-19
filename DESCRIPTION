@@ -2,8 +2,8 @@ Package: installr
 Type: Package
 Title: Using R to Install Stuff (Such As: R, Rtools, RStudio, Git, and
         More!)
-Version: 0.17.0
-Date: 2015-09-11
+Version: 0.17.4
+Date: 2016-03-19
 Authors@R: c(person("Tal", "Galili", role = c("aut", "cre", "cph"), email =
     "tal.galili@gmail.com", comment = "http://www.r-statistics.com"),
     person("Barry", "Rowlingson", role = "ctb", email =
@@ -37,10 +37,12 @@ URL: https://github.com/talgalili/installr/,
         http://www.r-statistics.com/tag/installr/
 BugReports: https://github.com/talgalili/installr/issues
 Depends: R (>= 2.11.0), utils
+Imports: curl, stringr
 Suggests: XML, devtools, rjson, data.table, plyr, ggplot2, sp, tools
 License: GPL-2
+RoxygenNote: 5.0.1
 NeedsCompilation: no
-Packaged: 2015-09-11 07:49:56 UTC; junior
+Packaged: 2016-03-19 11:58:48 UTC; junior
 Author: Tal Galili [aut, cre, cph] (http://www.r-statistics.com),
   Barry Rowlingson [ctb],
   Boris Hejblum [ctb],
@@ -62,4 +64,4 @@ Author: Tal Galili [aut, cre, cph] (http://www.r-statistics.com),
 Maintainer: Tal Galili <tal.galili@gmail.com>
 OS_type: windows
 Repository: CRAN
-Date/Publication: 2015-09-15 00:58:14
+Date/Publication: 2016-03-19 15:21:48

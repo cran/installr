@@ -171,13 +171,15 @@ ask.user.yn.question <- function(question, GUI = TRUE, add_lines_before = TRUE) 
 #' }
 check.for.updates.R <- function(notify_user = TRUE, 
                                 GUI = TRUE, 
-                                page_with_download_url = "http://cran.rstudio.com/bin/windows/base/",
-                                pat = "R-[0-9.]+-win") {
+                                page_with_download_url = "https://cran.rstudio.com/bin/windows/base/",
+                                pat = "R-[0-9.]+.+-win\\.exe") {
+   # stringr::str_extract("R-3.2.4-win.exe", "R-[0-9.]+.+-win\\.exe")
+   # stringr::str_extract("R-3.2.4revised-win.exe", "R-[0-9.]+.+-win\\.exe")
+   
    page   <- readLines(page_with_download_url, warn = FALSE)    
-   target_line <- grep(pat, page, value = TRUE); 
-   m <- regexpr(pat, target_line); 
-   latest_R_version  <- regmatches(target_line, m) 
-   latest_R_version  <- gsub(pattern="R-|-win" ,"", latest_R_version) # remove junk text
+   filename <- na.omit(stringr::str_extract(page, pat))[1]
+
+   latest_R_version  <- stringr::str_extract(filename, "[0-9.]+")
    
    pat <- "Last change: [0-9.]+-[0-9.]+-[0-9.]+"; 
    target_line <- grep(pat, page, value = TRUE); 
@@ -223,7 +225,7 @@ check.for.updates.R <- function(notify_user = TRUE,
 
 #' @title See the NEWS file for the latest R release
 #' @export
-#' @description Sends the user the the NEWS html file on "http://cran.rstudio.com/bin/windows/base/NEWS.R-3.0.0.html" (URL changes with each version)
+#' @description Sends the user the the NEWS html file on "https://cran.rstudio.com/bin/windows/base/NEWS.R-3.0.0.html" (URL changes with each version)
 #' @param URL the URL of the page from which R can be downloaded.
 #' @param ... for future use
 #' @return invisible(NULL)
@@ -232,7 +234,7 @@ check.for.updates.R <- function(notify_user = TRUE,
 #' browse.latest.R.NEWS() 
 #' }
 browse.latest.R.NEWS <- function(
-   URL = "http://cran.rstudio.com/bin/windows/base/",...) {
+   URL = "https://cran.rstudio.com/bin/windows/base/",...) {
    page_with_download_url <- URL
    page   <- readLines(page_with_download_url, warn = FALSE)
    pat <- "NEWS.R-[0-9.]+.html"# this is the structure of the link...
@@ -265,12 +267,12 @@ browse.latest.R.NEWS <- function(
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @return TRUE/FALSE - was the installation of R successful or not.
 #' @seealso \link{uninstall.R}, \link{install.Rdevel}, \link{updateR}, \link{system}
-#' @references \url{http://cran.rstudio.com/bin/windows/base/}
+#' @references \url{https://cran.r-project.org/bin/windows/base/}
 #' @examples
 #' \dontrun{
 #' install.R() 
 #' }
-install.R <- function(page_with_download_url = "http://cran.rstudio.com/bin/windows/base/", 
+install.R <- function(page_with_download_url = "https://cran.rstudio.com/bin/windows/base/", 
                       pat = "R-[0-9.]+-win.exe",
                       to_checkMD5sums = TRUE,
                       keep_install_file = FALSE,
@@ -338,12 +340,12 @@ install.R <- function(page_with_download_url = "http://cran.rstudio.com/bin/wind
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @return TRUE/FALSE - was the installation of R successful or not.
 #' @seealso \link{install.R}, \link{updateR}
-#' @references \url{http://cran.rstudio.com/bin/windows/base/rdevel.html}
+#' @references \url{https://cran.r-project.org/bin/windows/base/rdevel.html}
 #' @examples
 #' \dontrun{
 #' install.Rdevel() 
 #' }
-install.Rdevel <- function(exe_URL = "http://cran.rstudio.com/bin/windows/base/R-devel-win.exe", ...) {
+install.Rdevel <- function(exe_URL = "https://cran.rstudio.com/bin/windows/base/R-devel-win.exe", ...) {
    install.URL(exe_URL)   
 }
 
@@ -354,6 +356,8 @@ install.Rdevel <- function(exe_URL = "http://cran.rstudio.com/bin/windows/base/R
 
 
 #' @title Turns version to number (for 1 value only)
+#' @description 
+#' Turns version to number (for 1 value only)
 #' @param version_with_dots A character value - of the version of R (for example 2.15.2)
 #' @return A "number" representation of the version (for example: 2015002)
 #' @seealso \link{turn.version.to.number}
@@ -379,7 +383,10 @@ turn.version.to.number1 <- function(version_with_dots) {
 
 
 ### @aliases turn.version.to.number1
+
 #' @title Turns version to number (for a vector of values)
+#' @description 
+#' Turns version to number (for a vector of values)
 #' @param version_with_dots - A character vector - of the version of R (for example 2.15.2)
 #' @return A vector of "numbers" representing the versions (for example: 2015002).  The names of the vector is the original version character.
 #' @examples
@@ -398,7 +405,10 @@ turn.version.to.number <- function(version_with_dots) {
 # turn.version.to.number("2.15.11") # ---> 2015011
 
 # number_to_dots = 2015011
+
 #' @title Turns a vector of version-numbers back to version-character
+#' @description 
+#' Version Num to char
 #' @param number_to_dots A numeric vector - of the number-version of R 
 #' @return A vector of "numbers" representing the versions (for example: 2015002).  The names of the vector is the original version character.
 #' @examples
@@ -692,7 +702,8 @@ copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE
 updateR <- function(fast = FALSE, 
                     browse_news, install_R, copy_packages, copy_Rprofile.site,
                     keep_old_packages,  update_packages, start_new_R, quit_R,  print_R_versions=TRUE, GUI = TRUE, 
-                    to_checkMD5sums = TRUE, keep_install_file = FALSE, download_dir = tempdir(), silent = FALSE, 
+                    to_checkMD5sums = FALSE, keep_install_file = FALSE, download_dir = tempdir(),
+                    silent = FALSE, 
                     setInternet2 = TRUE, ...) {
    # this function checks if we have the latest version of R
    # IF not - it notifies the user - and leaves.
@@ -710,7 +721,7 @@ updateR <- function(fast = FALSE,
       quit_R <- FALSE
       print_R_versions  <-  TRUE
       GUI  <- FALSE
-      to_checkMD5sums  <-  TRUE
+      to_checkMD5sums  <-  FALSE
       keep_install_file  <-  TRUE
       download_dir  <-  "."
       silent  <-  FALSE
@@ -797,7 +808,7 @@ your packages to the new R installation.\n")
    
    if(update_packages & copy_packages) { # we should not update packages if we didn't copy them first...
       new_Rscript_path <- file.path(new_R_path, "bin/Rscript.exe") # make sure to run the newer R to update the packages.
-      update_packages_expression <- paste(new_Rscript_path, ' -e " setInternet2(TRUE); options(repos=structure(c(CRAN=\'http://cran.rstudio.com/\'))); update.packages(checkBuilt=TRUE, ask=FALSE) "')
+      update_packages_expression <- paste(new_Rscript_path, ' -e " setInternet2(TRUE); options(repos=structure(c(CRAN=\'https://cran.rstudio.com/\'))); update.packages(checkBuilt=TRUE, ask=FALSE) "')
       #    update_packages_expression <- paste(new_Rscript_path, ' -e "date()"')
       #    update_packages_expression <- paste(new_Rscript_path, ' -e "print(R.version)"')
       system(update_packages_expression, wait = TRUE, intern = TRUE, show.output.on.console = TRUE)
