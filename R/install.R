@@ -638,13 +638,24 @@ install.npptor <- function(URL="http://sourceforge.net/projects/npptor/files/npp
    
    # http://downloads.sourceforge.net/project/npptor/npptor%20installer/NppToR-2.6.4.exe
    
+   if(!requireNamespace("stringr")) {
+      cat("The package 'stringr' is missing - trying to install it")
+      install.packages("stringr")
+      requireNamespace("stringr")
+   }
+   
    pat <- "NppToR-[0-9.]+.exe" # I assume the first option on the page is the most up-to-date
    filename <- na.omit(stringr::str_extract(page, pat))[1]
    URL      <- paste0("http://downloads.sourceforge.net/project/npptor/npptor%20installer/",
                       filename)
    
-   # seems to fail...
+   
    cat("Please wait a moment while downloading (you may not see R respond for half a minute)\n ")
+   if(!requireNamespace("curl")) {
+      cat("The package 'curl' is missing - trying to install it")
+      install.packages("curl")
+      requireNamespace("curl")
+   }
    install.URL(URL, download_fun = curl::curl_download, ...)
    
    # download.file("http://downloads.sourceforge.net/project/npptor/npptor%20installer/NppToR-2.7.0.exe",
@@ -1253,7 +1264,7 @@ source.https <- function(URL,..., remove_r_file = T) {
 #' @description  require2 load add-on packages by passing it to \link{require}.  However, if the package is not available on the system, it will first install it (through \link{install.packages}), and only then try to load it again.
 #' 
 #' @param package A character of the name of a package (can also be without quotes).
-#' @param ask Should the user be asked to install the require packaged, in case it is missing? (default is TRUE)
+#' @param ask Should the user be asked to install the require packaged, in case it is missing? (default is FALSE)
 #' @param ... not used
 #' 
 #' @return  returns (invisibly) a logical indicating whether the required package is available.
@@ -1264,7 +1275,7 @@ source.https <- function(URL,..., remove_r_file = T) {
 #' a= require2(geonames)
 #' a
 #' }
-require2 <- function(package, ask= TRUE, ...) {
+require2 <- function(package, ask = FALSE, ...) {
    package <- as.character(substitute(package))
    if(!suppressWarnings(require(package=package, character.only = TRUE))) {
 	  if(ask) {
@@ -1580,16 +1591,19 @@ package_authors <- function(package, to_strsplit = TRUE, split=c(",|and"), to_ta
 #' install.CMake() # installs the latest version of ImageMagick
 #' }
 #'
-install.CMake   <- function(URL="http://www.cmake.org/cmake/resources/software.html",...) {    
+install.CMake   <- function(URL="https://cmake.org/download/",...) {    
    page_with_download_url <- URL
    # get download URL:
    page     <- readLines(page_with_download_url, warn = FALSE)
    # http://www.cmake.org/files/v3.0/cmake-3.0.1-win32-x86.exe
-   pat <- "//www.cmake.org/files/v[0-9.]+/cmake-[0-9.]+-win32-x86.exe"
+   # pat <- "//www.cmake.org/files/v[0-9.]+/cmake-[0-9.]+-win32-x86.exe"
+   pat <- "/files/v[0-9.]+/cmake-[0-9.]+-win32-x86.msi"
+   
    target_line <- grep(pat, page, value = TRUE); 
    m <- regexpr(pat, target_line); 
    URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
-   URL      <- paste('http', URL, sep = ':')[1] # we might find the same file more than once - so we'll only take its first one
+   URL      <- paste('https://cmake.org', URL, sep = '')[1] # we might find the same file more than once - so we'll only take its first one
+   
    
    # install.
    install.URL(URL,...)   

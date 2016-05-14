@@ -237,12 +237,11 @@ browse.latest.R.NEWS <- function(
    URL = "https://cran.rstudio.com/bin/windows/base/",...) {
    page_with_download_url <- URL
    page   <- readLines(page_with_download_url, warn = FALSE)
-   pat <- "NEWS.R-[0-9.]+.html"# this is the structure of the link...
+   pat <- "NEWS.R-[0-9.]+[^\">]*.html" # this is the structure of the link...
    target_line <- grep(pat, page, value = TRUE); 
    m <- regexpr(pat, target_line); 
-   latest_R_version_NEWS_html  <- regmatches(target_line, m)[1]
-   
-   URL <- paste(page_with_download_url, latest_R_version_NEWS_html, sep = "")
+   latest_news_path  <- regmatches(target_line, m)[1]
+   URL <- paste(page_with_download_url, ifelse(is.na(latest_news_path), "", latest_news_path), sep = "")
    browseURL(URL)   
    
    return(invisible(NULL))
@@ -450,7 +449,7 @@ turn.number.version <- function(number_to_dots) {
 R_version_in_a_folder <- function(folder) { 
 #    folder = R.home()
    files <- list.files(folder)
-   files <- gsub("patched", "", files)
+   files <- gsub("patched|revised", "", files)
    ss <- grep("README.R-[0-9]+.[0-9]+.[0-9]+$", files)
    if(length(ss)==0) return(NA) # this means that the current folder is NOT an R installation folder with the file README.R-numbers
    README_x <- files[ss] # for example: "README.R-3.0.1"   
@@ -569,7 +568,7 @@ get.installed.R.folders <- function(sort_by_version = TRUE, add_version_to_name 
 #' # As before, but this time it will MOVE (instead of COPY) the packages.
 #' #  e.g: erase them from their old location.
 #' }
-copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE, do_NOT_override_packages_in_new_R = TRUE) {
+copy.packages.between.libraries <- function(from, to, ask = FALSE, keep_old = TRUE, do_NOT_override_packages_in_new_R = TRUE) {
    
    installed_R_folders <- get.installed.R.folders()   
    installed_R_folders_TABLE <-data.frame("R_version" = names(installed_R_folders) , Folder = installed_R_folders)
@@ -683,7 +682,7 @@ copy.packages.between.libraries <- function(from, to, ask =FALSE,keep_old = TRUE
 #' @param keep_install_file If TRUE - the installer file will not be erased after it is downloaded and run.
 #' @param download_dir A character of the directory into which to download the file. (default is \link{tempdir}())
 #' @param silent If TRUE - enables silent installation mode.
-#' @param setInternet2 logical. Should setInternet2(TRUE) be run.
+#' @param setInternet2 logical. Should setInternet2(TRUE) be run. (only relevant for versions of R before 3.3.0)
 #' @param ... Other arguments (this is currently not used in any way)
 #' @return a TRUE/FALSE value on whether or not R was updated.
 #' @seealso \link{check.for.updates.R}, \link{install.R}, 
@@ -728,7 +727,11 @@ updateR <- function(fast = FALSE,
       setInternet2 <- TRUE
    }
    
-   if(setInternet2) setInternet2(TRUE)
+   current_R_is_less_then_R_3.3.0 <- as.numeric(R.version$major) * 1000 + as.numeric(R.version$minor) < 3003
+   if(setInternet2 & current_R_is_less_then_R_3.3.0) setInternet2(TRUE)
+   
+   
+   
    
    old_R_path <- get.installed.R.folders()[1]
 
@@ -808,7 +811,8 @@ your packages to the new R installation.\n")
    
    if(update_packages & copy_packages) { # we should not update packages if we didn't copy them first...
       new_Rscript_path <- file.path(new_R_path, "bin/Rscript.exe") # make sure to run the newer R to update the packages.
-      update_packages_expression <- paste(new_Rscript_path, ' -e " setInternet2(TRUE); options(repos=structure(c(CRAN=\'https://cran.rstudio.com/\'))); update.packages(checkBuilt=TRUE, ask=FALSE) "')
+      update_packages_expression <- paste(new_Rscript_path, ' -e " options(repos=structure(c(CRAN=\'https://cran.rstudio.com/\'))); update.packages(checkBuilt=TRUE, ask=FALSE) "')
+      # update_packages_expression <- paste(new_Rscript_path, ' -e " setInternet2(TRUE); options(repos=structure(c(CRAN=\'https://cran.rstudio.com/\'))); update.packages(checkBuilt=TRUE, ask=FALSE) "')
       #    update_packages_expression <- paste(new_Rscript_path, ' -e "date()"')
       #    update_packages_expression <- paste(new_Rscript_path, ' -e "print(R.version)"')
       system(update_packages_expression, wait = TRUE, intern = TRUE, show.output.on.console = TRUE)
