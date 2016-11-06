@@ -28,7 +28,7 @@
 #' @seealso \code{\link{install.URL}}, \code{\link{install.packages.zip}}
 #' @examples
 #' \dontrun{
-#' url <- "http://cran.r-project.org/bin/windows/base/R-2.15.3-win.exe"
+#' url <- "https://cran.r-project.org/bin/windows/base/R-2.15.3-win.exe"
 #' file.name.from.url(url) # returns: "R-2.15.3-win.exe"
 #' }
 file.name.from.url <- function(URL) {
@@ -73,7 +73,7 @@ up_folder <- function(FOLDER, n = -1,...) {
 #' @seealso \code{\link{install.packages}}, \code{\link[R.utils]{installPackages}}
 #' @examples
 #' \dontrun{
-#' install.packages.zip("http://cran.r-project.org/bin/windows/contrib/r-release/devtools_1.1.zip")
+#' install.packages.zip("https://cran.r-project.org/bin/windows/contrib/r-release/devtools_1.1.zip")
 #' }
 install.packages.zip <- function(zip_URL) {
    # zip_URL is the URL for the package_name.zip file
@@ -84,7 +84,7 @@ install.packages.zip <- function(zip_URL) {
    invisible(NULL)
 }
 # a simple example of use:
-# install.packages.zip(zip_URL="http://cran.r-project.org/bin/windows/contrib/r-release/TeachingSampling_2.0.1.zip")
+# install.packages.zip(zip_URL="https://cran.r-project.org/bin/windows/contrib/r-release/TeachingSampling_2.0.1.zip")
 
 
 
@@ -129,7 +129,21 @@ uninstall.packages <- function(pkgs,lib, warning = TRUE, ...) {
    invisible(NULL)
 }
 # a simple example of use:
-# install.packages.zip(zip_URL="http://cran.r-project.org/bin/windows/contrib/r-release/TeachingSampling_2.0.1.zip")
+# install.packages.zip(zip_URL="https://cran.r-project.org/bin/windows/contrib/r-release/TeachingSampling_2.0.1.zip")
+
+
+
+# source: http://stackoverflow.com/questions/5076593/how-to-determine-if-you-have-an-internet-connection-in-r
+# checks if there is internet.
+havingIP <- function() {
+   if (.Platform$OS.type == "windows") {
+      ipmessage <- system("ipconfig", intern = TRUE)
+   } else {
+      ipmessage <- system("ifconfig", intern = TRUE)
+   }
+   validIP <- "((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)[.]){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)"
+   any(grep(validIP, ipmessage))
+}
 
 
 
@@ -147,7 +161,7 @@ uninstall.packages <- function(pkgs,lib, warning = TRUE, ...) {
 #' @param download_fun a function to use for downloading. Default is \link{download.file}. We can also use
 #' \link[curl]{curl_download} (but it doesn't give as good of an output while downloading the file).
 #' @param ... parameters passed to 'shell'
-#' @return invisible(TRUE/FALSE) - was the installation successful or not. (this is based on the output of shell of running the command being either 0 or 1/2.  0 means the file was succesfully installed, while 1 or 2 means there was a failure in running the installer.)
+#' @return invisible(TRUE/FALSE) - was the installation successful or not. (this is based on the output of shell of running the command being either 0 or 1/2.  0 means the file was successfully installed, while 1 or 2 means there was a failure in running the installer.)
 #' @seealso \link{shell}
 #' @export
 #' @author GERGELY DAROCZI, Tal Galili
@@ -159,6 +173,11 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, downloa
    # source: http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
    # input: a url of an .exe file to install
    # output: it runs the .exe file (for installing something)   
+   
+   
+   if(!havingIP()) warning("You do not seem to be connected to the internet. Hence - you will likely not be able to download software.")
+   
+   
    exe_filename <- file.path(download_dir, file.name.from.url(exe_URL))   # the name of the zip file MUST be as it was downloaded...   
    # tryCatch(curl::curl_download(exe_URL, destfile=exe_filename, quiet = FALSE, mode = 'wb'), 
    tryCatch(download_fun(exe_URL, destfile=exe_filename, quiet = FALSE, mode = 'wb'), 
@@ -169,7 +188,7 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, downloa
    
    # check if we downloaded the file.
    if(file.exists(exe_filename)) {
-      if(message) cat("\nThe file was downloaded succesfully into:\n", exe_filename, "\n")
+      if(message) cat("\nThe file was downloaded successfully into:\n", exe_filename, "\n")
    } else {
       if(message) cat("\nWe failed to download the file into:\n", exe_filename, "\n(i.e.: the installation failed)\n")
       return(invisible(FALSE))      
@@ -207,7 +226,7 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, downloa
       #    file.access(exe_filename, mode = 3)
    return(invisible(shell_output == 0))
    # error code 1/2 means that we couldn't finish running the file
-   # # 0 means - the file was succesfully installed.   
+   # # 0 means - the file was successfully installed.   
 }
 
 
@@ -453,7 +472,7 @@ and enter the row number of the file-version you'd like to install: "
 #' @source
 #' Some parts of the code are taken from the devtools, see \url{https://github.com/hadley/devtools/blob/master/R/rtools.r}
 #' @references
-#' RTools homepage (for other resources and documentation): \url{http://cran.r-project.org/bin/windows/Rtools/}
+#' RTools homepage (for other resources and documentation): \url{https://cran.r-project.org/bin/windows/Rtools/}
 #' @examples
 #' \dontrun{
 #' install.Rtools() # installs the latest version of RTools (if one is needed)
@@ -467,7 +486,7 @@ and enter the row number of the file-version you'd like to install: "
 install.Rtools <- function(choose_version = FALSE,                           
                            check=TRUE,
                            GUI = TRUE,
-                           page_with_download_url = 'http://cran.r-project.org/bin/windows/Rtools/',
+                           page_with_download_url = 'https://cran.r-project.org/bin/windows/Rtools/',
                            ...
 ) {
    # choose_version==T allows the user to choose which version of Rtools he wishes to install
@@ -683,6 +702,8 @@ install.npptor <- function(URL="http://sourceforge.net/projects/npptor/files/npp
 #' @examples
 #' \dontrun{
 #' install.MikTeX() # installs the latest version of MikTeX
+#' install.MikTeX(32) # installs the latest version of MikTeX
+#' install.MikTeX(64) # installs the latest version of MikTeX
 #' }
 install.MikTeX  <- function(version, page_with_download_url="http://miktex.org/download",...) {
    if(missing(version)) {
@@ -698,22 +719,24 @@ install.MikTeX  <- function(version, page_with_download_url="http://miktex.org/d
       page     <- readLines(page_with_download_url, warn = FALSE)
       #"http://mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-2.9.4757.exe
       # "http://mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-2.9.4757-x64.exe"
-      pat <- "//mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-[0-9.]+.exe"; 
+      # http://miktex.org/download/ctan/systems/win32/miktex/setup/basic-miktex-2.9.6069-x64.exe
+      pat <- "/download/ctan/systems/win32/miktex/setup/basic-miktex-[0-9.]+.exe"; 
       target_line <- grep(pat, page, value = TRUE); 
       m <- regexpr(pat, target_line); 
       URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
-      URL      <- paste('http', URL, sep = ':')[1] # we might find the same file more than once - so we'll only take its first one
+      URL      <- paste('http://miktex.org', URL, sep = '')[1] # we might find the same file more than once - so we'll only take its first one
    } else { # else -> version == 64
       page     <- readLines(page_with_download_url, warn = FALSE)
       #"http://mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-2.9.4757.exe
       # "http://mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-2.9.4757-x64.exe"
-      pat <- "//mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-[0-9.]+-x64.exe"; 
+      pat <- "/download/ctan/systems/win32/miktex/setup/basic-miktex-[0-9.]+-x64.exe"; 
       target_line <- grep(pat, page, value = TRUE); 
       m <- regexpr(pat, target_line); 
       URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
-      URL      <- paste('http', URL, sep = ':')[1] # we might find the same file more than once - so we'll only take its first one      
+      URL      <- paste('http://miktex.org', URL, sep = '')[1] # we might find the same file more than once - so we'll only take its first one
    }
    # install.
+   # install.URL(URL)   
    install.URL(URL,...)   
 }
 
@@ -1229,7 +1252,7 @@ install.texmaker <- function(...) install.Texmaker(...)
 #' \itemize{
 #' \item Using RCurl
 #' \item devtools::source_url 
-#' \item A erlevant (OLD) discussion: http://stackoverflow.com/questions/7715723/sourcing-r-script-over-https
+#' \item A relevant (OLD) discussion: http://stackoverflow.com/questions/7715723/sourcing-r-script-over-https
 #' }
 #' @examples
 #' \dontrun{
@@ -1334,7 +1357,7 @@ restart_RGui <- function(...) {
 #' @description Gives the user the option to download software from within R.
 #' @param GUI a logical indicating whether a graphics menu should be used if available.  If TRUE, and on Windows, it will use \link{winDialog}, otherwise it will use \link[utils]{menu}.
 #' @param ... not in use
-#' @return TRUE/FALSE - if the software was installed succesfully or no.
+#' @return TRUE/FALSE - if the software was installed successfully or not.
 #' @seealso \link{updateR}, \link{install.R}, 
 #' \link{install.RStudio}, \link{install.Rtools}, \link{install.pandoc}, 
 #' \link{install.MikTeX}, \link{install.git}, \link{install.git},
@@ -1497,7 +1520,7 @@ fetch_tag_from_Rd <- function(package, tag = "\\author",...){
 #' @references
 #' Useful for updating your DESCRIPTION file:
 #' 
-#' \url{http://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file}
+#' \url{https://cran.r-project.org/doc/manuals/R-exts.html#The-DESCRIPTION-file}
 #' 
 #' @examples
 #' \dontrun{
