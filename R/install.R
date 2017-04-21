@@ -182,7 +182,7 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, downloa
    # tryCatch(curl::curl_download(exe_URL, destfile=exe_filename, quiet = FALSE, mode = 'wb'), 
    tryCatch(download_fun(exe_URL, destfile=exe_filename, quiet = FALSE, mode = 'wb'), 
                      error = function(e) {
-               cat("\nExplanation of the error: You didn't enter a valid .EXE URL. \nThis is likely to have happened because there was a change in the software download page, and the function you just ran no longer works. \n\n This is often caused by a change in the URL of the installer file in the download page of the software (making our function unable to know what to download). \n\n Please e-mail: tal.galili@gmail.com and let me know this function needs updating/fixing - thanks!\n")
+               cat("\nExplanation of the error: You didn't enter a valid .EXE URL. \nThis is likely to have happened because there was a change in the URL of the installer file in the download page of the software (making our function unable to know what to download). \n\nThis might have already been fixed in the latest version of installr. Install the latest version of installr using devtools::install_github('talgalili/installr') and try again.\n\nIf this doesn't help please e-mail: tal.galili@gmail.com and let me know this function needs updating/fixing (please include the output of sessionInfo() ) - thanks!\n")
                return(invisible(FALSE))
                })  
    
@@ -470,7 +470,7 @@ and enter the row number of the file-version you'd like to install: "
 #' @return invisible(TRUE/FALSE) - was the installation successful or not.
 #' @export
 #' @source
-#' Some parts of the code are taken from the devtools, see \url{https://github.com/hadley/devtools/blob/master/R/rtools.r}
+#' Some parts of the code are taken from the devtools.
 #' @references
 #' RTools homepage (for other resources and documentation): \url{https://cran.r-project.org/bin/windows/Rtools/}
 #' @examples
@@ -482,6 +482,8 @@ and enter the row number of the file-version you'd like to install: "
 #' install.Rtools(TRUE, FALSE) # asks the user to choose 
 #' # the latest version of RTools to install 
 #' # (regardless if one is needed)
+#' # install.Rtools(F,F)
+#' 
 #' }
 install.Rtools <- function(choose_version = FALSE,                           
                            check=TRUE,
@@ -522,8 +524,10 @@ install.Rtools <- function(choose_version = FALSE,
       version_to_install_no_dots <- gsub("\\.","", version_to_install)
       exe_filename <-   paste("Rtools" , version_to_install_no_dots , ".exe", sep = "")
    } else { # else - it means we have a version of R which is beyond our current knowledge of Rtools (or that the user asked to choose a version), so we'll have to let the user decide on what to do.
-		require2("XML")
-      TABLE <- XML::readHTMLTable(page_with_download_url, header=T,stringsAsFactors=F)[[1]]
+      require2("htmltab")
+      TABLE <- htmltab::htmltab(page_with_download_url)
+# 		require2("XML")
+#       TABLE <- XML::readHTMLTable(page_with_download_url, header=T,stringsAsFactors=F)[[1]]
       # example: http://stackoverflow.com/questions/1395528/scraping-html-tables-into-r-data-frames-using-the-xml-package
       
       # choose a version:
@@ -705,14 +709,15 @@ install.npptor <- function(URL="http://sourceforge.net/projects/npptor/files/npp
 #' install.MikTeX(32) # installs the latest version of MikTeX
 #' install.MikTeX(64) # installs the latest version of MikTeX
 #' }
-install.MikTeX  <- function(version, page_with_download_url="http://miktex.org/download",...) {
-   if(missing(version)) {
-      version <- ifelse(ask.user.for.a.row(data.frame(version = c(32, 64)), "Which version of MiKTeX do you want?") == 1,
-                        32, 64)
-   } else { 
-      if(!(version %in% c(32,64)))       version <- ifelse(ask.user.for.a.row(data.frame(version = c(32, 64)), "Which version of MiKTeX do you want?") == 1,
-                                                           32, 64)      
-   }
+install.MikTeX  <- function(version = 64, page_with_download_url="http://miktex.org/download",...) {
+   
+   # if(missing(version)) {
+   #    version <- ifelse(ask.user.for.a.row(data.frame(version = c(32, 64)), "Which version of MiKTeX do you want?") == 1,
+   #                      32, 64)
+   # } else { 
+   #    if(!(version %in% c(32,64)))       version <- ifelse(ask.user.for.a.row(data.frame(version = c(32, 64)), "Which version of MiKTeX do you want?") == 1,
+   #                                                         32, 64)      
+   # }
    
    # get download URL:
    if(version == 32) {
@@ -729,11 +734,12 @@ install.MikTeX  <- function(version, page_with_download_url="http://miktex.org/d
       page     <- readLines(page_with_download_url, warn = FALSE)
       #"http://mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-2.9.4757.exe
       # "http://mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-2.9.4757-x64.exe"
-      pat <- "/download/ctan/systems/win32/miktex/setup/basic-miktex-[0-9.]+-x64.exe"; 
+      # http://ctan.mirror.ftn.uns.ac.rs/systems/win32/miktex/setup/basic-miktex-2.9.6069-x64.exe
+      pat <- "http://.*/systems/win32/miktex/setup/basic-miktex-[0-9.]+-x64.exe"; 
       target_line <- grep(pat, page, value = TRUE); 
       m <- regexpr(pat, target_line); 
       URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
-      URL      <- paste('http://miktex.org', URL, sep = '')[1] # we might find the same file more than once - so we'll only take its first one
+      # URL      <- paste('http://miktex.org', URL, sep = '')[1] # we might find the same file more than once - so we'll only take its first one
    }
    # install.
    # install.URL(URL)   
@@ -1008,7 +1014,7 @@ install.latex2rtf <- function(...) install.LaTeX2RTF(...)
 #' @export
 #' @references
 #' \itemize{
-#' \item Cygwin homepage: \url{http://cygwin.com/}
+#' \item Cygwin homepage: https://www.cygwin.com/
 #' } 
 #' @examples
 #' \dontrun{
@@ -1288,6 +1294,8 @@ source.https <- function(URL,..., remove_r_file = T) {
 #' 
 #' @param package A character of the name of a package (can also be without quotes).
 #' @param ask Should the user be asked to install the require packaged, in case it is missing? (default is FALSE)
+#' @param character.only logical (FALSE) - a logical indicating whether package or 
+#' help can be assumed to be character strings. Passed to \link{require}.
 #' @param ... not used
 #' 
 #' @return  returns (invisibly) a logical indicating whether the required package is available.
@@ -1298,8 +1306,10 @@ source.https <- function(URL,..., remove_r_file = T) {
 #' a= require2(geonames)
 #' a
 #' }
-require2 <- function(package, ask = FALSE, ...) {
-   package <- as.character(substitute(package))
+require2 <- function (package, ask = FALSE, character.only = FALSE, ...) 
+{
+   if (!character.only)
+          package <- as.character(substitute(package))
    if(!suppressWarnings(require(package=package, character.only = TRUE))) {
 	  if(ask) {
 		install_package <- ask.user.yn.question(paste("Package ",package, 

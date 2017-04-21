@@ -4,12 +4,15 @@
 \alias{require2}
 \title{Loading Packages (and Installing them if they are missing)}
 \usage{
-require2(package, ask = FALSE, ...)
+require2(package, ask = FALSE, character.only = FALSE, ...)
 }
 \arguments{
 \item{package}{A character of the name of a package (can also be without quotes).}
 
 \item{ask}{Should the user be asked to install the require packaged, in case it is missing? (default is FALSE)}
+
+\item{character.only}{logical (FALSE) - a logical indicating whether package or 
+help can be assumed to be character strings. Passed to \link{require}.}
 
 \item{...}{not used}
 }
@@ -27,4 +30,3 @@ a= require2(geonames)
 a
 }
 }
-
