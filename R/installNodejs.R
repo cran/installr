@@ -24,7 +24,7 @@
 #' 
 #' @return TRUE/FALSE - was the installation successful or not.
 #' @export
-#' @author Tal Galili and A. Jonathan R. Godfrey
+#' @author Tal Galili and A. Jonathan R. Godfrey and Chanyub Park
 #' @param page_with_download_url a link to the list of download links for Nodejs
 #' @param version_number Either LTS or Current. Version LTS will lead to download of v6.11.X
 #' @param ... extra parameters to pass to \link{install.URL}
@@ -43,7 +43,7 @@ install.nodejs = function (page_with_download_url = "https://nodejs.org/en/downl
   }
   page <- readLines(page_with_download_url, warn = FALSE)
   pat <- paste0("Latest ",version_number," Version")
-  pat_exact_version <- paste0("v[0-9]+\\.[0-9]+\\.[0-9]+")
+  pat_exact_version <- paste0("[0-9]+\\.[0-9]+\\.[0-9]+")
   target_line <- grep(pat, page, value = TRUE)
   m <- regexpr(pat_exact_version, target_line)
   VersionNo <- regmatches(target_line, m)[1]
@@ -54,8 +54,7 @@ install.nodejs = function (page_with_download_url = "https://nodejs.org/en/downl
     bitNo<-"-x86"
   }
   
-  URL <- paste0("https://nodejs.org/dist/",VersionNo,"/node-",VersionNo,bitNo,".msi")
+  URL <- paste0("https://nodejs.org/dist/v",VersionNo,"/node-v",VersionNo,bitNo,".msi")
   
   install.URL(URL, ...) 
 }
-
