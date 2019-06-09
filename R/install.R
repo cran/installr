@@ -269,7 +269,10 @@ install.pandoc <- function(
       # https://github.com/jgm/pandoc/releases/download/1.12.4/pandoc-1.12.4-windows.msi
       # https://github.com/jgm/pandoc/releases/download/1.12.4.2/pandoc-1.12.4.2-1-windows.msi
 #    pat <- "jgm/pandoc/releases/download/[0-9.]+/pandoc-[0-9.]+-windows\\.msi"
-   pat <- "jgm/pandoc/releases/download/[0-9.]+/pandoc-[0-9.-]+-windows\\.msi"
+   #pat <- "jgm/pandoc/releases/download/[0-9.]+/pandoc-[0-9.-]+-windows\\.msi"
+	sysArch <- Sys.getenv("R_ARCH") 
+	sysArch <-  gsub("/ |/x", "", sysArch)
+  	pat <- paste0("jgm/pandoc/releases/download/[0-9.]+/pandoc-[0-9.-]+-windows",".*", sysArch, ".*", ".msi")
    #    grep(pat, page, value = TRUE, fixed = F)
 #    glob2rx("jgm/pandoc/releases/download/1.12.4/pandoc-1.12.4.msi.Windows.installer.msi")
 #    grep("aaa[:graph:]*", "aaasdfadsfa  adaf / sdfa", value = TRUE)
@@ -495,8 +498,8 @@ install.Rtools <- function(choose_version = FALSE,
    # latest_Frozen==T means we get the latest Rtools version which is Frozen (when writing this function it is Rtools215.exe)
    # latest_Frozen==F means we get the latest Rtools version which is not Frozen (when writing this function it is Rtools30.exe)
 
-   if(check & requireNamespace("devtools")) { # if we have devtools we can check for the existance of rtools
-      found_rtools <- devtools::find_rtools()
+   if(check & requireNamespace("pkgbuild")) { # if we have devtools we can check for the existance of rtools
+      found_rtools <- pkgbuild::find_rtools()
       if(found_rtools) {
          cat("No need to install Rtools - You've got the relevant version of Rtools installed\n")
          return(invisible(FALSE))
@@ -706,21 +709,23 @@ install.npptor <- function(URL="http://sourceforge.net/projects/npptor/files/npp
 #' \dontrun{
 #' install.MikTeX() # installs the latest version of MikTeX 62 bit
 #' }
-install.MikTeX  <- function(page_with_download_url="http://miktex.org/download", ...) {
+install.MikTeX  <- function(page_with_download_url="https://miktex.org/download", ...) {
    # get download URL:
    page     <- readLines(page_with_download_url, warn = FALSE)
+   # cat(page, sep = "\n")
    # The damn url keeps changing...
    #"http://mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-2.9.4757.exe
    # "http://mirrors.ctan.org/systems/win32/miktex/setup/basic-miktex-2.9.4757-x64.exe"
    # http://ctan.mirror.ftn.uns.ac.rs/systems/win32/miktex/setup/basic-miktex-2.9.6069-x64.exe
    # https://miktex.org/download/ctan/systems/win32/miktex/setup/windows-x64/basic-miktex-2.9.6615-x64.exe
    # I'm noticing that the one thing that doesn't change is that it is a .exe link - so let's only rely on this.
-   pat <- "http://.*64.*.exe"; 
+   # https://miktex.org/download/ctan/systems/win32/miktex/setup/windows-x64/basic-miktex-2.9.6942-x64.exe
+   pat <- "download.*basic.*64.*.exe"; 
    target_line <- grep(pat, page, value = TRUE); 
    m <- regexpr(pat, target_line); 
    URL <- regmatches(target_line, m) # (The http still needs to be prepended.
    URL <- URL[1] # use basic instead of setup
-
+   URL <- paste0("https://miktex.org/", URL)
    # install.URL(URL)   
    install.URL(URL,...)   
 }
@@ -810,7 +815,8 @@ install.lyx <- function(...) install.LyX(...)
 #' \dontrun{
 #' install.RStudio() # installs the latest version of RStudio
 #' }
-install.RStudio  <- function(page_with_download_url="http://www.rstudio.com/ide/download/desktop",...) {    
+install.RStudio  <- function(page_with_download_url, ...) {    
+   if(missing(page_with_download_url)) page_with_download_url <- "https://www.rstudio.com/products/rstudio/download"
    # get download URL:
    page     <- readLines(page_with_download_url, warn = FALSE)
    # http://download1.rstudio.org/RStudio-0.97.318.exe#
