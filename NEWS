@@ -1,3 +1,15 @@
+installr 0.22.0 (2019-08-02)
+---------------------------
+
+OTHER NOTES:
+   * Started using pkgdown :)
+
+BUG FIXES:
+   * Fix install.RStudio
+   * Fix install.Rtools - force the user to choose a version to download
+   * Make sure to DESCRIPTION of the package makes it clear that it is for Windows OS (and not, say Mac or Linux)
+
+
 installr 0.21.3 (2019-06-09)
 ---------------------------
 

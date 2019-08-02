@@ -488,8 +488,8 @@ and enter the row number of the file-version you'd like to install: "
 #' # install.Rtools(F,F)
 #' 
 #' }
-install.Rtools <- function(choose_version = FALSE,                           
-                           check=TRUE,
+install.Rtools <- function(choose_version = TRUE,                           
+                           check=FALSE,
                            GUI = TRUE,
                            page_with_download_url = 'https://cran.r-project.org/bin/windows/Rtools/',
                            ...
@@ -498,6 +498,10 @@ install.Rtools <- function(choose_version = FALSE,
    # latest_Frozen==T means we get the latest Rtools version which is Frozen (when writing this function it is Rtools215.exe)
    # latest_Frozen==F means we get the latest Rtools version which is not Frozen (when writing this function it is Rtools30.exe)
 
+   regex <- function(x, expr) {
+      regmatches(x , regexpr(expr, x))
+   }
+   
    if(check & requireNamespace("pkgbuild")) { # if we have devtools we can check for the existance of rtools
       found_rtools <- pkgbuild::find_rtools()
       if(found_rtools) {
@@ -540,8 +544,14 @@ install.Rtools <- function(choose_version = FALSE,
       
       if(ROW_id == 0) return(FALSE)
       
-      exe_filename <- TABLE[ROW_id,"Download"] # the version the user asked for
+      exe_filename <- regex(TABLE[ROW_id,"Download"], ".*\\.exe") # TABLE[ROW_id,"Download"] # the version the user asked for
    }      
+   
+   if(length(exe_filename) == 0) {
+      message("You'll need to go to the site and download this yourself. I'm now going to try and open the url for you.")
+      browseURL(page_with_download_url)
+      return(FALSE)
+   }
    
    # install Rtools!
    URL <- paste(page_with_download_url, exe_filename, sep = '')   
@@ -820,11 +830,11 @@ install.RStudio  <- function(page_with_download_url, ...) {
    # get download URL:
    page     <- readLines(page_with_download_url, warn = FALSE)
    # http://download1.rstudio.org/RStudio-0.97.318.exe#
-   pat <- "//download1.rstudio.org/RStudio-[0-9.]+.exe"; 
-   target_line <- grep(pat, page, value = TRUE); 
-   m <- regexpr(pat, target_line); 
-   URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
-   URL      <- paste('http', URL, sep = ':')[1] # we might find the same file more than once - so we'll only take its first one
+   # https://download1.rstudio.org/desktop/windows/RStudio-1.2.1335.exe
+   pat <- "http.*.rstudio.org/.*/RStudio-[0-9.]+.exe"
+   target_line <- grep(pat, page, value = TRUE)
+   m <- regexpr(pat, target_line)
+   URL <- regmatches(target_line, m) # (The http still needs to be prepended.
    
    # install.
    install.URL(URL,...)   

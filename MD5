@@ -1,12 +1,12 @@
-81202e4fa45d906767bda5e2568cd4ec *ChangeLog
-2de9ba137d607123a0e9c3d949dd1a02 *DESCRIPTION
+108e06e67ce08c114350af2ebd8ecd4c *ChangeLog
+916c707829e48ab59be6f26231090f85 *DESCRIPTION
 da0a16e805d1f3ff7adc19bcfc04c01c *NAMESPACE
-9adb66edac3dde9b35c6df8ec0489cf7 *NEWS
-9adb66edac3dde9b35c6df8ec0489cf7 *NEWS.md
+7648965f594a9a35dcda7f1ec415b1ae *NEWS
+7648965f594a9a35dcda7f1ec415b1ae *NEWS.md
 25951d77903ecd29870a26b856fb0984 *R/RStudio_CRAN_data.R
 0ff095fed9b07c2877d3b2a828b2e8f4 *R/create.global.library.R
 8b904ae7d9724fbfb4cda8add0b83add *R/geo_functions.R
-66131ef82b832bc7cca84684b9627f0e *R/install.R
+bfba17ff6fa92b56c7f752c96ac0174c *R/install.R
 71b675debb7d5baa20db608e0c5c5acb *R/install.inno.R
 fdee7431bfd4a7d1a2122db1691bb73e *R/installConda.R
 6d80676e7dfa773343fa96453599c5dc *R/installNodejs.R
@@ -20,8 +20,8 @@ cf68a3552e714b98ddf7a92501dc6cce *R/os.manage.R
 19ebf3d4e68c8a435cf45f16d30229b3 *R/startup.R
 88872423d9e42710c19953731b6aecd6 *R/updateR.R
 5a8b82b62d32b474923d2af0ccc09d70 *R/xlsx2csv.R
-1f2a88645740d6012b5963218200e3a3 *R/zzz.R
-8888d549bd6ff6770c1354ec1ea34b81 *README.md
+f26c34d74d5fc08c76624e36671bbff7 *R/zzz.R
+46b5c98ea25a7183720d12709d06f5b7 *README.md
 85fd96addd3a251c82693cdc55099379 *TODO
 b840cbb8fa6ad3e3aff429b49dc9abf1 *man/R_version_in_a_folder.Rd
 92927c32fd49dd0f0d6c12aadbc3829a *man/add.installr.GUI.Rd
@@ -60,7 +60,7 @@ f8f6cefbca624f4980ad56dfa9702bae *man/install.MikTeX.Rd
 e2721654657608a4600e6c3c391c55ab *man/install.R.Rd
 577542475ea44a783f21dfaa7c4170a0 *man/install.RStudio.Rd
 b030450a606e32511c85be1a17b663df *man/install.Rdevel.Rd
-af5e24be33ce8dc36bebd9a98a7ac2ca *man/install.Rtools.Rd
+a46d0fee2b176e366afec4e67634d52b *man/install.Rtools.Rd
 127777068bb9f7f3ddcd929719a3e709 *man/install.SWFTools.Rd
 9814798417ff9f949a064b309cae2460 *man/install.Texmaker.Rd
 e8f8b40d7f911092326bfc9ba8571975 *man/install.URL.Rd
