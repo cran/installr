@@ -117,7 +117,7 @@ checkMD5sums2 <- function (package, dir, md5file, omit_files,...)
 #' @param add_lines_before if to add a line before asking the question.  Default is TRUE.
 #' @return TRUE/FALSE - if the user answers yes or no.
 #' @seealso menu in the {utils} package, yesno in the {devtools} package. 
-#' @references \url{http://stackoverflow.com/questions/15250487/how-to-add-a-menu-item-to-rgui} 
+#' @references \url{https://stackoverflow.com/questions/15250487/how-to-add-a-menu-item-to-rgui} 
 #' (my thanks goes to Dason for his answer and help)
 #' @examples
 #' \dontrun{
@@ -148,6 +148,28 @@ ask.user.yn.question <- function(question, GUI = TRUE, add_lines_before = TRUE) 
    
    ifelse(the_answer == 1L, TRUE, FALSE)   # returns TRUE or FALSE
 }
+
+#' @title Fetches latest R version from CRAN
+#' @export
+#' @description Returns the latest version of R available on CRAN as an R system version object.
+#' @param cran_mirror The CRAN mirror to use
+#' @seealso \link{getRversion}
+#' @references \url{https://cran.r-project.org/bin/windows/base/}
+get_latest_r_version <- function(cran_mirror = "https://cran.rstudio.com/") {
+  release_url <- stringr::str_glue("{cran_mirror}/bin/windows/base/release.html")
+  page <- readLines(release_url)
+  pat <- "R-[0-9.]+.+-win\\.exe"
+  filename <- na.omit(stringr::str_extract(page, pat))[[1]]
+  version <- stringr::str_extract(filename, "[0-9.]+")
+  package_version(version)
+}
+
+r_update_available <- function(ignore_patchlevel = F) {
+  latest_r <- get_latest_r_version()
+  if (ignore_patchlevel) latest_r[[1, 3]] <- 0
+  getRversion() < latest_r
+}
+
 
 
 #' @title Checks if there is a newer version of R
@@ -190,11 +212,7 @@ check.for.updates.R <- function(notify_user = TRUE,
    
    current_R_version <- as.character(getRversion()) # paste(R.version$major, R.version$minor, sep=".")
    
-   # Turn the version character into a number
-   latest_R_version_long <- turn.version.to.number(latest_R_version)   
-   current_R_version_long <- turn.version.to.number(current_R_version)   
-   
-   there_is_a_newer_version <- current_R_version_long < latest_R_version_long # TRUE = there IS a need to update (since the latest version is higher then what we currently have)
+   there_is_a_newer_version <- utils::compareVersion(current_R_version, latest_R_version) == -1 # TRUE = there IS a need to update (since the latest version is higher then what we currently have)
    
    if(there_is_a_newer_version) {
       message_text <-   paste("There is a newer version of R for you to download!\n\n",
@@ -259,7 +277,7 @@ browse.latest.R.NEWS <- function(
 #' See the \link{install.Rdevel} function for installing the latest R-devel version.
 #' @param page_with_download_url URL from which the latest stable version of R can be downloaded from.
 #' @param pat the pattern of R .exe file to download
-#' @param to_checkMD5sums Should we check that the new R installation has the files we expect it to (by checking the MD5 sums)? default is TRUE.  It assumes that the R which was isntalled is the latest R version.
+#' @param to_checkMD5sums Should we check that the new R installation has the files we expect it to (by checking the MD5 sums)? default is TRUE.  It assumes that the R which was installed is the latest R version.
 #' @param keep_install_file If TRUE - the installer file will not be erased after it is downloaded and run.
 #' @param download_dir A character of the directory into which to download the file. (default is \link{tempdir}())
 #' @param silent If TRUE - enables silent installation mode.
@@ -469,7 +487,7 @@ R_version_in_a_folder <- function(folder) {
 #' @description 
 #' The function finds the folders where there are R installations.  This is important for deciding what to uninstall, and where from and to to move libraries.
 #' This function ignores installations of R-devel at this point.
-#' Also, this function is based on only looking at the folders above the current installation of R.  If there are other isntallations of R outside the above folder, they will not be listed.
+#' Also, this function is based on only looking at the folders above the current installation of R.  If there are other installations of R outside the above folder, they will not be listed.
 #' @param sort_by_version should the returned vector be sorted by the version number? (default is yes - so that the first element is of the newest version of R) should the user be given the option to choose between which two libraries to copy the packages?  If FALSE (default), the folders are copied from the before-newest R installation to the newest R installation.
 #' @param add_version_to_name should the version number be added to the vector of folders? (default is yes)
 #' @return Returns a character vector (possibly named, possibly sorted) of the folders where there are R installations.
@@ -490,7 +508,7 @@ R_version_in_a_folder <- function(folder) {
 #' }
 get.installed.R.folders <- function(sort_by_version = TRUE, add_version_to_name = TRUE) {
    # get the parent folder of the current R installation
-   R_parent_folder <- paste(head(strsplit(R.home(), "/|\\\\")[[1]], -1), collapse = "/") # the strsplit is seperating the path whether it is / or \\ (but since \\ is a problem, I need to cancel it with \\\\)      
+   R_parent_folder <- paste(head(strsplit(R.home(), "/|\\\\")[[1]], -1), collapse = "/") # the strsplit is separating the path whether it is / or \\ (but since \\ is a problem, I need to cancel it with \\\\)
    items_in_R_parent_folder <- list.files(R_parent_folder)
    
    R_folders <- file.path(R_parent_folder, items_in_R_parent_folder) # some of these may NOT be R folders
@@ -666,19 +684,19 @@ copy.packages.between.libraries <- function(from, to, ask = FALSE, keep_old = TR
 #' It is worth noting that the function assumes that you are installing R in the same directory as before. That is, if the old R was on: D:\R\R-3.0.0 then the new R will be on D:\R\R-3.0.1.
 #' @param fast logical (default is FALSE). If TRUE, it overrides other parameters and uses a set of defaults to make the
 #' R installation as fast as possible: no news, installr R, copy packages and Rprofile, keep
-#' old packages, updated packages, without quiting current R or starting the new R.
+#' old packages, updated packages, without quitting current R or starting the new R.
 #' don't use GUI, check MD5sums, keep installed file in the \link{getwd}.
 #' @param browse_news if TRUE (and if there is a newer version of R) - it opens the browser to the NEWS of the latest version of R, for the user to read through
 #' @param install_R TRUE/FALSE - if to install a new version of R (if one is available).  If missing (this is the default)  - the user be asked if to download R or not.Of course the installation part itself (the running of the .exe file) is dependent on the user.
 #' @param copy_packages TRUE/FALSE - if to copy your packages from the old version of R to the new version of R. If missing (this is the default)  - the user will be asked for his preference (he should say yes, unless he is using a global library folder).
-#' @param copy_Rprofile.site logical - if to copy your Rprofile.site from the old version of R to the new version of R. If missing (this is the default)  - the user will be asked for his preference (he should say yes, unless he is using a global library folder).
+#' @param copy_site_files logical - if to copy your Rprofile.site and Renviron.site from the old version of R to the new version of R. If missing (this is the default)  - the user will be asked for his preference (he should say yes, unless he is using a global library folder).
 #' @param update_packages TRUE/FALSE - if to update your packages in the new version of R (all packages will be updated without asking confirmation per package) If missing (this is the default)  - the user will be asked for his preference (he should say yes, unless he is using a global library folder).  This is done by calling the Rscript in the new R.
 #' @param keep_old_packages - if the keep the packages in the library of the old R installation. If missing (this is the default)  - the user will be asked for his preference (he should say yes, unless he is using a global library folder).
 #' @param start_new_R TRUE/FALSE - if to start the new R (Rgui) after we will quit the old R. Default is TRUE. It will try to start the 64 bit R version, if it does not exist, the 32 bit will be started. This may be less useful for people using RStudio or the likes.
 #' @param quit_R TRUE/FALSE - if to quit R after the installation and package copying or not. If missing (this is the default) - the user is asked what to do.
 #' @param print_R_versions if to tell the user what version he has and what is the latest version (default is TRUE)
 #' @param GUI a logical indicating whether a graphics menu should be used if available.  If TRUE, and on Windows, it will use winDialog, otherwise it will use \link[utils]{menu}.
-#' @param to_checkMD5sums Should we check that the new R installation has the files we expect it to (by checking the MD5 sums)? default is TRUE.  It assumes that the R which was isntalled is the latest R version. parameter is passed to install.R()
+#' @param to_checkMD5sums Should we check that the new R installation has the files we expect it to (by checking the MD5 sums)? default is TRUE.  It assumes that the R which was installed is the latest R version. parameter is passed to install.R()
 #' @param keep_install_file If TRUE - the installer file will not be erased after it is downloaded and run.
 #' @param download_dir A character of the directory into which to download the file. (default is \link{tempdir}())
 #' @param silent If TRUE - enables silent installation mode.
@@ -700,7 +718,7 @@ copy.packages.between.libraries <- function(from, to, ask = FALSE, keep_old = TR
 #' updateR() # will ask you what you want at every decision.
 #' }
 updateR <- function(fast = FALSE, 
-                    browse_news, install_R, copy_packages, copy_Rprofile.site,
+                    browse_news, install_R, copy_packages, copy_site_files,
                     keep_old_packages,  update_packages, start_new_R, quit_R,  print_R_versions=TRUE, GUI = TRUE, 
                     to_checkMD5sums = FALSE, keep_install_file = FALSE, download_dir = tempdir(),
                     silent = FALSE, 
@@ -716,7 +734,7 @@ updateR <- function(fast = FALSE,
       browse_news <- FALSE
       install_R <- TRUE
       copy_packages <- TRUE
-      copy_Rprofile.site <- TRUE
+      copy_site_files <- TRUE
       keep_old_packages <- TRUE
       update_packages <- TRUE
       start_new_R <- FALSE
@@ -794,18 +812,28 @@ your packages to the new R installation.\n")
       copy.packages.between.libraries(keep_old=keep_old_packages)   
    }
 
+   # Check ... for deprecated copy_Rprofile.site 
+   # if copy_site_files has been set it takes precedence
+   # if copy_Rprofile.site has been set, give copy_site_files the same value
+   # if neither have been set, ask the user
+   args <- list(...)
+   if ('copy_Rprofile.site' %in% names(args)){
+     warning('"copy_Rprofile.site" argument has been deprecated in favour of copy_site_files - both Renviron.site and Rprofile.site will be copied if they exist')
+     if(missing(copy_site_files)) copy_site_files <- args[['copy_Rprofile.site']]
+   }
    
-   if(missing(copy_Rprofile.site)) copy_Rprofile.site <- ask.user.yn.question("Do you wish to copy your 'Rprofile.site' from the older version of R to the newer version of R?")
+   if(missing(copy_site_files)) copy_site_files <- ask.user.yn.question("Do you wish to copy your 'Rprofile.site' and 'Renviron.site' from the older version of R to the newer version of R?")
    
-   if(copy_Rprofile.site) {
+   if(copy_site_files) {
       old_R_path_etc <- file.path(old_R_path, "etc")
       new_R_path_etc <- file.path(new_R_path, "etc")
-      if("Rprofile.site" %in% list.files(old_R_path_etc)) {
-         file.copy(from = file.path(old_R_path_etc, "Rprofile.site"),
-                   to = file.path(new_R_path_etc, "Rprofile.site"))         
+      files_to_copy <- intersect(c('Rprofile.site', 'Renviron.site'), list.files(old_R_path_etc))
+      if(length(files_to_copy) != 0) {
+         file.copy(from = file.path(old_R_path_etc, files_to_copy),
+                   to = file.path(new_R_path_etc, files_to_copy))         
       } else {
-         warning('"Rprofile.site" does not exist in your old R-etc folder')
-      }      
+         warning('Could not find either "Rprofile.site" or "Renviron.site" in your old R-etc folder')
+      }
    }
    
    

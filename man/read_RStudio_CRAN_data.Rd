@@ -4,11 +4,15 @@
 \alias{read_RStudio_CRAN_data}
 \title{Reads RStudio CRAN mirror data files from a folder}
 \source{
-\url{http://www.nicebread.de/finally-tracking-cran-packages-downloads/}
+\url{https://www.nicebread.de/finally-tracking-cran-packages-downloads/}
 }
 \usage{
-read_RStudio_CRAN_data(log_folder = tempdir(), use_data_table = TRUE,
-  packages, ...)
+read_RStudio_CRAN_data(
+  log_folder = tempdir(),
+  use_data_table = TRUE,
+  packages,
+  ...
+)
 }
 \arguments{
 \item{log_folder}{the folder which contains the RStudio CRAN log files that were downloaded to. Default is the temporary folder picked by \link{tempdir}.}
@@ -26,7 +30,7 @@ there are many log files.}
 Returns the combined data file.
 }
 \description{
-This function reads files downloaded from the downlaod page (\url{http://cran-logs.rstudio.com/}).
+This function reads files downloaded from the download page (\url{http://cran-logs.rstudio.com/}).
 
 This function relies on data.table to run faster.
 WARNING: this function can be quite slow...

@@ -4,18 +4,22 @@
 \alias{install.R}
 \title{Downloads and installs the latest R version}
 \usage{
-
-  install.R(page_with_download_url = "https://cran.rstudio.com/bin/windows/base/",
-  pat = "R-[0-9.]+.+-win\\\\.exe", to_checkMD5sums = TRUE,
-  keep_install_file = FALSE, download_dir = tempdir(),
-  silent = FALSE, ...)
+install.R(
+  page_with_download_url = "https://cran.rstudio.com/bin/windows/base/",
+  pat = "R-[0-9.]+.+-win\\\\.exe",
+  to_checkMD5sums = TRUE,
+  keep_install_file = FALSE,
+  download_dir = tempdir(),
+  silent = FALSE,
+  ...
+)
 }
 \arguments{
 \item{page_with_download_url}{URL from which the latest stable version of R can be downloaded from.}
 
 \item{pat}{the pattern of R .exe file to download}
 
-\item{to_checkMD5sums}{Should we check that the new R installation has the files we expect it to (by checking the MD5 sums)? default is TRUE.  It assumes that the R which was isntalled is the latest R version.}
+\item{to_checkMD5sums}{Should we check that the new R installation has the files we expect it to (by checking the MD5 sums)? default is TRUE.  It assumes that the R which was installed is the latest R version.}
 
 \item{keep_install_file}{If TRUE - the installer file will not be erased after it is downloaded and run.}
 

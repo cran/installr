@@ -23,6 +23,7 @@
 #' @details
 #' The install.packages.zip must use this function, since it is crucial that the name of the file into which the ZIPPED package is downloaded to the computer, will have the same name as the file which is online.
 #' @param URL Some url to a file.
+#' @param rm.params (optional, default=\code{FALSE}). Whether or not to remove query parameters from URL.
 #' @return The name of the file in the URL
 #' @export
 #' @seealso \code{\link{install.URL}}, \code{\link{install.packages.zip}}
@@ -30,12 +31,17 @@
 #' \dontrun{
 #' url <- "https://cran.r-project.org/bin/windows/base/R-2.15.3-win.exe"
 #' file.name.from.url(url) # returns: "R-2.15.3-win.exe"
+#'
+#' url <- "https://bioconductor.org/packages/R/genetics?version=5.01&f=gz"
+#' file.name.from.url(url, rm.params=TRUE)  # returns: "genetics?version=5.01&f=gz"
+#' file.name.from.url(url, rm.params=FALSE) # returns: "genetics"
+#' file.name.from.url(url)                  # returns: "genetics"
 #' }
-file.name.from.url <- function(URL) {
- #  tail(strsplit(URL,   "/")[[1]],1)
-   # corrected to use R's base function thanks to Uwe's remark.
-   basename(URL)
-}
+file.name.from.url <- function(URL, rm.params=FALSE) {
+    name <- basename(URL);
+    if(rm.params) name <- gsub('^((?:(?!\\?).)*).*', '\\1', name, perl=TRUE);
+    return(name);
+};
 
 
 
@@ -76,13 +82,15 @@ up_folder <- function(FOLDER, n = -1,...) {
 #' install.packages.zip("https://cran.r-project.org/bin/windows/contrib/r-release/devtools_1.1.zip")
 #' }
 install.packages.zip <- function(zip_URL) {
-   # zip_URL is the URL for the package_name.zip file
-   zip_filename <- file.path(tempdir(), file.name.from.url(zip_URL))   # the name of the zip file MUST be as it was downloaded...
-   download.file(zip_URL, destfile=zip_filename, mode = 'wb')   
-   install.packages(pkgs= zip_filename, repos=NULL)   
-   unlink(zip_filename)
-   invisible(NULL)
-}
+   name <- file.name.from.url(zip_URL, rm.params=TRUE);
+   # Note: zip_URL does NOT need to be related at all to the URL for the package_name.zip file
+   # see https://github.com/RLogik/utilsRL/blob/master/R/packages.r >> install.from.url for a more comprehensive solution.
+   zip_filename <- file.path(tempdir(), name); 
+   download.file(zip_URL, destfile=zip_filename, mode = 'wb');
+   install.packages(pkgs=zip_filename, repos=NULL);
+   unlink(zip_filename);
+   invisible(NULL);
+};
 # a simple example of use:
 # install.packages.zip(zip_URL="https://cran.r-project.org/bin/windows/contrib/r-release/TeachingSampling_2.0.1.zip")
 
@@ -92,7 +100,7 @@ install.packages.zip <- function(zip_URL) {
 #' @title uninstalls (removes) Installed Packages
 #' @export
 #' @description 
-#' A wrapper for \link{remove.packages}. Usefull since it also works if the 
+#' A wrapper for \link{remove.packages}. Useful since it also works if the
 #' package is currently loaded into the workspace.
 #' @param pkgs a character vector with the names of the packages to be removed.
 #' @param lib a character vector giving the library directories to remove the packages from. 
@@ -133,7 +141,7 @@ uninstall.packages <- function(pkgs,lib, warning = TRUE, ...) {
 
 
 
-# source: http://stackoverflow.com/questions/5076593/how-to-determine-if-you-have-an-internet-connection-in-r
+# source: https://stackoverflow.com/questions/5076593/how-to-determine-if-you-have-an-internet-connection-in-r
 # checks if there is internet.
 havingIP <- function() {
    if (.Platform$OS.type == "windows") {
@@ -170,12 +178,16 @@ havingIP <- function() {
 #' install.URL("adfadf") # shows the error produced when the URL is not valid.
 #' }
 install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, download_dir = tempdir(), message = TRUE, installer_option = NULL, download_fun = download.file, ...) {
-   # source: http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
+   # source: https://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
    # input: a url of an .exe file to install
    # output: it runs the .exe file (for installing something)   
    
    
    if(!havingIP()) warning("You do not seem to be connected to the internet. Hence - you will likely not be able to download software.")
+  
+   if(!(is.character(exe_URL) && length(exe_URL) == 1)) {
+     stop("exe_URL is not a single URL")
+   }
    
    
    exe_filename <- file.path(download_dir, file.name.from.url(exe_URL))   # the name of the zip file MUST be as it was downloaded...   
@@ -234,7 +246,7 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, downloa
 #' @title Downloads and installs pandoc
 #' @description Downloads and installs the latest version of pandoc for Windows.
 #' @details
-#' pandoc is a free open source software for converting documents from many filetypes to many filetypes.  For details, see \url{http://johnmacfarlane.net/pandoc/}.
+#' pandoc is a free open source software for converting documents from many filetypes to many filetypes.  For details, see \url{https://johnmacfarlane.net/pandoc/}.
 #' 
 #' Credit: the code in this function is based on GERGELY DAROCZIs coding in his answer on the Q&A forum StackOverflow, and also G. Grothendieck for the non-XML addition to the function. 
 #' I thank them both!
@@ -247,7 +259,7 @@ install.URL <- function(exe_URL, keep_install_file = FALSE, wait = TRUE, downloa
 #'  after pandoc is installed? (if missing then the user is prompted 
 #' 	for a decision)
 #' @param ... extra parameters to pass to \link{install.URL}
-#' @source \url{http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command}
+#' @source \url{https://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command}
 #' @examples
 #' \dontrun{
 #' install.pandoc() 
@@ -257,8 +269,8 @@ install.pandoc <- function(
    use_regex = TRUE, to_restart,...
 ) {
    page_with_download_url <- URL
-   # source: http://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
-   # published on: http://www.r-statistics.com/2013/02/installing-pandoc-from-r-on-windows/
+   # source: https://stackoverflow.com/questions/15071957/is-it-possible-to-install-pandoc-on-windows-using-an-r-command
+   # published on: https://www.r-statistics.com/2013/02/installing-pandoc-from-r-on-windows/
    
    # https://github.com/jgm/pandoc/releases/download/1.12.4/pandoc-1.12.4.msi.Windows.installer.msi
    
@@ -316,7 +328,7 @@ install.pandoc <- function(
 #' @param N A number (if a vector is supplied only the first element is checked - without warning)
 #' @return TRUE/FALSE on whether a number is integer or not.
 #' @author VitoshKa
-#' @source \url{http://stackoverflow.com/questions/3476782/how-to-check-if-the-number-is-integer}
+#' @source \url{https://stackoverflow.com/questions/3476782/how-to-check-if-the-number-is-integer}
 #' @examples
 #' check.integer <- installr:::check.integer
 #' check.integer(4) # TRUE
@@ -328,7 +340,7 @@ install.pandoc <- function(
 #' check.integer(1e600) #FALSE - the function is having a hardtime with Inf...
 #' rm(check.integer)
 check.integer <- function(N){
-   # source: http://stackoverflow.com/questions/3476782/how-to-check-if-the-number-is-integer
+   # source: https://stackoverflow.com/questions/3476782/how-to-check-if-the-number-is-integer
    # author: VitoshKa
    
    # notice that the function "is.integer" is used by based R for checking the object if it is of type integer.
@@ -354,7 +366,7 @@ check.integer <- function(N){
 #' @return The row number the user has choosen from the data.frame table.
 #' @source On how to ask the user for input:
 #' 
-#' \url{http://stackoverflow.com/questions/5974967/what-is-the-correct-way-to-ask-for-user-input-in-an-r-program}
+#' \url{https://stackoverflow.com/questions/5974967/what-is-the-correct-way-to-ask-for-user-input-in-an-r-program}
 #' @examples
 #' \dontrun{
 #' version_table <- data.frame(versions = c("devel", "V 1.0.0", "V 2.0.0"))
@@ -363,7 +375,7 @@ check.integer <- function(N){
 ask.user.for.a.row <- function(TABLE, 
                                header_text = "Possible versions to download (choose one)",
                                questions_text) {
-   # http://stackoverflow.com/questions/5974967/what-is-the-correct-way-to-ask-for-user-input-in-an-r-program
+   # https://stackoverflow.com/questions/5974967/what-is-the-correct-way-to-ask-for-user-input-in-an-r-program
    # based on code by Joris Meys
 
    if(missing(questions_text)) questions_text <- "Please review the table of versions from above,
@@ -407,160 +419,6 @@ and enter the row number of the file-version you'd like to install: "
 
 
 
-
-# 
-# if(FALSE) {
-#    # version_info is taken from https://github.com/hadley/devtools/blob/master/R/rtools.r
-#    version_info <- list(
-#       "2.11" = list(
-#          version_min = "2.10.0",
-#          version_max = "2.11.1",
-#          path = c("bin", "perl/bin", "MinGW/bin")
-#       ),
-#       "2.12" = list(
-#          version_min = "2.12.0",
-#          version_max = "2.12.2",
-#          path = c("bin", "perl/bin", "MinGW/bin", "MinGW64/bin")
-#       ),
-#       "2.13" = list(
-#          version_min = "2.13.0",
-#          version_max = "2.13.2",
-#          path = c("bin", "MinGW/bin", "MinGW64/bin")
-#       ),
-#       "2.14" = list(
-#          version_min = "2.13.0",
-#          version_max = "2.14.2",
-#          path = c("bin", "MinGW/bin", "MinGW64/bin")
-#       ),
-#       "2.15" = list(
-#          version_min = "2.14.2",
-#          version_max = "2.15.1",
-#          path = c("bin", "gcc-4.6.3/bin")
-#       ),
-#       "2.16" = list(
-#          version_min = "2.15.2",
-#          version_max = "3.0.0",
-#          path = c("bin", "gcc-4.6.3/bin")
-#       ),
-#       "3.0" = list(
-#          version_min = "2.15.2",
-#          version_max = "3.0.0",
-#          path = c("bin", "gcc-4.6.3/bin")
-#       )
-#    )      
-#    
-#    require(plyr)
-#    version_info2 <- ldply(version_info, function(xx) {data.frame(version_min=xx$version_min, version_max = xx$version_max)})
-#    colnames(version_info2)[1] <- "version"
-#   version_info2[,2] <- as.character(version_info2[,2])
-#    version_info2[,3] <- as.character(version_info2[,3])
-#    dput(version_info2)
-# }
-
-
-
-#' @title Downloads and installs Rtools
-#' @aliases install.rtools
-#' @description Allows the user to choose, downloads and install - the latest version of Rtools for Windows.  By default, the function searches if RTools is installed, if not, it checks if it knows which version to isntall for the current R version, and if not - it asks the user to choose which Rtools version to install.
-#' @details
-#' RTools is a collection of software for building packages for R under Microsoft Windows, or for building R itself (version 1.9.0 or later).
-#' The original collection was put together by Prof. Brian Ripley; it is currently being maintained by Duncan Murdoch.
-#' @param choose_version if TRUE, allows the user to choose which version of RTools to install.  Useful if you wish to install the devel version of RTools, or if you are running on an old version of R which requires an old version of R.
-#' @param check checks if we need to install Rtools or not.  Relies on the "find_rtools" function in the {devtools} package.
-#' @param GUI Should a GUI be used when asking the user questions? (defaults to TRUE)
-#' @param page_with_download_url the URL of the RTools download page.
-#' @param ... extra parameters to pass to \link{install.URL}
-#' @return invisible(TRUE/FALSE) - was the installation successful or not.
-#' @export
-#' @source
-#' Some parts of the code are taken from the devtools.
-#' @references
-#' RTools homepage (for other resources and documentation): \url{https://cran.r-project.org/bin/windows/Rtools/}
-#' @examples
-#' \dontrun{
-#' install.Rtools() # installs the latest version of RTools (if one is needed)
-#' install.Rtools(TRUE) # if one is needed - asks the user to choose the latest 
-#' # version of RTools to install
-#' 
-#' install.Rtools(TRUE, FALSE) # asks the user to choose 
-#' # the latest version of RTools to install 
-#' # (regardless if one is needed)
-#' # install.Rtools(F,F)
-#' 
-#' }
-install.Rtools <- function(choose_version = TRUE,                           
-                           check=FALSE,
-                           GUI = TRUE,
-                           page_with_download_url = 'https://cran.r-project.org/bin/windows/Rtools/',
-                           ...
-) {
-   # choose_version==T allows the user to choose which version of Rtools he wishes to install
-   # latest_Frozen==T means we get the latest Rtools version which is Frozen (when writing this function it is Rtools215.exe)
-   # latest_Frozen==F means we get the latest Rtools version which is not Frozen (when writing this function it is Rtools30.exe)
-
-   regex <- function(x, expr) {
-      regmatches(x , regexpr(expr, x))
-   }
-   
-   if(check & requireNamespace("pkgbuild")) { # if we have devtools we can check for the existance of rtools
-      found_rtools <- pkgbuild::find_rtools()
-      if(found_rtools) {
-         cat("No need to install Rtools - You've got the relevant version of Rtools installed\n")
-         return(invisible(FALSE))
-      }
-   }# if we reached here - it means we'll need to install Rtools.
-
-
-   version_info2 <- structure(list(version = c("2.11", "2.12", "2.13", "2.14", "2.15", 
-                                               "2.16", "3.0"), version_min = c("2.10.0", "2.12.0", "2.13.0", 
-                                                                               "2.13.0", "2.14.2", "2.15.2", "2.15.2"), version_max = c("2.11.1", 
-                                                                                                                                        "2.12.2", "2.13.2", "2.14.2", "2.15.1", "3.0.0", "3.0.0")), .Names = c("version", 
-                                                                                                                                                                                                               "version_min", "version_max"), row.names = c(NA, -7L), class = "data.frame")
-      
-#    version_info2
-   
-   # try to fit the best Rtools to isntall
-   Rversion <- as.character(getRversion())
-   Rversion_number <- turn.version.to.number(Rversion)      
-   ss_min <- Rversion_number >= turn.version.to.number(version_info2$version_min)
-   ss_max <- Rversion_number <= turn.version.to.number(version_info2$version_max)
-   version_to_install <- tail(version_info2$version[ss_min & ss_max], 1) # get the latest version that fits our current R version.
-
-   
-   if(length(version_to_install) > 0 & !choose_version) { # e.g: there is some version to install      
-      version_to_install_no_dots <- gsub("\\.","", version_to_install)
-      exe_filename <-   paste("Rtools" , version_to_install_no_dots , ".exe", sep = "")
-   } else { # else - it means we have a version of R which is beyond our current knowledge of Rtools (or that the user asked to choose a version), so we'll have to let the user decide on what to do.
-      require2("htmltab")
-      TABLE <- htmltab::htmltab(page_with_download_url)
-# 		require2("XML")
-#       TABLE <- XML::readHTMLTable(page_with_download_url, header=T,stringsAsFactors=F)[[1]]
-      # example: http://stackoverflow.com/questions/1395528/scraping-html-tables-into-r-data-frames-using-the-xml-package
-      
-      # choose a version:
-      cat("Please remember you are using: ", R.version$version.string , "\n")
-      choices <- paste(TABLE[,"Download"], " (",TABLE[,2],")", sep = "")      
-      ROW_id <- menu(choices, graphics = GUI, title = "Which Rtools would you like to download?")      
-      
-      if(ROW_id == 0) return(FALSE)
-      
-      exe_filename <- regex(TABLE[ROW_id,"Download"], ".*\\.exe") # TABLE[ROW_id,"Download"] # the version the user asked for
-   }      
-   
-   if(length(exe_filename) == 0) {
-      message("You'll need to go to the site and download this yourself. I'm now going to try and open the url for you.")
-      browseURL(page_with_download_url)
-      return(FALSE)
-   }
-   
-   # install Rtools!
-   URL <- paste(page_with_download_url, exe_filename, sep = '')   
-   install.URL(URL,...)   
-}
-
-
-#' @export
-install.rtools <- function(...) install.Rtools(...)
 
 
 
@@ -617,12 +475,12 @@ install.git <- function(URL="http://git-scm.com/download/win", version = 64, ...
 #' @export
 #' @references
 #' homepage: \url{http://notepad-plus-plus.org/}
-#' download page: \url{http://notepad-plus-plus.org/download/}
+#' download page: \url{https://notepad-plus-plus.org/downloads/}
 #' @examples
 #' \dontrun{
 #' install.notepadpp() # installs the latest version of Notepad++
 #' }
-install.notepadpp <- function(page_with_download_url="http://notepad-plus-plus.org/download/",...) {
+install.notepadpp <- function(page_with_download_url="https://notepad-plus-plus.org/downloads/",...) {
    # "http://git-scm.com/download/win"
    # get download URL:
    page     <- readLines(page_with_download_url, warn = FALSE)
@@ -656,8 +514,7 @@ install.notepadpp <- function(page_with_download_url="http://notepad-plus-plus.o
 #' @return invisible TRUE/FALSE - was the installation successful or not.
 #' @export
 #' @references
-#' homepage: \url{http://npptor.sourceforge.net/}
-#' download page: \url{http://sourceforge.net/projects/npptor/}
+#' download page: \url{https://sourceforge.net/projects/npptor/}
 #' @examples
 #' \dontrun{
 #' install.npptor() # installs the latest version of NppToR
@@ -818,7 +675,7 @@ install.lyx <- function(...) install.LyX(...)
 #' @export
 #' @references
 #' \itemize{
-#' \item RStudio homepage: \url{http://www.rstudio.com/}
+#' \item RStudio homepage: \url{https://www.rstudio.com/}
 #' } 
 #' @examples
 #' ### devtools::source_url
@@ -826,7 +683,7 @@ install.lyx <- function(...) install.LyX(...)
 #' install.RStudio() # installs the latest version of RStudio
 #' }
 install.RStudio  <- function(page_with_download_url, ...) {    
-   if(missing(page_with_download_url)) page_with_download_url <- "https://www.rstudio.com/products/rstudio/download"
+   if(missing(page_with_download_url)) page_with_download_url <- "https://www.rstudio.com/products/rstudio/download/#download"
    # get download URL:
    page     <- readLines(page_with_download_url, warn = FALSE)
    # http://download1.rstudio.org/RStudio-0.97.318.exe#
@@ -834,7 +691,13 @@ install.RStudio  <- function(page_with_download_url, ...) {
    pat <- "http.*.rstudio.org/.*/RStudio-[0-9.]+.exe"
    target_line <- grep(pat, page, value = TRUE)
    m <- regexpr(pat, target_line)
-   URL <- regmatches(target_line, m) # (The http still needs to be prepended.
+   URL <- unique(regmatches(target_line, m))
+   
+   if(length(URL) != 1) {
+      message("You'll need to go to the site and download this yourself. I'm now going to try and open the url for you.")
+      browseURL(page_with_download_url)
+      return(FALSE)
+   }
    
    # install.
    install.URL(URL,...)   
@@ -863,21 +726,17 @@ install.rstudio <- function(...) install.RStudio(...)
 #' \dontrun{
 #' install.ImageMagick() # installs the latest version of ImageMagick
 #' }
-install.ImageMagick  <- function(URL="http://www.imagemagick.org/script/download.php",...) {    
+install.ImageMagick  <- function(URL="https://www.imagemagick.org/script/download.php",...) {    
    page_with_download_url <- URL
    # get download URL:
    # cat(page)
    page     <- readLines(page_with_download_url, warn = FALSE)
-   # http://www.imagemagick.org/download/binaries/ImageMagick-6.8.3-8-Q16-x86-dll.exe
-   # http://www.imagemagick.org/download/binaries/ImageMagick-6.8.3-9-Q16-x86-dll.exe
-   # http://www.imagemagick.org/download/binaries/ImageMagick-6.9.0-10-Q16-x64-dll.exe
-   # https://imagemagick.org/download/binaries/ImageMagick-7.0.8-12-Q16-x64-dll.exe
-   pat <- "imagemagick.org/download/binaries/ImageMagick-[0-9.]+-[0-9]+-Q16-x64-dll.exe"; 
+   # https://imagemagick.org/download/binaries/ImageMagick-7.0.10-23-Q16-HDRI-x64-dll.exe
+   pat <- "http.+imagemagick.org.+download/binaries.+exe"
    target_line <- grep(pat, page, value = TRUE); 
    m <- regexpr(pat, target_line); 
-   URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
-   URL      <- paste0('https://', URL)[1] # we might find the same file more than once - so we'll only take its first one
-   
+   URL <- regmatches(target_line, m) # (The http still needs to be prepended.
+   URL <- URL[1] # take the first option that comes up
    # install.
    install.URL(URL,...)   
 }
@@ -893,8 +752,9 @@ install.imagemagick <- function(...) install.ImageMagick(...)
 #' @details
 #' GraphicsMagick is the swiss army knife of image processing. Comprised of 282K physical lines (according to David A. Wheeler's SLOCCount) of source code in the base package (or 964K including 3rd party libraries) it provides a robust and efficient collection of tools and libraries which support reading, writing, and manipulating an image in over 88 major formats including important formats like DPX, GIF, JPEG, JPEG-2000, PNG, PDF, PNM, and TIFF.
 #' This function downloads Win32 dynamic at 16 bits-per-pixel.
+#' No direct file is available to run, You'll need to open/run the file that your browser is now downloading.
 #' @param URL the URL of the ImageMagick download page.
-#' @param ... extra parameters to pass to \link{install.URL}
+#' @param ... deprecated
 #' @return TRUE/FALSE - was the installation successful or not.
 #' @export
 #' @references
@@ -905,20 +765,23 @@ install.imagemagick <- function(...) install.ImageMagick(...)
 #' \dontrun{
 #' install.GraphicsMagick() # installs the latest version of GraphicsMagick
 #' }
-install.GraphicsMagick  <- function(URL="http://sourceforge.net/projects/graphicsmagick/",...) {    
-   page_with_download_url <- URL
-   # get download URL:
-   page     <- readLines(page_with_download_url, warn = FALSE)
-   # http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick-binaries/1.3.17/GraphicsMagick-1.3.17-Q16-windows-dll.exe?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fgraphicsmagick%2Ffiles%2F&ts=1362862824&use_mirror=garr
-   # http://sourceforge.net/projects/graphicsmagick/files/graphicsmagick-binaries/1.3.17/GraphicsMagick-1.3.17-Q8-windows-dll.exe/download
-   pat <- "//sourceforge.net/projects/graphicsmagick/files/graphicsmagick-binaries/[0-9.]+/GraphicsMagick-[0-9.]+-Q16-windows-dll.exe"
-   target_line <- grep(pat, page, value = TRUE); 
-   m <- regexpr(pat, target_line); 
-   URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
-   URL      <- paste('http', URL, sep = ':')[1] # we might find the same file more than once - so we'll only take its first one
+install.GraphicsMagick  <- function(URL="https://sourceforge.net/projects/graphicsmagick/files/latest/download",...) {    
    
-   # install.
-   install.URL(URL,...)   
+   # page_with_download_url <- URL
+   # # get download URL:
+   # page     <- readLines(page_with_download_url, warn = FALSE)
+   # # http://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick-binaries/1.3.17/GraphicsMagick-1.3.17-Q16-windows-dll.exe?r=http%3A%2F%2Fsourceforge.net%2Fprojects%2Fgraphicsmagick%2Ffiles%2F&ts=1362862824&use_mirror=garr
+   # # http://sourceforge.net/projects/graphicsmagick/files/graphicsmagick-binaries/1.3.17/GraphicsMagick-1.3.17-Q8-windows-dll.exe/download
+   # pat <- "//sourceforge.net/projects/graphicsmagick/files/graphicsmagick-binaries/[0-9.]+/GraphicsMagick-[0-9.]+-Q16-windows-dll.exe"
+   # target_line <- grep(pat, page, value = TRUE); 
+   # m <- regexpr(pat, target_line); 
+   # URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
+   # URL      <- paste('http', URL, sep = ':')[1] # we might find the same file more than once - so we'll only take its first one
+   # 
+   # # install.
+   # install.URL(URL,...)   
+   browseURL(URL)
+   message("No direct file is available to run, You'll need to open/run the file that your browser is now downloading.")
 }
 
 #' @export
@@ -1069,13 +932,13 @@ install.cygwin <- function(...) install.Cygwin(...)
 #' @export
 #' @references
 #' \itemize{
-#' \item 7-zip homepage: \url{http://www.7-zip.org/}
+#' \item 7-zip homepage: \url{https://www.7-zip.org/}
 #' } 
 #' @examples
 #' \dontrun{
 #' install.7zip() # installs the latest version of 7-Zip
 #' }
-install.7zip  <- function(page_with_download_url="http://www.7-zip.org/download.html",...) {    
+install.7zip  <- function(page_with_download_url="https://www.7-zip.org/download.html",...) {    
    # get download URL:
    page     <- readLines(page_with_download_url, warn = FALSE)
    # http://downloads.sourceforge.net/sevenzip/7z920.exe
@@ -1096,7 +959,7 @@ install.7zip  <- function(page_with_download_url="http://www.7-zip.org/download.
 # # ' @param ... NOT used
 # # ' @return the shell output of 7z
 # # ' @references
-# # ' \url{http://stackoverflow.com/questions/14122732/unzip-files-7-zip-via-cmd-command}
+# # ' \url{https://stackoverflow.com/questions/14122732/unzip-files-7-zip-via-cmd-command}
 # # ' @examples
 # # ' \dontrun{
 # # ' 
@@ -1166,7 +1029,7 @@ system.PATH <- function() strsplit(shell("echo %PATH% ", intern= TRUE), ";")[[1]
 # ' @param exe_folder the folder where the relevant .exe file is.
 # ' @return The updated search PATH
 # ' @references
-# ' \url{http://stackoverflow.com/questions/14122732/unzip-files-7-zip-via-cmd-command}
+# ' \url{https://stackoverflow.com/questions/14122732/unzip-files-7-zip-via-cmd-command}
 # ' \dontrun{
 # ' set.PATH("C:\\Program Files (x86)\\7-Zip\\")
 # ' is.exe.installed("7z") 
@@ -1192,7 +1055,7 @@ system.PATH <- function() strsplit(shell("echo %PATH% ", intern= TRUE), ";")[[1]
 #' @references
 #' \itemize{
 #' \item GitHub homepage: \url{https://github.com/}
-#' \item GitHub for windows download page: \url{http://windows.github.com/}
+#' \item GitHub for windows download page: \url{https://desktop.github.com/}
 #' } 
 #' @examples
 #' \dontrun{
@@ -1255,7 +1118,7 @@ install.texmaker <- function(...) install.Texmaker(...)
 #' \itemize{
 #' \item Using RCurl
 #' \item devtools::source_url 
-#' \item A relevant (OLD) discussion: http://stackoverflow.com/questions/7715723/sourcing-r-script-over-https
+#' \item A relevant (OLD) discussion: https://stackoverflow.com/questions/7715723/sourcing-r-script-over-https
 #' }
 #' @examples
 #' \dontrun{
@@ -1273,7 +1136,7 @@ source.https <- function(URL,..., remove_r_file = T) {
 
 # 
 # # being able to source from github
-# source("http://www.r-statistics.com/wp-content/uploads/2012/01/source.https.r.txt")
+# source("https://www.r-statistics.com/wp-content/uploads/2012/01/source.https.r.txt")
 # source.https("source url for install.packages.zip")
 # install.packages.zip("URL/installR.zip")
 # # actually use functions...
@@ -1287,37 +1150,40 @@ source.https <- function(URL,..., remove_r_file = T) {
 
 #' @title Loading Packages (and Installing them if they are missing)
 #' @export
-#' @description  require2 load add-on packages by passing it to \link{require}.  However, if the package is not available on the system, it will first install it (through \link{install.packages}), and only then try to load it again.
-#' 
+#' @description  require2 load add-on packages by passing it to \link{require}.
+#' However, if the package is not available on the system, it will first install it (through \link{install.packages}),
+#' and only then try to load it again.
+#'
 #' @param package A character of the name of a package (can also be without quotes).
 #' @param ask Should the user be asked to install the require packaged, in case it is missing? (default is FALSE)
-#' @param character.only logical (FALSE) - a logical indicating whether package or 
+#' @param character.only logical (FALSE) - a logical indicating whether package or
 #' help can be assumed to be character strings. Passed to \link{require}.
-#' @param ... not used
-#' 
+#' @param min_version Minimum version of package
+#'
 #' @return  returns (invisibly) a logical indicating whether the required package is available.
 #' @examples
 #' \dontrun{
-#' a= require2("devtools")
-#' a
-#' a= require2(geonames)
-#' a
+#' require2("devtools")
+#' require2(geonames)
+#' require2(pkgbuild, min_version = "1.1.0")
+#' data_table_loaded <- require2("data.table")
 #' }
-require2 <- function (package, ask = FALSE, character.only = FALSE, ...) 
-{
-   if (!character.only)
-          package <- as.character(substitute(package))
-   if(!suppressWarnings(require(package=package, character.only = TRUE))) {
-	  if(ask) {
-		install_package <- ask.user.yn.question(paste("Package ",package, 
-                                                    " is not installed. Do you want to install it now?"))
-      } else { 
-		install_package <- TRUE 
-	}
-	  
-	  if(install_package) install.packages(pkgs=package)
-   }
-   require(package=package, character.only = TRUE)
+require2 <- function(package, ask = FALSE, character.only = FALSE, min_version = 0) {
+  if (!character.only) package <- as.character(substitute(package))
+  available <- requireNamespace(package, character.only = T, quietly = T) && packageVersion(package) >= min_version
+  if (!available) {
+    if (ask) {
+      install_package <- ask.user.yn.question(paste(
+        "Package", package, "is not installed.",
+        "Do you want to install it now?"
+      ))
+    } else {
+      install_package <- TRUE
+    }
+
+    if (install_package) install.packages(package)
+  }
+  require(package, character.only = TRUE)
 }
 
 
@@ -1330,7 +1196,7 @@ require2 <- function (package, ask = FALSE, character.only = FALSE, ...)
 
 #' @title Restart RGui from RGui
 #' @export
-#' @description Start a new RGui session and then quites the current one.
+#' @description Start a new RGui session and then quits the current one.
 #' 
 #' This is a Windows only function.
 #' @param ... passed to q()
@@ -1423,7 +1289,7 @@ installr <- function(GUI = TRUE, ...) {
 
 
 
-# http://stackoverflow.com/questions/8809004/escaping-in-roxygen2-style-documentation
+# https://stackoverflow.com/questions/8809004/escaping-in-roxygen2-style-documentation
 
 
 
@@ -1441,9 +1307,9 @@ installr <- function(GUI = TRUE, ...) {
 #' @param tag a character vector of tag(s) to get from a package's Rd files.
 #' @param ... not in use.
 #' @author Thomas J. Leeper <thosjleeper@@gmail.com>
-#' @return a character vector with the tag's contant, and the name of the 
+#' @return a character vector with the tag's content, and the name of the
 #' Rd source of the function the tag came from.
-#' @source \url{http://stackoverflow.com/questions/17909081/access-elements-from-rs-rd-file}
+#' @source \url{https://stackoverflow.com/questions/17909081/access-elements-from-rs-rd-file}
 #' @seealso \link{package_authors}
 #' @examples
 #' \dontrun{
@@ -1507,13 +1373,13 @@ fetch_tag_from_Rd <- function(package, tag = "\\author",...){
 #' Find authors.
 #' @details
 #' List authors for a package from its "author" tag elements from its Rd files.
-#' The function also seperate lists of authors, and cleans the output a bit 
+#' The function also separate lists of authors, and cleans the output a bit
 #' (from spaces at the beginning of the strings).
 #' 
 #' @param package a character string of the package we are interested in.
 #' @param to_strsplit logical (TRUE). Should the authors strings be split
 #' (in cases of a "and" or a comma ",")?
-#' @param split a character scalar to be passed to \link{strsplit} split paramter.
+#' @param split a character scalar to be passed to \link{strsplit} split parameter.
 #' default is c(",|and)
 #' @param to_table logical (FALSE). Should the authors strings be listed in a
 #' table - showing a count of how many .Rd files they were listed in?
@@ -1540,7 +1406,7 @@ fetch_tag_from_Rd <- function(package, tag = "\\author",...){
 #' 
 #' 
 #' ## From the top R packages list: 
-#' ## http://www.r-statistics.com/2013/06/top-100-r-packages-for-2013-jan-may/
+#' ## https://www.r-statistics.com/2013/06/top-100-r-packages-for-2013-jan-may/
 #' package_authors("plyr")
 #' package_authors("digest")
 #' package_authors("ggplot2")
@@ -1608,37 +1474,106 @@ package_authors <- function(package, to_strsplit = TRUE, split=c(",|and"), to_ta
 #' platform and compiler independent configuration files. 
 #' CMake generates native makefiles and workspaces that can be used in the 
 #' compiler environment of your choice.
+#' If run NOT on Windows (i.e.: max/linux), this would download the file into the working directory.
+#' (\link{getwd}).
 #' @param URL the URL of the CMake download page.
+#' @param cmake_version NULL by default, but a user can supply the version as a character.
 #' @param ... extra parameters to pass to \link{install.URL}
 #' @return TRUE/FALSE - was the installation successful or not.
 #' @export
 #' @references
 #' \itemize{
-#' \item CMake homepage: \url{http://www.cmake.org/cmake/resources/software.html}
+#' \item CMake homepage: \url{https://cmake.org/download/}
 #' } 
 #' @examples
 #' \dontrun{
-#' install.CMake() # installs the latest version of ImageMagick
+#' install.CMake() # installs the latest version of CMake
 #' }
 #'
-install.CMake   <- function(URL="https://cmake.org/download/",...) {    
-   page_with_download_url <- URL
-   # get download URL:
-   page     <- readLines(page_with_download_url, warn = FALSE)
-   # http://www.cmake.org/files/v3.0/cmake-3.0.1-win32-x86.exe
-   # pat <- "//www.cmake.org/files/v[0-9.]+/cmake-[0-9.]+-win32-x86.exe"
-   pat <- "/files/v[0-9.]+/cmake-[0-9.]+-win32-x86.msi"
-   
-   target_line <- grep(pat, page, value = TRUE); 
-   m <- regexpr(pat, target_line); 
-   URL      <- regmatches(target_line, m) # (The http still needs to be prepended.
-   URL      <- paste('https://cmake.org', URL, sep = '')[1] # we might find the same file more than once - so we'll only take its first one
-   
-   
-   # install.
-   install.URL(URL,...)   
-}
 
+install.CMake   <-
+   function (URL =  "https://github.com/Kitware/CMake/releases",
+             cmake_version = NULL, 
+             ...)
+   {
+      repo <- URL
+      # enforce quality control for repo and cmake version
+      if (!is.null(cmake_version) & !is.character(cmake_version)) {
+         stop("cmake_version must be NULL or a character with exact version number")
+      }
+      page <- readLines(repo, warn = FALSE)
+      
+      # get architecture and OS
+      arch_os <- unlist(strsplit(R.version$system, ", "))
+      ver <- "v[0-9.]+/"
+      target_line <- grep(ver, page, value = TRUE)
+      m <- regexpr(ver, target_line)
+      # get available versions and sort decreasing
+      available_versions <-
+         sort(unique(regmatches(target_line, m)), decreasing = TRUE)
+      # remove the "/"
+      available_versions <-
+         gsub(x = available_versions,
+              pattern = "/",
+              replacement = "")
+      # default to latest or user input ?
+      if (is.null(cmake_version)) {
+         message("Looking available versions for latest version")
+         print(available_versions)
+         target_version <-
+            gsub(x = available_versions[1],
+                 pattern = "v",
+                 replacement = "")
+         target_version <-
+            gsub(x = target_version,
+                 pattern = "/",
+                 replacement = "")
+      } else {
+         # must be exact match
+         if (!(paste0("v", cmake_version) %in% available_versions)) {
+            message(
+               paste0(
+                  "Provided version `",
+                  cmake_version,
+                  "` not found on available versions. See below:"
+               )
+            )
+            # print with no v to avoid confusion
+            print(gsub(
+               x = available_versions,
+               pattern = "v",
+               replacement = ""
+            ))
+            stop("provided version not available.")
+         }
+         target_version <- cmake_version
+      }
+      
+      os_initial <- regmatches(arch_os[2], regexpr("([A-Za-z\\-]+)", arch_os[2]))
+      file <- switch(
+         os_initial,
+         "mingw" = paste0("win-", arch_os[1], ".msi"),
+         "linux-gnu" = paste0("Linux-", arch_os[1], ".tar.gz"),
+         "darwin" = paste0("Darwin-", arch_os[1], ".tar.gz")
+      )
+      
+      file <- paste0("cmake-", target_version, "-", file)
+      
+      # links look like
+      # version/cmake-3.17.0-Darwin-x86_64.dmg
+      URL <-
+         paste(repo, "download", paste0("v", target_version), file, sep = "/")
+      message("Trying to find CMake in this URL")
+      print(URL)
+      
+      if (os_initial == "mingw") {
+         install.URL(URL, ...)
+      } else {
+         download.file(URL, destfile = file.path(getwd(), file))
+      }
+      
+   }
 
 #' @export
-install.cmake <- function(...) install.CMake(...)
+install.cmake <- function(...)
+   install.CMake(...)

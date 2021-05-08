@@ -17,7 +17,7 @@ os.manage(GUI = TRUE, ask = TRUE, ...)
 The status code of \code{\link[base]{system}}.
 }
 \description{
-A central function to run functions for shuting down, restarting, sleeping (etc.) your computer.
+A central function to run functions for shutting down, restarting, sleeping (etc.) your computer.
 This will run these functions immediately.
 }
 \examples{
@@ -33,7 +33,7 @@ os.manage()
 }
 }
 \references{
-\url{http://superuser.com/questions/42124/how-can-i-put-the-computer-to-sleep-from-command-prompt-run-menu} , \url{http://www.howtogeek.com/howto/windows-vista/quick-tip-create-shutdown-restart-lock-icons-in-windows-vista/}
+\url{https://superuser.com/questions/42124/how-can-i-put-the-computer-to-sleep-from-command-prompt-run-menu} , \url{https://www.howtogeek.com/howto/windows-vista/quick-tip-create-shutdown-restart-lock-icons-in-windows-vista/}
 }
 \seealso{
 \code{\link[base]{system}},\code{\link[base]{shell}}, \code{\link[base]{Sys.sleep}}, 

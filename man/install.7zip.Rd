@@ -4,9 +4,10 @@
 \alias{install.7zip}
 \title{Downloads and installs 7-Zip for windows}
 \usage{
-
-  install.7zip(page_with_download_url = "http://www.7-zip.org/download.html",
-  ...)
+install.7zip(
+  page_with_download_url = "https://www.7-zip.org/download.html",
+  ...
+)
 }
 \arguments{
 \item{page_with_download_url}{the URL of the 7-Zip download page.}
@@ -43,6 +44,6 @@ install.7zip() # installs the latest version of 7-Zip
 }
 \references{
 \itemize{
-\item 7-zip homepage: \url{http://www.7-zip.org/}
+\item 7-zip homepage: \url{https://www.7-zip.org/}
 }
 }

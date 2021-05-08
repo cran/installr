@@ -6,12 +6,14 @@
 \source{
 On how to ask the user for input:
 
-\url{http://stackoverflow.com/questions/5974967/what-is-the-correct-way-to-ask-for-user-input-in-an-r-program}
+\url{https://stackoverflow.com/questions/5974967/what-is-the-correct-way-to-ask-for-user-input-in-an-r-program}
 }
 \usage{
-ask.user.for.a.row(TABLE,
+ask.user.for.a.row(
+  TABLE,
   header_text = "Possible versions to download (choose one)",
-  questions_text)
+  questions_text
+)
 }
 \arguments{
 \item{TABLE}{a data.frame table with rows from which we wish the user to choose a row.  If TABLE is not a data.frame, it will be coerced into one.}

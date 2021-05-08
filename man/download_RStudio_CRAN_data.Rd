@@ -4,10 +4,15 @@
 \alias{download_RStudio_CRAN_data}
 \title{Download RStudio CRAN mirror data files into a folder}
 \usage{
-download_RStudio_CRAN_data(START = as.Date(Sys.time()) - 5,
-  END = as.Date(Sys.time()), log_folder = tempdir(),
-  trunc_END_date_to_today = TRUE, override = FALSE, message = TRUE,
-  ...)
+download_RStudio_CRAN_data(
+  START = as.Date(Sys.time()) - 5,
+  END = as.Date(Sys.time()),
+  log_folder = tempdir(),
+  trunc_END_date_to_today = TRUE,
+  override = FALSE,
+  message = TRUE,
+  ...
+)
 }
 \arguments{
 \item{START}{the defaults is 5 days before today. A character string of the START date for files to be downloaded. The date format is "YYYY-MM-DD".}
@@ -32,7 +37,7 @@ are already available in the temp folder}
 Returns the value of log_folder.
 }
 \description{
-This function download these files based on the code from the downlaod page (\url{http://cran-logs.rstudio.com/}) into a temporary folder.
+This function download these files based on the code from the download page (\url{http://cran-logs.rstudio.com/}) into a temporary folder.
 }
 \details{
 RStudio maintains its own CRAN mirror, https://cran.rstudio.com/ and offers its log files.

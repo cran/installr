@@ -4,7 +4,7 @@
 \alias{fetch_tag_from_Rd}
 \title{Access tag elements from R's Rd file}
 \source{
-\url{http://stackoverflow.com/questions/17909081/access-elements-from-rs-rd-file}
+\url{https://stackoverflow.com/questions/17909081/access-elements-from-rs-rd-file}
 }
 \usage{
 fetch_tag_from_Rd(package, tag = "\\\\author", ...)
@@ -17,7 +17,7 @@ fetch_tag_from_Rd(package, tag = "\\\\author", ...)
 \item{...}{not in use.}
 }
 \value{
-a character vector with the tag's contant, and the name of the 
+a character vector with the tag's content, and the name of the
 Rd source of the function the tag came from.
 }
 \description{

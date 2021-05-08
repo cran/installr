@@ -37,7 +37,7 @@
 #' @param m time to wait before shutting down (in minutes), added to s and h; passed to \code{\link[base]{Sys.sleep}}
 #' @param h time to wait before shutting down (in hours), added to s and m; passed to \code{\link[base]{Sys.sleep}}
 #' @return The status code of \code{\link[base]{system}}.
-#' @author Yihui Xie <\url{http://yihui.name}>, and Tal Galili
+#' @author Yihui Xie <\url{https://yihui.org/}>, and Tal Galili
 #' @seealso \code{\link[base]{system}},\code{\link[base]{shell}}, \code{\link[base]{Sys.sleep}},
 #' \code{\link{is.windows}}, \code{\link{os.shutdown}}, \code{\link{os.sleep}}, \code{\link{os.hibernate}}, \code{\link{os.lock}}, \code{\link{os.restart}}
 #' @references \url{https://github.com/yihui/fun/blob/master/R/shutdown.R}
@@ -60,7 +60,7 @@ os.shutdown <- function(s=0, m=0, h=0) {
 		  shell("shutdown -s -f -t 1", wait = F) # -f == forces the shutdown.  And I give R 2 seconds to close.
 		  quit("no")
 		  }
-		  ,# without wait =F, the shuting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)
+		  ,# without wait =F, the shutting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)
           system("shutdown -h now"))
 }
 
@@ -83,7 +83,7 @@ os.shutdown <- function(s=0, m=0, h=0) {
 #' @seealso \code{\link[base]{system}},\code{\link[base]{shell}}, \code{\link[base]{Sys.sleep}}, 
 #' \code{\link{is.windows}}, \code{\link{os.shutdown}}, \code{\link{os.sleep}}, \code{\link{os.hibernate}}, \code{\link{os.lock}}, \code{\link{os.restart}}
 #' @references
-#' \url{http://superuser.com/questions/42124/how-can-i-put-the-computer-to-sleep-from-command-prompt-run-menu} , \url{http://www.howtogeek.com/howto/windows-vista/quick-tip-create-shutdown-restart-lock-icons-in-windows-vista/}, \url{http://superuser.com/a/135450/28536}
+#' \url{https://superuser.com/questions/42124/how-can-i-put-the-computer-to-sleep-from-command-prompt-run-menu} , \url{https://www.howtogeek.com/howto/windows-vista/quick-tip-create-shutdown-restart-lock-icons-in-windows-vista/}, \url{https://superuser.com/a/135450/28536}
 #' @examples
 #' \dontrun{
 #' ## when your code is extremely time-consuming,
@@ -97,12 +97,12 @@ os.sleep <- function(s=0, m=0, h=0, first_turn_hibernate_off = TRUE) {
    Sys.sleep(wait)
    
    if(first_turn_hibernate_off & is.windows()) {
-      shell("powercfg -hibernate off", wait = F) # without wait =F, the shuting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)   
+      shell("powercfg -hibernate off", wait = F) # without wait =F, the shutting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)
    }
    
    
    ifelse(is.windows(), 
-          shell("rundll32.exe powrprof.dll,SetSuspendState 0,1,0", wait = F),# without wait =F, the shuting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)
+          shell("rundll32.exe powrprof.dll,SetSuspendState 0,1,0", wait = F),# without wait =F, the shutting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)
           warning("This function doesn't handle non-Windows OS (you are welcome to contribute code to let me know how to do it, e-mail: tal.galili@gmail.com)."))
 }
 
@@ -120,7 +120,7 @@ os.sleep <- function(s=0, m=0, h=0, first_turn_hibernate_off = TRUE) {
 #' @author Tal Galili
 #' @seealso \code{\link[base]{system}},\code{\link[base]{shell}}, \code{\link[base]{Sys.sleep}}, 
 #' \code{\link{is.windows}}, \code{\link{os.shutdown}}, \code{\link{os.sleep}}, \code{\link{os.hibernate}}, \code{\link{os.lock}}, \code{\link{os.restart}}
-#' @references \url{http://superuser.com/questions/42124/how-can-i-put-the-computer-to-sleep-from-command-prompt-run-menu} , \url{http://www.howtogeek.com/howto/windows-vista/quick-tip-create-shutdown-restart-lock-icons-in-windows-vista/}
+#' @references \url{https://superuser.com/questions/42124/how-can-i-put-the-computer-to-sleep-from-command-prompt-run-menu} , \url{https://www.howtogeek.com/howto/windows-vista/quick-tip-create-shutdown-restart-lock-icons-in-windows-vista/}
 #' @examples
 #' \dontrun{
 #' ## when your code is extremely time-consuming, 
@@ -134,11 +134,11 @@ os.hibernate  <- function(s=0, m=0, h=0, first_turn_hibernate_on = TRUE) {
    Sys.sleep(wait)
 
    if(first_turn_hibernate_on & is.windows()) {
-      shell("powercfg -hibernate on", wait = F) # without wait =F, the shuting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)   
+      shell("powercfg -hibernate on", wait = F) # without wait =F, the shutting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)
    }   
    
    ifelse(is.windows(), 
-          shell("rundll32.exe powrprof.dll,SetSuspendState Hibernate", wait = F),# without wait =F, the shuting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)
+          shell("rundll32.exe powrprof.dll,SetSuspendState Hibernate", wait = F),# without wait =F, the shutting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)
           warning("This function doesn't handle non-Windows OS (you are welcome to contribute code to let me know how to do it, e-mail: tal.galili@gmail.com)."))
 }
 
@@ -156,7 +156,7 @@ os.hibernate  <- function(s=0, m=0, h=0, first_turn_hibernate_on = TRUE) {
 #' @author Tal Galili
 #' @seealso \code{\link[base]{system}},\code{\link[base]{shell}}, \code{\link[base]{Sys.sleep}}, 
 #' \code{\link{is.windows}}, \code{\link{os.shutdown}}, \code{\link{os.sleep}}, \code{\link{os.hibernate}}, \code{\link{os.lock}}, \code{\link{os.restart}}
-#' @references \url{http://superuser.com/questions/42124/how-can-i-put-the-computer-to-sleep-from-command-prompt-run-menu} , \url{http://www.howtogeek.com/howto/windows-vista/quick-tip-create-shutdown-restart-lock-icons-in-windows-vista/}
+#' @references \url{https://superuser.com/questions/42124/how-can-i-put-the-computer-to-sleep-from-command-prompt-run-menu} , \url{https://www.howtogeek.com/howto/windows-vista/quick-tip-create-shutdown-restart-lock-icons-in-windows-vista/}
 #' @examples
 #' \dontrun{
 #' ## when your code is extremely time-consuming, 
@@ -170,7 +170,7 @@ os.lock  <- function(s=0, m=0, h=0) {
    Sys.sleep(wait)
    
    ifelse(is.windows(), 
-          shell("Rundll32.exe User32.dll,LockWorkStation", wait = F),# without wait =F, the shuting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)
+          shell("Rundll32.exe User32.dll,LockWorkStation", wait = F),# without wait =F, the shutting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)
           warning("This function doesn't handle non-Windows OS (you are welcome to contribute code to let me know how to do it, e-mail: tal.galili@gmail.com)."))
 }
 
@@ -188,7 +188,7 @@ os.lock  <- function(s=0, m=0, h=0) {
 #' @author Tal Galili
 #' @seealso \code{\link[base]{system}},\code{\link[base]{shell}}, \code{\link[base]{Sys.sleep}}, 
 #' \code{\link{is.windows}}, \code{\link{os.shutdown}}, \code{\link{os.sleep}}, \code{\link{os.hibernate}}, \code{\link{os.lock}}, \code{\link{os.restart}}
-#' @references \url{http://superuser.com/questions/42124/how-can-i-put-the-computer-to-sleep-from-command-prompt-run-menu} , \url{http://www.howtogeek.com/howto/windows-vista/quick-tip-create-shutdown-restart-lock-icons-in-windows-vista/}
+#' @references \url{https://superuser.com/questions/42124/how-can-i-put-the-computer-to-sleep-from-command-prompt-run-menu} , \url{https://www.howtogeek.com/howto/windows-vista/quick-tip-create-shutdown-restart-lock-icons-in-windows-vista/}
 #' @examples
 #' \dontrun{
 #' os.restart()
@@ -199,7 +199,7 @@ os.restart  <- function(s=0, m=0, h=0) {
    Sys.sleep(wait)
    
    ifelse(is.windows(), 
-          shell("Shutdown.exe -r -t 00", wait = F),# without wait =F, the shuting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)
+          shell("Shutdown.exe -r -t 00", wait = F),# without wait =F, the shutting down will not work properly since Windows will wait for R to close (which will be waiting for Windows to shutdown)
           warning("This function doesn't handle non-Windows OS (you are welcome to contribute code to let me know how to do it, e-mail: tal.galili@gmail.com)."))
 }
 
@@ -210,7 +210,7 @@ os.restart  <- function(s=0, m=0, h=0) {
 #' @title Gives managing option to the current OS (shutdown, restart, sleep, hibernate, etc...)
 #' @export
 #' @description
-#' A central function to run functions for shuting down, restarting, sleeping (etc.) your computer.
+#' A central function to run functions for shutting down, restarting, sleeping (etc.) your computer.
 #' This will run these functions immediately.
 #' @param GUI a logical indicating whether a graphics menu should be used if available.  If TRUE, and on Windows, it will use winDialog, otherwise it will use \link[utils]{menu}.
 #' @param ask a logical indicating whether to ask the user for the number of minutes in which to perform the operation.
@@ -218,7 +218,7 @@ os.restart  <- function(s=0, m=0, h=0) {
 #' @return The status code of \code{\link[base]{system}}.
 #' @seealso \code{\link[base]{system}},\code{\link[base]{shell}}, \code{\link[base]{Sys.sleep}}, 
 #' \code{\link{is.windows}}, \code{\link{os.shutdown}}, \code{\link{os.sleep}}, \code{\link{os.hibernate}}, \code{\link{os.lock}}, \code{\link{os.restart}}
-#' @references \url{http://superuser.com/questions/42124/how-can-i-put-the-computer-to-sleep-from-command-prompt-run-menu} , \url{http://www.howtogeek.com/howto/windows-vista/quick-tip-create-shutdown-restart-lock-icons-in-windows-vista/}
+#' @references \url{https://superuser.com/questions/42124/how-can-i-put-the-computer-to-sleep-from-command-prompt-run-menu} , \url{https://www.howtogeek.com/howto/windows-vista/quick-tip-create-shutdown-restart-lock-icons-in-windows-vista/}
 #' @examples
 #' \dontrun{
 #' ## when your code is extremely time-consuming, 

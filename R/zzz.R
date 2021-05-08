@@ -30,7 +30,7 @@ NULL
 #' @return Returns invisible TRUE/FALSE if menus were added or not.
 #' @references 
 #' My thanks goes to Yihui and Dason, for the idea and help with implementation.  See also: 
-#' \url{http://stackoverflow.com/questions/15250487/how-to-add-a-menu-item-to-rgui/}
+#' \url{https://stackoverflow.com/questions/15250487/how-to-add-a-menu-item-to-rgui/}
 #' @examples
 #' \dontrun{
 #' add.installr.GUI() 
@@ -215,7 +215,7 @@ installrWelcomeMessage <- function(){
 # devtools::check(args="--as-cran")
 #                 Thanks to: http://stackoverflow.com/questions/10017702/r-cmd-check-options-for-more-rigorous-testing-2-15-0
 # file.copy("NEWS", "NEWS.md", overwrite = TRUE)
-# shell('git log --graph --stat --date=short --pretty=format:"%ad(%an) %s |%h" > ChangeLog', intern = TRUE)
+# system('git log --graph --stat --date=short --pretty=format:"%ad(%an) %s |%h" > ChangeLog', intern = TRUE)
 # pkgdown::build_site()
 # devtools::check_win_devel()
 # release(check = TRUE)

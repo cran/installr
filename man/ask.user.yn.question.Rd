@@ -31,13 +31,13 @@ sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 Ut enim ad minim veniam, quis nostrud exercitation
 
   ullamco laboris nisi ut aliquip 
-  ex ea commodo consequat. Do \\n you \\n love R?")
+  ex ea commodo consequat. Do \n you \n love R?")
    # checking how it deals with multi lines, and a lot of text (very good actually)
   
 }
 }
 \references{
-\url{http://stackoverflow.com/questions/15250487/how-to-add-a-menu-item-to-rgui} 
+\url{https://stackoverflow.com/questions/15250487/how-to-add-a-menu-item-to-rgui} 
 (my thanks goes to Dason for his answer and help)
 }
 \seealso{

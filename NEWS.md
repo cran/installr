@@ -1,3 +1,24 @@
+installr 0.23.0 (2021-05-08)
+---------------------------
+
+UPDATED FUNCTIONS:
+   * updateR - changed copy_Rprofile.site argument to copy_site_files, which will now also copy Renviron.site
+   * small edits to improve 32/64 bit architecture detection and appropriate download for Python.
+   * install.packages.zip - now removes query parameters from URL.
+
+OTHER NOTES:
+   * Appveyor integration added to the github repo
+   * installr is now also available to install on linux/mac. The main functionality of the package is primarily geared towards Windows users, but making the package OS agnostic, allows it to be developed/tested by users from other OS (based on the request by Hadley)
+
+BUG FIXES:
+   * Fix install.GraphicsMagick
+   * Fix create.global.library to allow no arguments
+   * Fix install.CMake
+   * Fix install.RStudio
+   * Fix install.Rtools
+   * Fix install.ImageMagick
+
+
 installr 0.22.0 (2019-08-02)
 ---------------------------
 

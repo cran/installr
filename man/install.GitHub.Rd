@@ -5,9 +5,10 @@
 \alias{install.github}
 \title{Downloads and installs GitHub for windows}
 \usage{
-
-  install.GitHub(URL = "http://github-windows.s3.amazonaws.com/GitHubSetup.exe",
-  ...)
+install.GitHub(
+  URL = "http://github-windows.s3.amazonaws.com/GitHubSetup.exe",
+  ...
+)
 }
 \arguments{
 \item{URL}{the URL of the GitHub download page.}
@@ -31,6 +32,6 @@ install.GitHub() # installs the latest version of GitHub for windows
 \references{
 \itemize{
 \item GitHub homepage: \url{https://github.com/}
-\item GitHub for windows download page: \url{http://windows.github.com/}
+\item GitHub for windows download page: \url{https://desktop.github.com/}
 }
 }

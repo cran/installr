@@ -4,8 +4,13 @@
 \alias{package_authors}
 \title{Access (and clean) author elements from R's Rd file}
 \usage{
-package_authors(package, to_strsplit = TRUE, split = c(",|and"),
-  to_table = FALSE, ...)
+package_authors(
+  package,
+  to_strsplit = TRUE,
+  split = c(",|and"),
+  to_table = FALSE,
+  ...
+)
 }
 \arguments{
 \item{package}{a character string of the package we are interested in.}
@@ -13,7 +18,7 @@ package_authors(package, to_strsplit = TRUE, split = c(",|and"),
 \item{to_strsplit}{logical (TRUE). Should the authors strings be split
 (in cases of a "and" or a comma ",")?}
 
-\item{split}{a character scalar to be passed to \link{strsplit} split paramter.
+\item{split}{a character scalar to be passed to \link{strsplit} split parameter.
 default is c(",|and)}
 
 \item{to_table}{logical (FALSE). Should the authors strings be listed in a
@@ -31,7 +36,7 @@ Find authors.
 }
 \details{
 List authors for a package from its "author" tag elements from its Rd files.
-The function also seperate lists of authors, and cleans the output a bit 
+The function also separate lists of authors, and cleans the output a bit
 (from spaces at the beginning of the strings).
 }
 \examples{
@@ -45,7 +50,7 @@ sort(package_authors("installr")) # sorted name list...
 
 
 ## From the top R packages list: 
-## http://www.r-statistics.com/2013/06/top-100-r-packages-for-2013-jan-may/
+## https://www.r-statistics.com/2013/06/top-100-r-packages-for-2013-jan-may/
 package_authors("plyr")
 package_authors("digest")
 package_authors("ggplot2")
